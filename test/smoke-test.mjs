@@ -41,7 +41,7 @@ class Element {
 
 const noop = () => {};
 const context = {
-  clearRect: noop, save: noop, restore: noop, translate: noop, fillRect: noop, strokeRect: noop,
+  clearRect: noop, save: noop, restore: noop, scale: noop, translate: noop, fillRect: noop, strokeRect: noop,
   beginPath: noop, moveTo: noop, lineTo: noop, quadraticCurveTo: noop, stroke: noop, fill: noop,
   arc: noop, fillText: noop, measureText: (text) => ({ width: String(text).length * 6 }),
   createRadialGradient: () => ({ addColorStop: noop }), setTransform: noop
@@ -86,7 +86,7 @@ const emitKey = (key) => { for (const handler of windowListeners.keydown ?? []) 
 
 game.start();
 assert(game.state.running, "Game did not start");
-assert(game.state.player.x === 190 && game.state.player.y === 950, "Game did not start at the entrance");
+assert(game.state.player.x === 220 && game.state.player.y === 650, "Game did not start at the entrance");
 assert(elements["title-screen"].classList.contains("hidden"), "Title screen did not hide");
 assert(!elements["game-ui"].classList.contains("hidden"), "Game HUD did not appear");
 assert(game.content.length === 4 && game.content.every((chapter) => chapter.sections.length === 3), "Content contract did not load four three-panel chapters");
@@ -97,8 +97,11 @@ assert(game.state.dialogueOpen, "Curator guidance did not open");
 elements["dialogue-close"].click();
 assert(!game.state.dialogueOpen, "Curator guidance did not close");
 
-assert(!game.canMove(710, 600), "Chapter 02 gate was passable before chapter 01");
-game.state.player = { x: 710, y: 600 };
+const item = (id) => game.interactables.find((entry) => entry.id === id);
+const gate = (id) => item(id);
+
+assert(!game.canMove(gate("gate-class").x, gate("gate-class").y), "Chapter 02 gate was passable before chapter 01");
+game.state.player = { x: gate("gate-class").x, y: gate("gate-class").y };
 game.interact();
 assert(game.state.dialogueOpen, "Locked chapter gate did not explain its requirement");
 emitKey("e");
@@ -150,31 +153,31 @@ function finishOpenChapter(id) {
 }
 
 finishOpenChapter("base");
-assert(game.canMove(710, 600), "Chapter 02 gate remained blocked after chapter 01");
-game.state.player = { x: 710, y: 600 };
+assert(game.canMove(gate("gate-class").x, gate("gate-class").y), "Chapter 02 gate remained blocked after chapter 01");
+game.state.player = { x: gate("gate-class").x, y: gate("gate-class").y };
 game.interact();
-assert(game.state.player.x > 770, "Opening chapter 02 gate did not move player into chapter 02");
-assert(!game.canMove(1390, 600), "Chapter 03 gate was passable before chapter 02");
+assert(game.state.player.x > game.rooms.find((room) => room.id === "class").x, "Opening chapter 02 gate did not move player into chapter 02");
+assert(!game.canMove(gate("gate-state").x, gate("gate-state").y), "Chapter 03 gate was passable before chapter 02");
 
 openChapter("class");
 finishOpenChapter("class");
-assert(game.canMove(1390, 600), "Chapter 03 gate remained blocked after chapter 02");
-game.state.player = { x: 1390, y: 600 };
+assert(game.canMove(gate("gate-state").x, gate("gate-state").y), "Chapter 03 gate remained blocked after chapter 02");
+game.state.player = { x: gate("gate-state").x, y: gate("gate-state").y };
 game.interact();
-assert(game.state.player.x > 1450, "Opening chapter 03 gate did not move player into chapter 03");
-assert(!game.canMove(2070, 600), "Chapter 04 gate was passable before chapter 03");
+assert(game.state.player.x > game.rooms.find((room) => room.id === "state").x, "Opening chapter 03 gate did not move player into chapter 03");
+assert(!game.canMove(gate("gate-revolt").x, gate("gate-revolt").y), "Chapter 04 gate was passable before chapter 03");
 
 openChapter("state");
 finishOpenChapter("state");
-assert(game.canMove(2070, 600), "Chapter 04 gate remained blocked after chapter 03");
-game.state.player = { x: 2070, y: 600 };
+assert(game.canMove(gate("gate-revolt").x, gate("gate-revolt").y), "Chapter 04 gate remained blocked after chapter 03");
+game.state.player = { x: gate("gate-revolt").x, y: gate("gate-revolt").y };
 game.interact();
-assert(game.state.player.x > 2130, "Opening chapter 04 gate did not move player into chapter 04");
+assert(game.state.player.x > game.rooms.find((room) => room.id === "revolt").x, "Opening chapter 04 gate did not move player into chapter 04");
 
 openChapter("revolt");
 finishOpenChapter("revolt");
 assert(game.state.evidence.size === 4, "Chapter counter did not reach 4/4");
-game.state.player = { x: 2550, y: 920 };
+game.state.player = { x: gate("gate-end").x, y: gate("gate-end").y };
 game.interact();
 assert(!game.state.running, "Final gate did not end the exhibition");
 assert(!elements["ending-screen"].classList.contains("hidden"), "Ending screen did not appear");
