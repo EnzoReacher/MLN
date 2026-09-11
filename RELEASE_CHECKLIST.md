@@ -10,7 +10,9 @@
 - [x] Thu thập đủ `4/4` evidence để mở cánh cửa cuối.
 - [x] Kết thúc hiển thị mức tập trung quyền lực và áp lực mâu thuẫn.
 - [x] Có phần ghi chú nối gameplay với lý thuyết.
-- [x] Giao diện không dùng palette đỏ-vàng-trắng kiểu website cũ.
+- [x] Palette đỏ cách mạng–đen–đồng vàng, có biểu tượng búa–liềm và biểu ngữ chính trị.
+- [x] Mỗi phòng có bảng luận đề và artifact gắn với chủ đề môn học.
+- [x] Nút `RỜI TRIỂN LÃM` là nút HTML tương tác thật, dừng game và hiện màn cảm ơn.
 
 ## Automated checks
 
@@ -30,6 +32,7 @@ Các test hiện xác nhận:
 - Mỗi exhibit mở được dialogue với hai lựa chọn.
 - Bốn evidence được ghi nhận.
 - Cánh cửa cuối mở đúng điều kiện và màn ending xuất hiện.
+- Nút quit dừng game, hiện quit screen và quay lại được màn hình đầu.
 - Các khái niệm `giai cấp`, `tư liệu sản xuất`, `mâu thuẫn`, `Nhà nước`, `cách mạng xã hội` có trong game.
 - Vercel rewrite giữ `/` về `dist/index.html`.
 

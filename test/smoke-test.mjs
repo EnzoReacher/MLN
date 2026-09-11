@@ -5,8 +5,8 @@ const source = fs.readFileSync(new URL("../dist/app.js", import.meta.url), "utf8
 class ClassList { constructor() { this.values = new Set(); } add(...names) { names.forEach((name) => this.values.add(name)); } remove(...names) { names.forEach((name) => this.values.delete(name)); } toggle(name, force) { const next = force === undefined ? !this.values.has(name) : force; next ? this.add(name) : this.remove(name); return next; } contains(name) { return this.values.has(name); } }
 class Element { constructor(id = "") { this.id = id; this.classList = new ClassList(); this.style = {}; this.textContent = ""; this._innerHTML = ""; this.listeners = {}; this.children = []; this.hidden = false; } get innerHTML() { return this._innerHTML; } set innerHTML(value) { this._innerHTML = value; this.children = []; } addEventListener(type, handler) { (this.listeners[type] ??= []).push(handler); } click() { for (const handler of this.listeners.click ?? []) handler({ currentTarget: this }); } append(child) { this.children.push(child); } }
 const noop = () => {};
-const context = { clearRect: noop, save: noop, restore: noop, translate: noop, fillRect: noop, strokeRect: noop, beginPath: noop, moveTo: noop, lineTo: noop, stroke: noop, fill: noop, arc: noop, fillText: noop, createRadialGradient: () => ({ addColorStop: noop }), setTransform: noop };
-const ids = ["game-canvas", "title-screen", "game-ui", "dialogue", "ending-screen", "interaction-prompt", "prompt-text", "zone-name", "zone-index", "status-text", "evidence-count", "objective-text", "dialogue-title", "dialogue-body", "dialogue-type", "dialogue-number", "dialogue-choices", "dialogue-close", "start-button", "restart-button", "theory-button", "theory-note", "ending-evidence", "ending-power", "ending-conflict", "ending-copy"];
+const context = { clearRect: noop, save: noop, restore: noop, translate: noop, fillRect: noop, strokeRect: noop, beginPath: noop, moveTo: noop, lineTo: noop, stroke: noop, fill: noop, arc: noop, fillText: noop, measureText: (text) => ({ width: String(text).length * 6 }), createRadialGradient: () => ({ addColorStop: noop }), setTransform: noop };
+const ids = ["game-canvas", "title-screen", "game-ui", "dialogue", "ending-screen", "quit-screen", "interaction-prompt", "prompt-text", "zone-name", "zone-index", "status-text", "evidence-count", "objective-text", "dialogue-title", "dialogue-body", "dialogue-type", "dialogue-number", "dialogue-choices", "dialogue-close", "start-button", "restart-button", "quit-button", "return-title-button", "ending-exit-button", "theory-button", "theory-note", "ending-evidence", "ending-power", "ending-conflict", "ending-copy"];
 const elements = Object.fromEntries(ids.map((id) => [id, new Element(id)]));
 elements["game-canvas"].getContext = () => context;
 elements["mini-player"] = new Element("mini-player");
@@ -21,6 +21,13 @@ game.start();
 assert(game.state.running, "Game did not start");
 assert(elements["title-screen"].classList.contains("hidden"), "Title screen did not hide");
 assert(elements["game-ui"].classList.contains("hidden") === false, "Game HUD did not appear");
+elements["quit-button"].click();
+assert(!game.state.running, "Quit button did not stop the game");
+assert(!elements["quit-screen"].classList.contains("hidden"), "Quit screen did not appear");
+assert(elements["game-ui"].classList.contains("hidden"), "Game HUD remained visible after quitting");
+elements["return-title-button"].click();
+assert(!elements["title-screen"].classList.contains("hidden"), "Return-to-title button did not work");
+game.start();
 assert(game.rooms.length === 4, "Expected four exhibition rooms");
 assert(game.interactables.filter((item) => item.kind === "exhibit").length === 4, "Expected four exhibits");
 assert(game.canMove(700, 400), "Open floor was incorrectly blocked");
@@ -63,5 +70,7 @@ elements["dialogue-choices"].children[0].click();
 elements["dialogue-close"].click();
 assert(!game.state.running, "Ending did not stop the game loop");
 assert(!elements["ending-screen"].classList.contains("hidden"), "Ending screen did not appear");
+elements["ending-exit-button"].click();
+assert(!elements["quit-screen"].classList.contains("hidden"), "Ending exit button did not open the thank-you screen");
 
 console.log("PASS: start, HUD, four-room navigation model, wall collision, four evidence interactions, final gate, and ending");

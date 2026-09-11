@@ -14,7 +14,7 @@ for (const asset of ["dist/styles.css", "dist/app.js"]) assert(fs.existsSync(pat
 assert(html.includes('id="game-canvas"') && html.includes('src="./app.js"'), "Canvas game shell is incomplete");
 assert(app.includes("requestAnimationFrame(loop)") && app.includes("getContext(\"2d\")"), "Canvas game loop is missing");
 for (const concept of ["giai cấp", "tư liệu sản xuất", "mâu thuẫn", "Nhà nước", "cách mạng xã hội"]) assert(html.toLocaleLowerCase("vi").includes(concept.toLocaleLowerCase("vi")) || app.toLocaleLowerCase("vi").includes(concept.toLocaleLowerCase("vi")), `Missing academic concept: ${concept}`);
-for (const marker of ["WASD", "interaction-prompt", "evidence-count", "EXHIBITION MAP", "Cánh cửa cuối"]) assert(html.includes(marker) || app.includes(marker), `Missing gameplay marker: ${marker}`);
+for (const marker of ["WASD", "interaction-prompt", "evidence-count", "EXHIBITION MAP", "Cánh cửa cuối", "quit-button", "quit-screen", "☭", "drawHammerSickle", "TƯ LIỆU SẢN XUẤT", "CÁCH MẠNG XÃ HỘI"]) assert(html.includes(marker) || app.includes(marker), `Missing gameplay/theme marker: ${marker}`);
 assert((app.match(/kind: "exhibit"/g) ?? []).length === 4, "Expected exactly four evidence exhibits");
 assert(app.includes("function rectCircleCollision") && app.includes("function canMove"), "Collision system missing");
 assert(css.includes("#game-canvas") && css.includes(".choice-button") && css.includes("@media (max-width:800px)"), "Game visual/responsive rules missing");

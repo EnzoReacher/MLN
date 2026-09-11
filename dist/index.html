@@ -15,9 +15,10 @@
       <section id="title-screen" class="overlay title-screen" aria-labelledby="game-title">
         <div class="title-noise" aria-hidden="true"></div>
         <div class="title-content">
-          <p class="overline">THE STATE / EXHIBITION 01</p>
+          <div class="revolution-mark" aria-label="Biểu tượng búa liềm">☭</div>
+          <p class="overline">THE STATE / EXHIBITION 01 / POLITICAL ARCHIVE</p>
           <h1 id="game-title">WHO<br /><em>HOLDS</em><br />THE ROOM?</h1>
-          <p class="title-copy">Một triển lãm không trưng bày câu trả lời.<br />Bạn phải bước vào trong để nhìn thấy cấu trúc vận hành.</p>
+          <p class="title-copy">Một triển lãm về Nhà nước và Cách mạng xã hội.<br />Bạn phải bước vào trong để nhìn thấy cấu trúc vận hành.</p>
           <button id="start-button" class="primary-button" type="button"><span>VÀO TRIỂN LÃM</span><b>ENTER</b></button>
           <div class="control-strip"><span><kbd>WASD</kbd> DI CHUYỂN</span><span><kbd>E</kbd> TƯƠNG TÁC</span><span><kbd>ESC</kbd> ĐÓNG</span></div>
         </div>
@@ -26,15 +27,16 @@
 
       <section id="game-ui" class="game-ui hidden" aria-live="polite">
         <header class="topbar">
-          <div class="brand"><span class="brand-mark">+</span><div><strong>THE STATE</strong><small>EXHIBITION 01</small></div></div>
+          <div class="brand"><span class="brand-mark">☭</span><div><strong>THE STATE</strong><small>EXHIBITION 01 / POLITICAL ARCHIVE</small></div></div>
           <div class="objective"><span class="ui-label">CURRENT OBJECTIVE</span><strong id="objective-text">Khám phá các khu triển lãm</strong></div>
-          <div class="evidence-counter"><span class="ui-label">EVIDENCE</span><strong><span id="evidence-count">0</span><b>/</b>4</strong></div>
+          <div class="hud-actions"><div class="evidence-counter"><span class="ui-label">EVIDENCE</span><strong><span id="evidence-count">0</span><b>/</b>4</strong></div><button id="quit-button" class="quit-button" type="button">RỜI TRIỂN LÃM <b>×</b></button></div>
         </header>
 
         <div class="zone-card"><span class="zone-index" id="zone-index">00</span><div><span class="ui-label">YOU ARE IN</span><strong id="zone-name">SẢNH ĐÓN</strong></div></div>
         <div id="interaction-prompt" class="interaction-prompt hidden"><span class="prompt-key">E</span><span id="prompt-text">Tương tác</span></div>
         <div class="minimap" aria-label="Sơ đồ triển lãm"><div class="mini-title">EXHIBITION MAP</div><div class="mini-map-art"><span class="mini-room mini-base">01</span><span class="mini-room mini-class">02</span><span class="mini-room mini-state">03</span><span class="mini-room mini-revolt">04</span><i class="mini-player"></i></div></div>
         <div class="bottom-hint"><span class="pulse-dot"></span><span id="status-text">Tìm điểm sáng trong các phòng.</span></div>
+        <div class="theme-ribbon">NHÀ NƯỚC // GIAI CẤP // MÂU THUẪN // CÁCH MẠNG XÃ HỘI</div>
       </section>
 
       <section id="dialogue" class="dialogue hidden" aria-labelledby="dialogue-title">
@@ -49,7 +51,11 @@
       </section>
 
       <section id="ending-screen" class="overlay ending-screen hidden" aria-labelledby="ending-title">
-        <div class="ending-content"><p class="overline">EXHIBITION COMPLETE / FIELD REPORT</p><h2 id="ending-title">THE ROOM<br /><em>REMEMBERS.</em></h2><p id="ending-copy" class="ending-copy"></p><div class="ending-stats"><span><b id="ending-evidence">4/4</b><small>evidence recovered</small></span><span><b id="ending-power">—</b><small>power balance</small></span><span><b id="ending-conflict">—</b><small>social pressure</small></span></div><div class="ending-actions"><button id="restart-button" class="primary-button" type="button"><span>WALK THE EXHIBITION AGAIN</span><b>↻</b></button><button id="theory-button" class="text-button" type="button">MỞ GHI CHÚ LÝ THUYẾT</button></div><div id="theory-note" class="theory-note hidden"><strong>READ THE ROOM</strong><p>Điều kiện vật chất tổ chức đời sống xã hội. Khi quyền kiểm soát tư liệu sản xuất bị phân hóa, giai cấp và mâu thuẫn xuất hiện. Nhà nước hình thành như một thiết chế quyền lực trong bối cảnh đó; cách mạng xã hội là bước biến đổi căn bản khi quan hệ cũ trở thành lực cản.</p></div></div>
+        <div class="ending-content"><div class="revolution-mark small-mark">☭</div><p class="overline">EXHIBITION COMPLETE / FIELD REPORT</p><h2 id="ending-title">THE ROOM<br /><em>REMEMBERS.</em></h2><p id="ending-copy" class="ending-copy"></p><div class="ending-stats"><span><b id="ending-evidence">4/4</b><small>evidence recovered</small></span><span><b id="ending-power">—</b><small>power balance</small></span><span><b id="ending-conflict">—</b><small>social pressure</small></span></div><div class="ending-actions"><button id="restart-button" class="primary-button" type="button"><span>WALK THE EXHIBITION AGAIN</span><b>↻</b></button><button id="theory-button" class="text-button" type="button">MỞ GHI CHÚ LÝ THUYẾT</button><button id="ending-exit-button" class="text-button danger-button" type="button">RỜI TRIỂN LÃM →</button></div><div id="theory-note" class="theory-note hidden"><strong>READ THE ROOM</strong><p>Điều kiện vật chất tổ chức đời sống xã hội. Khi quyền kiểm soát tư liệu sản xuất bị phân hóa, giai cấp và mâu thuẫn xuất hiện. Nhà nước hình thành như một thiết chế quyền lực trong bối cảnh đó; cách mạng xã hội là bước biến đổi căn bản khi quan hệ cũ trở thành lực cản.</p></div></div>
+      </section>
+
+      <section id="quit-screen" class="overlay quit-screen hidden" aria-labelledby="quit-title">
+        <div class="quit-content"><div class="revolution-mark">☭</div><p class="overline">ARCHIVE CLOSED / SESSION ENDED</p><h2 id="quit-title">CẢM ƠN BẠN ĐÃ<br /><em>THAM QUAN.</em></h2><p>Triển lãm kết thúc ở đây. Nhưng những câu hỏi về quyền lực, giai cấp, Nhà nước và biến đổi xã hội vẫn tiếp tục bên ngoài căn phòng.</p><div class="quit-rule"></div><div class="quit-actions"><button id="return-title-button" class="primary-button" type="button"><span>VỀ MÀN HÌNH ĐẦU</span><b>↩</b></button><span>THE STATE / POLITICAL ARCHIVE</span></div></div>
       </section>
     </main>
     <script src="./app.js"></script>
