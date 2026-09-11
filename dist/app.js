@@ -50,7 +50,8 @@
   const lightboxClose = document.getElementById("lightbox-close");
 
   const keys = new Set();
-  const WORLD = { width: 2800, height: 1200 };
+  const WORLD = { width: 5300, height: 1400 };
+  const CAMERA_ZOOM = 1.24;
   const PLAYER = { radius: 17, speed: 245 };
 
   function normaliseImage(image) {
@@ -98,7 +99,7 @@
     lastTime: 0,
     time: 0,
     camera: { x: 0, y: 0 },
-    player: { x: 190, y: 950 },
+    player: { x: 220, y: 650 },
     evidence: new Set(),
     viewedPages: new Set(),
     imagesViewed: new Set(),
@@ -111,10 +112,10 @@
   };
 
   const rooms = [
-    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", x: 90, y: 150, w: 560, h: 900, color: "#c9363d", label: "THE BASE", artifact: "TƯ LIỆU SẢN XUẤT" },
-    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", x: 770, y: 150, w: 560, h: 900, color: "#e2b45d", label: "THE SPLIT", artifact: "GIAI CẤP" },
-    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", x: 1450, y: 150, w: 560, h: 900, color: "#d7c2a5", label: "THE STATE", artifact: "THIẾT CHẾ NHÀ NƯỚC" },
-    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", x: 2130, y: 150, w: 560, h: 900, color: "#9f2635", label: "THE FAULTLINE", artifact: "CÁCH MẠNG XÃ HỘI" }
+    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", x: 100, y: 120, w: 1050, h: 1160, color: "#c75b58", label: "THE BASE", artifact: "TƯ LIỆU SẢN XUẤT" },
+    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", x: 1450, y: 120, w: 1050, h: 1160, color: "#d3a95f", label: "THE SPLIT", artifact: "GIAI CẤP" },
+    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", x: 2800, y: 120, w: 1050, h: 1160, color: "#c8c0ae", label: "THE STATE", artifact: "THIẾT CHẾ NHÀ NƯỚC" },
+    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", x: 4150, y: 120, w: 1050, h: 1160, color: "#c75b68", label: "THE FAULTLINE", artifact: "CÁCH MẠNG XÃ HỘI" }
   ];
 
   const walls = [
@@ -122,24 +123,24 @@
     { x: 0, y: WORLD.height - 50, w: WORLD.width, h: 50 },
     { x: 0, y: 0, w: 50, h: WORLD.height },
     { x: WORLD.width - 50, y: 0, w: 50, h: WORLD.height },
-    { x: 650, y: 50, w: 120, h: 470 },
-    { x: 650, y: 680, w: 120, h: 470 },
-    { x: 1330, y: 50, w: 120, h: 470 },
-    { x: 1330, y: 680, w: 120, h: 470 },
-    { x: 2010, y: 50, w: 120, h: 470 },
-    { x: 2010, y: 680, w: 120, h: 470 }
+    { x: 1150, y: 50, w: 300, h: 510 },
+    { x: 1150, y: 760, w: 300, h: 590 },
+    { x: 2500, y: 50, w: 300, h: 510 },
+    { x: 2500, y: 760, w: 300, h: 590 },
+    { x: 3850, y: 50, w: 300, h: 510 },
+    { x: 3850, y: 760, w: 300, h: 590 }
   ];
 
   const interactables = [
-    { id: "curator", x: 180, y: 950, radius: 74, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Đây là một tuyến triển lãm có thứ tự. Đi tới từng hiện vật, nhấn E để đọc hồ sơ và xem ảnh. Khi hoàn tất một chương, cổng tiếp theo sẽ mở." },
-    { id: "base", x: 370, y: 590, radius: 105, kind: "exhibit", chapterId: "base", title: "Hồ sơ điều kiện vật chất", type: "ARCHIVE 01", number: "01 / 04" },
-    { id: "gate-class", x: 710, y: 600, radius: 105, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
-    { id: "class", x: 1050, y: 590, radius: 105, kind: "exhibit", chapterId: "class", title: "Hồ sơ giai cấp và sở hữu", type: "ARCHIVE 02", number: "02 / 04" },
-    { id: "gate-state", x: 1390, y: 600, radius: 105, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
-    { id: "state", x: 1730, y: 590, radius: 105, kind: "exhibit", chapterId: "state", title: "Hồ sơ Nhà nước và quyền lực", type: "ARCHIVE 03", number: "03 / 04" },
-    { id: "gate-revolt", x: 2070, y: 600, radius: 105, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
-    { id: "revolt", x: 2370, y: 590, radius: 105, kind: "exhibit", chapterId: "revolt", title: "Hồ sơ mâu thuẫn và chuyển hóa", type: "ARCHIVE 04", number: "04 / 04" },
-    { id: "gate-end", x: 2550, y: 920, radius: 110, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
+    { id: "curator", x: 220, y: 650, radius: 74, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Đây là một tuyến triển lãm có thứ tự. Đi tới từng hiện vật, nhấn E để đọc hồ sơ và xem ảnh. Khi hoàn tất một chương, cổng tiếp theo sẽ mở." },
+    { id: "base", x: 625, y: 700, radius: 105, kind: "exhibit", chapterId: "base", title: "Hồ sơ điều kiện vật chất", type: "ARCHIVE 01", number: "01 / 04" },
+    { id: "gate-class", x: 1300, y: 650, radius: 105, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
+    { id: "class", x: 1975, y: 700, radius: 105, kind: "exhibit", chapterId: "class", title: "Hồ sơ giai cấp và sở hữu", type: "ARCHIVE 02", number: "02 / 04" },
+    { id: "gate-state", x: 2650, y: 650, radius: 105, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
+    { id: "state", x: 3325, y: 700, radius: 105, kind: "exhibit", chapterId: "state", title: "Hồ sơ Nhà nước và quyền lực", type: "ARCHIVE 03", number: "03 / 04" },
+    { id: "gate-revolt", x: 4000, y: 650, radius: 105, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
+    { id: "revolt", x: 4675, y: 700, radius: 105, kind: "exhibit", chapterId: "revolt", title: "Hồ sơ mâu thuẫn và chuyển hóa", type: "ARCHIVE 04", number: "04 / 04" },
+    { id: "gate-end", x: 5000, y: 1040, radius: 110, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
   ];
 
   const roomById = new Map(rooms.map((room) => [room.id, room]));
@@ -159,7 +160,7 @@
     state.running = true;
     state.lastTime = performance.now();
     state.time = 0;
-    state.player = { x: 190, y: 950 };
+    state.player = { x: 220, y: 650 };
     state.camera = { x: 0, y: 0 };
     state.evidence.clear();
     state.viewedPages.clear();
@@ -477,7 +478,7 @@
         showEnding();
         return;
       }
-      state.player.x = clamp(state.player.x + 130, 70, WORLD.width - 70);
+      state.player.x = clamp(state.player.x + 170, 70, WORLD.width - 70);
       updateCamera();
       updateUi();
       return;
@@ -494,8 +495,9 @@
     const height = innerHeight;
     ctx.clearRect(0, 0, width, height);
     ctx.save();
+    ctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
     ctx.translate(-state.camera.x, -state.camera.y);
-    ctx.fillStyle = "#2b1d20";
+    ctx.fillStyle = "#2b292a";
     ctx.fillRect(0, 0, WORLD.width, WORLD.height);
     drawFloor();
     rooms.forEach(drawRoom);
@@ -508,135 +510,165 @@
   }
 
   function drawFloor() {
-    ctx.fillStyle = "#281c1f";
+    ctx.fillStyle = "#343131";
     ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100);
-    const glow = ctx.createRadialGradient(1400, 600, 80, 1400, 600, 1100);
-    glow.addColorStop(0, "rgba(226,180,93,.15)");
-    glow.addColorStop(1, "rgba(201,54,61,0)");
+    const glow = ctx.createRadialGradient(WORLD.width / 2, 610, 80, WORLD.width / 2, 610, 2100);
+    glow.addColorStop(0, "rgba(224,190,133,.10)");
+    glow.addColorStop(1, "rgba(43,41,42,0)");
     ctx.fillStyle = glow;
     ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100);
-    ctx.strokeStyle = "rgba(226,180,93,.09)";
+    ctx.fillStyle = "rgba(240,224,203,.045)";
+    ctx.fillRect(50, 613, WORLD.width - 100, 74);
+    ctx.strokeStyle = "rgba(247,239,227,.045)";
     ctx.lineWidth = 1;
-    for (let x = 75; x < WORLD.width - 50; x += 50) {
+    for (let x = 90; x < WORLD.width - 50; x += 260) {
       ctx.beginPath();
       ctx.moveTo(x, 50);
       ctx.lineTo(x, WORLD.height - 50);
       ctx.stroke();
     }
-    for (let y = 75; y < WORLD.height - 50; y += 50) {
+    for (let y = 90; y < WORLD.height - 50; y += 180) {
       ctx.beginPath();
       ctx.moveTo(50, y);
       ctx.lineTo(WORLD.width - 50, y);
       ctx.stroke();
     }
-    ctx.fillStyle = "rgba(201,54,61,.16)";
-    ctx.fillRect(65, 570, 2670, 60);
+    ctx.strokeStyle = "rgba(240,224,203,.12)";
+    ctx.beginPath();
+    ctx.moveTo(50, 613);
+    ctx.lineTo(WORLD.width - 50, 613);
+    ctx.moveTo(50, 687);
+    ctx.lineTo(WORLD.width - 50, 687);
+    ctx.stroke();
   }
 
   function drawRoom(room) {
     const collected = state.evidence.has(room.id);
-    ctx.strokeStyle = `${room.color}${collected ? "dd" : "88"}`;
-    ctx.lineWidth = collected ? 3 : 2;
-    ctx.strokeRect(room.x, room.y, room.w, room.h);
-    ctx.fillStyle = collected ? `${room.color}16` : `${room.color}09`;
+    ctx.fillStyle = collected ? `${room.color}14` : "rgba(247,239,227,.018)";
     ctx.fillRect(room.x, room.y, room.w, room.h);
-    ctx.font = "11px 'DM Mono', monospace";
-    ctx.fillStyle = `${room.color}ee`;
-    ctx.fillText(`${room.index} / ${room.label}`, room.x + 22, room.y + 30);
-    ctx.strokeStyle = `${room.color}55`;
+    ctx.strokeStyle = collected ? `${room.color}d0` : `${room.color}86`;
+    ctx.lineWidth = collected ? 2.5 : 1.5;
+    ctx.strokeRect(room.x, room.y, room.w, room.h);
+    ctx.fillStyle = "rgba(247,239,227,.028)";
+    ctx.fillRect(room.x + 28, room.y + 92, room.w - 56, room.h - 120);
+    ctx.strokeStyle = "rgba(247,239,227,.09)";
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(room.x + 22, room.y + 46);
-    ctx.lineTo(room.x + room.w - 22, room.y + 46);
+    ctx.moveTo(room.x + 30, room.y + 78);
+    ctx.lineTo(room.x + room.w - 30, room.y + 78);
     ctx.stroke();
+    ctx.font = "16px 'Space Grotesk', system-ui, sans-serif";
+    ctx.fillStyle = "#f1e7d8";
+    ctx.fillText(room.name, room.x + 32, room.y + 42);
+    ctx.font = "11px 'DM Mono', monospace";
+    ctx.fillStyle = `${room.color}e6`;
+    ctx.fillText(`${room.index} / ${room.label}`, room.x + 32, room.y + 64);
+    ctx.fillStyle = `${room.color}cc`;
+    ctx.fillRect(room.x + 32, room.y + room.h - 34, 76, 3);
+    ctx.fillStyle = "rgba(247,239,227,.18)";
+    ctx.fillRect(room.x + room.w - 108, room.y + room.h - 34, 76, 3);
   }
 
   function drawChapterObject(item) {
     const room = roomById.get(item.id);
-    const color = room?.color || "#e2b45d";
-    const pulse = 1 + Math.sin(state.time * 2.3 + item.x) * 0.06;
+    const color = room?.color || "#d3a95f";
     const collected = state.evidence.has(item.id);
     ctx.save();
     ctx.translate(item.x, item.y);
-    ctx.globalAlpha = collected ? 0.48 : 1;
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 22;
-    ctx.strokeStyle = color;
-    ctx.fillStyle = `${color}28`;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(0, 0, 92 * pulse, 0, Math.PI * 2);
-    ctx.stroke();
+    ctx.globalAlpha = collected ? 0.52 : 1;
+    const light = ctx.createRadialGradient(0, 12, 20, 0, 12, 270);
+    light.addColorStop(0, `${color}20`);
+    light.addColorStop(1, `${color}00`);
+    ctx.fillStyle = light;
+    ctx.fillRect(-270, -220, 540, 440);
+    ctx.shadowColor = `${color}66`;
+    ctx.shadowBlur = 14;
+    ctx.fillStyle = "#4a4240";
+    ctx.fillRect(-160, 76, 320, 14);
     ctx.shadowBlur = 0;
+    ctx.strokeStyle = `${color}c8`;
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(-160, 76, 320, 14);
+    ctx.fillStyle = color;
+    ctx.fillRect(-160, 91, 10, 7);
+    ctx.fillRect(150, 91, 10, 7);
 
     if (item.id === "base") {
-      ctx.fillRect(-78, 27, 156, 22);
-      for (let index = -60; index <= 60; index += 30) {
-        ctx.fillStyle = index % 60 ? "#e2b45d" : "#c9363d";
-        ctx.fillRect(index, 31, 17, 14);
-      }
+      ctx.fillStyle = "#514846";
+      ctx.fillRect(-124, -45, 248, 112);
+      ctx.strokeStyle = color;
+      ctx.strokeRect(-124, -45, 248, 112);
+      ctx.fillStyle = "#eee1cd";
+      ctx.fillRect(-88, -20, 176, 20);
+      ctx.fillStyle = `${color}a8`;
+      ctx.fillRect(-88, 9, 126, 9);
+      ctx.fillRect(-88, 27, 160, 9);
+      ctx.fillRect(-88, 45, 94, 9);
       ctx.fillStyle = color;
-      ctx.fillRect(-66, -47, 42, 74);
-      ctx.fillRect(24, -47, 42, 74);
-      ctx.beginPath();
-      ctx.arc(0, -7, 34, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(-18, -7);
-      ctx.lineTo(18, -7);
-      ctx.moveTo(0, -25);
-      ctx.lineTo(0, 11);
-      ctx.stroke();
+      ctx.fillRect(-105, -66, 72, 16);
+      ctx.fillRect(-20, -66, 52, 16);
+      ctx.fillRect(45, -66, 60, 16);
     } else if (item.id === "class") {
-      ctx.beginPath();
-      ctx.moveTo(0, -62);
-      ctx.lineTo(-62, 20);
-      ctx.lineTo(62, 20);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(-78, 33);
-      ctx.lineTo(78, 33);
-      ctx.stroke();
-      ctx.fillStyle = "#f0d181";
-      ctx.beginPath();
-      ctx.arc(-53, 12, 22, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = "#9f2635";
-      ctx.beginPath();
-      ctx.arc(53, 12, 22, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillStyle = "#544a45";
+      ctx.fillRect(-128, -62, 112, 129);
+      ctx.fillRect(16, -15, 112, 82);
+      ctx.strokeStyle = color;
+      ctx.strokeRect(-128, -62, 112, 129);
+      ctx.strokeRect(16, -15, 112, 82);
+      ctx.fillStyle = "#efe1c9";
+      ctx.fillRect(-103, -38, 62, 12);
+      ctx.fillRect(41, 9, 62, 12);
+      ctx.fillStyle = `${color}aa`;
+      ctx.fillRect(-103, -14, 59, 8);
+      ctx.fillRect(41, 33, 58, 8);
+      ctx.fillRect(-103, 4, 41, 8);
+      ctx.fillRect(41, 51, 42, 8);
     } else if (item.id === "state") {
-      ctx.fillStyle = "#d7c2a5";
-      ctx.fillRect(-62, 18, 124, 33);
-      ctx.fillRect(-42, -48, 18, 66);
-      ctx.fillRect(-9, -64, 18, 82);
-      ctx.fillRect(24, -48, 18, 66);
-      ctx.strokeStyle = "#c9363d";
-      ctx.beginPath();
-      ctx.arc(0, -20, 78, state.time * 0.5, state.time * 0.5 + Math.PI * 1.45);
-      ctx.stroke();
+      ctx.fillStyle = "#514b47";
+      ctx.fillRect(-112, -76, 224, 143);
+      ctx.strokeStyle = color;
+      ctx.strokeRect(-112, -76, 224, 143);
+      ctx.fillStyle = "#eee4d4";
+      ctx.fillRect(-83, -46, 166, 20);
+      ctx.fillStyle = `${color}b0`;
+      ctx.fillRect(-83, -9, 166, 8);
+      ctx.fillRect(-83, 12, 122, 8);
+      ctx.fillRect(-83, 33, 145, 8);
+      ctx.fillStyle = color;
+      ctx.fillRect(-83, 51, 46, 7);
+      ctx.fillRect(-28, 51, 78, 7);
+      ctx.fillRect(59, 51, 24, 7);
     } else if (item.id === "revolt") {
-      ctx.fillStyle = "rgba(201,54,61,.28)";
-      ctx.fillRect(-82, -34, 63, 68);
-      ctx.fillRect(19, -34, 63, 68);
-      ctx.strokeStyle = "#f0d181";
+      ctx.fillStyle = "#514244";
+      ctx.fillRect(-132, -64, 264, 131);
+      ctx.strokeStyle = color;
+      ctx.strokeRect(-132, -64, 264, 131);
+      ctx.fillStyle = `${color}aa`;
+      ctx.fillRect(-104, -33, 66, 10);
+      ctx.fillRect(38, -33, 72, 10);
+      ctx.fillRect(-104, -9, 88, 8);
+      ctx.fillRect(16, -9, 94, 8);
+      ctx.fillRect(-104, 14, 52, 8);
+      ctx.fillRect(8, 14, 60, 8);
+      ctx.strokeStyle = "#f0d7a7";
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.moveTo(-5, -67);
-      ctx.lineTo(-19, -28);
-      ctx.lineTo(9, 0);
-      ctx.lineTo(-12, 32);
-      ctx.lineTo(14, 68);
-      ctx.stroke();
-      ctx.strokeStyle = "#c9363d";
-      ctx.beginPath();
-      ctx.arc(0, 0, 48 * pulse, 0, Math.PI * 2);
+      ctx.moveTo(-10, -64);
+      ctx.lineTo(-27, -32);
+      ctx.lineTo(4, -7);
+      ctx.lineTo(-18, 22);
+      ctx.lineTo(14, 66);
       ctx.stroke();
     }
+    ctx.fillStyle = color;
+    ctx.fillRect(-15, -112, 30, 5);
+    ctx.fillRect(-2, -107, 4, 14);
     ctx.restore();
   }
 
   function drawWalls() {
-    ctx.fillStyle = "#43272b";
-    ctx.strokeStyle = "rgba(226,180,93,.3)";
+    ctx.fillStyle = "#292729";
+    ctx.strokeStyle = "rgba(240,224,203,.18)";
     ctx.lineWidth = 1;
     walls.forEach((wall) => {
       ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
@@ -645,7 +677,7 @@
   }
 
   function drawInteractable(item) {
-    const color = item.kind === "curator" ? "#e2b45d" : item.kind === "gate" ? "#c9363d" : roomById.get(item.id)?.color || "#e2b45d";
+    const color = item.kind === "curator" ? "#d3a95f" : item.kind === "gate" ? "#c75b58" : roomById.get(item.id)?.color || "#d3a95f";
     if (item.kind === "exhibit") {
       drawChapterObject(item);
       return;
@@ -654,38 +686,38 @@
     ctx.save();
     ctx.translate(item.x, item.y);
     ctx.shadowColor = color;
-    ctx.shadowBlur = 22;
+    ctx.shadowBlur = 12;
     if (item.kind === "gate") {
       const unlocked = gateUnlocked(item);
-      ctx.fillStyle = unlocked ? "rgba(226,180,93,.18)" : "rgba(201,54,61,.2)";
-      ctx.fillRect(-47, -70, 94, 140);
+      ctx.fillStyle = unlocked ? "rgba(211,169,95,.12)" : "rgba(199,91,88,.14)";
+      ctx.fillRect(-54, -82, 108, 164);
       ctx.shadowBlur = 0;
-      ctx.fillStyle = "#281c1f";
-      ctx.fillRect(-36, -60, 72, 120);
-      ctx.strokeStyle = unlocked ? "#e2b45d" : color;
-      ctx.lineWidth = 3;
-      ctx.strokeRect(-47, -70, 94, 140);
+      ctx.fillStyle = "#343031";
+      ctx.fillRect(-42, -69, 84, 138);
+      ctx.strokeStyle = unlocked ? "#d3a95f" : color;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(-54, -82, 108, 164);
       ctx.beginPath();
-      ctx.moveTo(-23, 54);
-      ctx.lineTo(-23, -20);
-      ctx.quadraticCurveTo(0, -50, 23, -20);
-      ctx.lineTo(23, 54);
+      ctx.moveTo(-27, 58);
+      ctx.lineTo(-27, -20);
+      ctx.quadraticCurveTo(0, -55, 27, -20);
+      ctx.lineTo(27, 58);
       ctx.stroke();
-      ctx.font = "10px 'DM Mono', monospace";
+      ctx.font = "12px 'DM Mono', monospace";
       ctx.textAlign = "center";
-      ctx.fillStyle = unlocked ? "#f0d181" : color;
-      ctx.fillText(unlocked ? item.final ? "EXIT" : "OPEN" : "LOCKED", 0, 91);
+      ctx.fillStyle = unlocked ? "#f0d7a7" : color;
+      ctx.fillText(unlocked ? item.final ? "EXIT" : "OPEN" : "LOCKED", 0, 103);
       ctx.restore();
       return;
     }
 
     ctx.strokeStyle = color;
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(0, 0, 33 + Math.sin(state.time * 2) * 4, 0, Math.PI * 2);
+    ctx.arc(0, 0, 26 + Math.sin(state.time * 2) * 2, 0, Math.PI * 2);
     ctx.stroke();
     ctx.fillStyle = color;
-    ctx.fillRect(-8, -8, 16, 16);
+    ctx.fillRect(-6, -6, 12, 12);
     ctx.restore();
   }
 
@@ -713,11 +745,11 @@
   }
 
   function drawParticles() {
-    for (let index = 0; index < 38; index += 1) {
-      const x = (index * 277 + 120) % WORLD.width;
-      const y = (index * 149 + 80) % WORLD.height;
-      const alpha = 0.08 + (Math.sin(state.time * 0.7 + index) + 1) * 0.04;
-      ctx.fillStyle = `rgba(226,180,93,${alpha})`;
+    for (let index = 0; index < 18; index += 1) {
+      const x = (index * 487 + 160) % WORLD.width;
+      const y = (index * 241 + 110) % WORLD.height;
+      const alpha = 0.035 + (Math.sin(state.time * 0.35 + index) + 1) * 0.018;
+      ctx.fillStyle = `rgba(240,224,203,${alpha})`;
       ctx.fillRect(x, y, 2, 2);
     }
   }
@@ -725,14 +757,16 @@
   function drawVignette(width, height) {
     const gradient = ctx.createRadialGradient(width / 2, height / 2, Math.min(width, height) * 0.25, width / 2, height / 2, Math.max(width, height) * 0.78);
     gradient.addColorStop(0, "transparent");
-    gradient.addColorStop(1, "rgba(13,6,8,.35)");
+    gradient.addColorStop(1, "rgba(20,18,19,.22)");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
   }
 
   function updateCamera() {
-    state.camera.x = clamp(state.player.x - innerWidth / 2, 0, WORLD.width - innerWidth);
-    state.camera.y = clamp(state.player.y - innerHeight / 2, 0, WORLD.height - innerHeight);
+    const viewWidth = innerWidth / CAMERA_ZOOM;
+    const viewHeight = innerHeight / CAMERA_ZOOM;
+    state.camera.x = clamp(state.player.x - viewWidth * 0.5, 0, Math.max(0, WORLD.width - viewWidth));
+    state.camera.y = clamp(state.player.y - viewHeight * 0.56, 0, Math.max(0, WORLD.height - viewHeight));
   }
 
   function scheduleLoop() {
