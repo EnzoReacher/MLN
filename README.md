@@ -1,6 +1,8 @@
-# THE STATE — web game mô phỏng xã hội
+# THE STATE // CRISIS ENGINE — web game mô phỏng xã hội
 
-MVP tĩnh cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**.
+Game mô phỏng xã hội theo lượt cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**.
+
+Đây là một trải nghiệm game ngắn cho cả lớp: người chơi bỏ phiếu A/B/C qua 5 lượt, nhìn bản đồ xã hội và các chỉ số dịch chuyển sau mỗi quyết định. Giao diện dùng ngôn ngữ của một crisis/strategy game — HUD, social field, telemetry, action cards và resolution report — thay vì bố cục website thông thường.
 
 ## Chạy local
 

@@ -8,6 +8,7 @@
 
 ## Bản MVP đã có
 
+- Giao diện **Crisis Engine** full-screen theo ngôn ngữ game chiến lược: HUD, turn track, social field, action cards, telemetry và resolution report.
 - Màn hình mở đầu có không khí game và nút vào chơi ngay.
 - 5 sự kiện theo đúng mạch kiến thức: điều kiện vật chất → phân hóa giai cấp → Nhà nước → mâu thuẫn phát triển → bước chuyển.
 - Mỗi sự kiện có 3 lựa chọn có hệ quả khác nhau.

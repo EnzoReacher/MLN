@@ -59,6 +59,11 @@ let selectedHistory = [];
 const $ = (id) => document.getElementById(id);
 const clamp = (value) => Math.max(0, Math.min(100, value));
 const pad = (value) => String(value).padStart(2, "0");
+const setText = (id, value) => { const element = $(id); if (element) element.textContent = value; };
+
+function updatePhaseTrack() {
+  document.querySelectorAll(".phase-node").forEach((node, index) => node.classList.toggle("active", index === eventIndex));
+}
 
 function showScreen(id) {
   ["intro-screen", "game-screen", "result-screen"].forEach((screen) => $(screen).classList.toggle("hidden", screen !== id));
@@ -71,17 +76,19 @@ function renderStats() {
   };
   Object.keys(mappings).forEach((key) => {
     const value = Math.round(stats[key]);
-    $(`${key}-value`).textContent = pad(value);
-    $(`${key}-bar`).style.width = `${value}%`;
-    if ($(`${key}-chip`)) $(`${key}-chip`).textContent = pad(value);
+    setText(`${key}-value`, pad(value));
+    const bar = $(`${key}-bar`);
+    if (bar) { bar.style.width = `${value}%`; bar.classList.remove("meter-pulse"); void bar.offsetWidth; bar.classList.add("meter-pulse"); }
+    setText(`${key}-chip`, pad(value));
   });
-  $("world-status").textContent = stats.conflict >= 65 ? "Mâu thuẫn đang lên đỉnh" : stats.stability <= 48 ? "Trật tự xã hội đang rung chuyển" : stats.state >= 30 ? "Nhà nước đang tổ chức trật tự" : "Xã hội đang ổn định";
-  $("map-phase").textContent = eventIndex >= 4 ? "ĐANG BIẾN ĐỔI" : eventIndex >= 2 ? "TRẬT TỰ ĐƯỢC TỔ CHỨC" : "ĐANG HÌNH THÀNH";
+  setText("world-status", stats.conflict >= 65 ? "Mâu thuẫn đang lên đỉnh" : stats.stability <= 48 ? "Trật tự xã hội đang rung chuyển" : stats.state >= 30 ? "Nhà nước đang tổ chức trật tự" : "Xã hội đang ổn định");
+  setText("map-phase", eventIndex >= 4 ? "ĐANG BIẾN ĐỔI" : eventIndex >= 2 ? "TRẬT TỰ ĐƯỢC TỔ CHỨC" : "ĐANG HÌNH THÀNH");
 }
 
 function renderEvent() {
   const event = events[eventIndex];
   const eventCard = $("event-card");
+  $("game-screen").classList.remove("turn-resolved");
   eventCard.classList.remove("event-enter");
   void eventCard.offsetWidth;
   eventCard.classList.add("event-enter");
@@ -94,6 +101,8 @@ function renderEvent() {
   $("event-context").textContent = event.context;
   $("choices").innerHTML = event.choices.map((choice, index) => `<button class="choice" type="button" data-choice="${index}"><span class="choice-key">${String.fromCharCode(65 + index)}</span><span class="choice-text"><b>${choice.label}</b><br /><small>${choice.hint}</small></span><span class="choice-arrow">→</span></button>`).join("");
   $("feedback").classList.add("hidden");
+  $("feedback").classList.remove("feedback-enter");
+  updatePhaseTrack();
   document.querySelectorAll(".choice").forEach((button) => button.addEventListener("click", () => choose(Number(button.dataset.choice))));
   renderStats();
 }
@@ -103,11 +112,15 @@ function choose(choiceIndex) {
   const choice = event.choices[choiceIndex];
   selectedHistory.push({ event, choice });
   Object.entries(choice.effect).forEach(([key, delta]) => { stats[key] = clamp(stats[key] + delta); });
+  $("game-screen").classList.add("turn-resolved");
   document.querySelectorAll(".choice").forEach((button) => { button.disabled = true; if (Number(button.dataset.choice) === choiceIndex) button.classList.add("selected"); });
   $("feedback-copy").textContent = choice.feedback;
   $("delta-list").innerHTML = Object.entries(choice.effect).filter(([, delta]) => delta !== 0).map(([key, delta]) => `<span class="delta ${delta < 0 ? "negative" : ""}">${key === "state" ? "NHÀ NƯỚC" : key === "production" ? "SẢN XUẤT" : key === "inequality" ? "BẤT BÌNH ĐẲNG" : key === "conflict" ? "MÂU THUẪN" : "ỔN ĐỊNH"} <strong>${delta > 0 ? "+" : ""}${delta}</strong></span>`).join("");
   $("feedback-title").textContent = eventIndex === events.length - 1 ? "HỆ QUẢ / MÔ PHỎNG HOÀN TẤT" : "HỆ QUẢ / XÃ HỘI ĐÃ DỊCH CHUYỂN";
   $("next-button").innerHTML = eventIndex === events.length - 1 ? "Xem kết quả <span>↗</span>" : "Tiếp tục <span>→</span>";
+  $("feedback").classList.remove("feedback-enter");
+  void $("feedback").offsetWidth;
+  $("feedback").classList.add("feedback-enter");
   $("feedback").classList.remove("hidden");
   renderStats();
 }
@@ -131,8 +144,9 @@ $("play-again-button").addEventListener("click", startGame);
 $("next-button").addEventListener("click", () => { if (eventIndex === events.length - 1) showResult(); else { eventIndex += 1; renderEvent(); } });
 $("debrief-button").addEventListener("click", () => { $("debrief").classList.toggle("hidden"); $("debrief-button").querySelector("span").textContent = $("debrief").classList.contains("hidden") ? "Giải mã bằng lý luận" : "Ẩn phần giải mã"; if (!$("debrief").classList.contains("hidden")) $("debrief").scrollIntoView({ behavior: "smooth", block: "start" }); });
 document.addEventListener("keydown", (event) => {
-  if ($("game-screen").classList.contains("hidden")) return;
   const key = event.key.toLowerCase();
+  if (!$('intro-screen').classList.contains("hidden") && key === "enter") { startGame(); return; }
+  if ($("game-screen").classList.contains("hidden")) return;
   const keyIndex = { a: 0, b: 1, c: 2 }[key];
   if (keyIndex !== undefined) {
     const choice = document.querySelectorAll(".choice")[keyIndex];

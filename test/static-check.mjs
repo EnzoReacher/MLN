@@ -18,11 +18,13 @@ for (const asset of ["dist/styles.css", "dist/phase34.css", "dist/app.js"]) {
 assert(html.includes('href="./styles.css"'), "Main stylesheet is not linked");
 assert(html.includes('href="./phase34.css"'), "Release polish stylesheet is not linked");
 assert(html.includes('src="./app.js"'), "Game script is not linked");
+assert(html.includes("CRISIS SIGNAL DETECTED") && html.includes("SOCIAL FIELD"), "Game shell markers missing");
 assert((app.match(/chapter:/g) ?? []).length === 5, "Expected exactly five game events");
 for (const concept of ["giai cấp", "tư liệu sản xuất", "mâu thuẫn", "Nhà nước", "cách mạng xã hội"]) {
   assert(html.toLocaleLowerCase("vi").includes(concept.toLocaleLowerCase("vi")) || app.toLocaleLowerCase("vi").includes(concept.toLocaleLowerCase("vi")), `Missing academic concept: ${concept}`);
 }
 assert(css.includes("@media (max-width: 560px)"), "Mobile layout rules missing");
+assert(css.includes("--void:") && css.includes("--cyan:") && css.includes(".game-board"), "Game visual system missing");
 assert(phaseCss.includes("event-enter") && phaseCss.includes("choice.selected"), "Phase 2 polish rules missing");
 assert(css.split("{").length === css.split("}").length, "Base CSS braces are unbalanced");
 assert(phaseCss.split("{").length === phaseCss.split("}").length, "Phase CSS braces are unbalanced");

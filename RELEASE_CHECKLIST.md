@@ -2,6 +2,9 @@
 
 ## Phase 3 — Release candidate
 
+- [x] Đã thay presentation shell bằng game shell **Crisis Engine**: turn HUD, social field, action cards và telemetry.
+- [x] Palette nền midnight–indigo, accent cyan/magenta/gold/lime; không dùng nền trắng làm canvas chính.
+- [x] Có feedback resolution, action lock, meter pulse và keyboard Enter/A/B/C.
 - [x] Nội dung đi theo chuỗi điều kiện kinh tế → phân hóa → Nhà nước → mâu thuẫn → bước chuyển.
 - [x] Mỗi sự kiện có 3 lựa chọn và hệ quả riêng.
 - [x] Phần debrief liên hệ giai cấp, tư liệu sản xuất, mâu thuẫn, Nhà nước và cách mạng xã hội.
