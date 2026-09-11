@@ -1,0 +1,19 @@
+/* Phase 3–4 release polish: make decision feedback legible in a classroom setting. */
+.event-card.event-enter { animation: event-enter .48s ease both; }
+.event-context { margin-bottom: 22px; }
+.class-vote-note { display: flex; align-items: center; gap: 9px; margin: 0 0 12px; color: var(--signal-soft); font: 10px var(--mono); letter-spacing: .08em; }
+.class-vote-note > span:last-child { color: var(--muted-2); letter-spacing: .03em; }
+.vote-mark { color: var(--signal); font-size: 16px; }
+.choice:disabled:not(.selected) { opacity: .43; }
+.choice.selected { border-color: var(--signal); background: linear-gradient(90deg, rgba(230,87,63,.15), var(--panel)); box-shadow: inset 3px 0 0 var(--signal); }
+.choice.selected .choice-key { background: var(--signal); border-color: var(--signal); color: #fff; }
+.choice.selected .choice-arrow { color: var(--signal-soft); transform: translateX(3px); }
+.choice-text b { font-weight: 700; }
+.choice-text small { color: var(--muted); font-size: 12px; }
+.choice-arrow { transition: transform .2s; }
+.feedback { animation: feedback-enter .38s ease both; }
+.model-note { border-top: 1px solid var(--line); color: var(--muted-2); font: 11px/1.6 var(--mono); letter-spacing: .03em; margin: 25px 0 0; padding-top: 15px; }
+.model-note span { color: var(--signal-soft); margin-right: 12px; }
+@keyframes event-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes feedback-enter { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 560px) { .class-vote-note { align-items: flex-start; flex-wrap: wrap; line-height: 1.4; }.class-vote-note > span:last-child { width: 100%; margin-left: 25px; }.model-note { font-size: 10px; } }
