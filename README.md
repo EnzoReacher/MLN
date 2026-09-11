@@ -21,6 +21,8 @@ Sau đó mở `http://localhost:4173`.
 - `ESC`: đóng bảng tương tác.
 - `RỜI TRIỂN LÃM`: dừng phiên chơi và hiện màn cảm ơn.
 
+`EXIT` trong phòng cuối là một portal riêng. Nếu chưa đủ `4/4 evidence`, portal báo khóa; sau khi đủ evidence, đứng gần portal và nhấn `E` một lần để vào thẳng màn tổng kết.
+
 ## Nội dung chơi
 
 1. Điều kiện vật chất — sản phẩm dư thừa và tư liệu sản xuất.

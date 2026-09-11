@@ -13,6 +13,8 @@
 - [x] Palette đỏ cách mạng–đen–đồng vàng, có biểu tượng búa–liềm và biểu ngữ chính trị.
 - [x] Mỗi phòng có bảng luận đề và artifact gắn với chủ đề môn học.
 - [x] Nút `RỜI TRIỂN LÃM` là nút HTML tương tác thật, dừng game và hiện màn cảm ơn.
+- [x] Cổng `EXIT` được vẽ như một portal riêng, không nhầm với hiện vật `REVOLT`.
+- [x] Cổng báo khóa nếu chưa đủ 4 evidence; đủ evidence thì nhấn `E` một lần mở ending.
 
 ## Automated checks
 
@@ -33,6 +35,7 @@ Các test hiện xác nhận:
 - Bốn evidence được ghi nhận.
 - Cánh cửa cuối mở đúng điều kiện và màn ending xuất hiện.
 - Nút quit dừng game, hiện quit screen và quay lại được màn hình đầu.
+- Cổng khóa không cho kết thúc sớm; cổng đủ điều kiện mở ending bằng `E`.
 - Các khái niệm `giai cấp`, `tư liệu sản xuất`, `mâu thuẫn`, `Nhà nước`, `cách mạng xã hội` có trong game.
 - Vercel rewrite giữ `/` về `dist/index.html`.
 
