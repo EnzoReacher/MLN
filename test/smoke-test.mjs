@@ -2,108 +2,66 @@ import fs from "node:fs";
 import vm from "node:vm";
 
 const source = fs.readFileSync(new URL("../dist/app.js", import.meta.url), "utf8");
-
-class ClassList {
-  constructor() { this.values = new Set(); }
-  add(...names) { names.forEach((name) => this.values.add(name)); }
-  remove(...names) { names.forEach((name) => this.values.delete(name)); }
-  toggle(name, force) { const next = force === undefined ? !this.values.has(name) : force; next ? this.add(name) : this.remove(name); return next; }
-  contains(name) { return this.values.has(name); }
-}
-
-class Element {
-  constructor(id = "") { this.id = id; this.classList = new ClassList(); this.style = {}; this.textContent = ""; this.disabled = false; this.dataset = {}; this.listeners = {}; this.children = []; this._html = ""; }
-  addEventListener(type, handler) { (this.listeners[type] ??= []).push(handler); }
-  click() { if (this.disabled) throw new Error(`Clicked disabled element: ${this.id}`); for (const handler of this.listeners.click ?? []) handler({ currentTarget: this }); }
-  querySelector(selector) { return selector === "span" ? (this.children.find((child) => child.tagName === "SPAN") ?? new Element()) : new Element(); }
-  scrollIntoView() {}
-}
-
-const ids = [
-  "intro-screen", "game-screen", "result-screen", "start-button", "restart-button", "play-again-button", "event-card", "event-counter", "chapter-name", "cycle-label", "event-index", "event-category", "event-question", "event-context", "choices", "feedback", "feedback-title", "feedback-copy", "delta-list", "next-button", "world-status", "map-phase", "production-chip", "inequality-chip", "state-chip", "conflict-chip", "production-value", "inequality-value", "conflict-value", "stability-value", "state-value", "production-bar", "inequality-bar", "conflict-bar", "stability-bar", "state-bar", "result-sequence", "result-title", "result-summary", "result-score-value", "result-core-word", "journey", "debrief-button", "debrief"
-];
+class ClassList { constructor() { this.values = new Set(); } add(...names) { names.forEach((name) => this.values.add(name)); } remove(...names) { names.forEach((name) => this.values.delete(name)); } toggle(name, force) { const next = force === undefined ? !this.values.has(name) : force; next ? this.add(name) : this.remove(name); return next; } contains(name) { return this.values.has(name); } }
+class Element { constructor(id = "") { this.id = id; this.classList = new ClassList(); this.style = {}; this.textContent = ""; this._innerHTML = ""; this.listeners = {}; this.children = []; this.hidden = false; } get innerHTML() { return this._innerHTML; } set innerHTML(value) { this._innerHTML = value; this.children = []; } addEventListener(type, handler) { (this.listeners[type] ??= []).push(handler); } click() { for (const handler of this.listeners.click ?? []) handler({ currentTarget: this }); } append(child) { this.children.push(child); } }
+const noop = () => {};
+const context = { clearRect: noop, save: noop, restore: noop, translate: noop, fillRect: noop, strokeRect: noop, beginPath: noop, moveTo: noop, lineTo: noop, stroke: noop, fill: noop, arc: noop, fillText: noop, createRadialGradient: () => ({ addColorStop: noop }), setTransform: noop };
+const ids = ["game-canvas", "title-screen", "game-ui", "dialogue", "ending-screen", "interaction-prompt", "prompt-text", "zone-name", "zone-index", "status-text", "evidence-count", "objective-text", "dialogue-title", "dialogue-body", "dialogue-type", "dialogue-number", "dialogue-choices", "dialogue-close", "start-button", "restart-button", "theory-button", "theory-note", "ending-evidence", "ending-power", "ending-conflict", "ending-copy"];
 const elements = Object.fromEntries(ids.map((id) => [id, new Element(id)]));
-const documentListeners = {};
+elements["game-canvas"].getContext = () => context;
+elements["mini-player"] = new Element("mini-player");
+const document = { getElementById: (id) => elements[id] ?? null, querySelector: (selector) => selector === ".mini-player" ? elements["mini-player"] : null, createElement: () => new Element() };
+const window = { devicePixelRatio: 1, addEventListener: noop, __THE_STATE__: null };
+const sandbox = { document, window, innerWidth: 1280, innerHeight: 720, performance: { now: () => 100 }, requestAnimationFrame: noop, console };
+vm.runInNewContext(source, sandbox);
+const game = sandbox.window.__THE_STATE__;
+const assert = (condition, message) => { if (!condition) throw new Error(message); };
 
-elements["game-screen"].classList.add("hidden");
-elements["result-screen"].classList.add("hidden");
-elements.feedback.classList.add("hidden");
-elements.debrief.classList.add("hidden");
-Object.defineProperty(elements.choices, "innerHTML", {
-  get() { return this._html; },
-  set(value) {
-    this._html = value;
-    this.children = [...value.matchAll(/data-choice="(\d+)"/g)].map((match) => {
-      const button = new Element();
-      button.tagName = "BUTTON";
-      button.dataset.choice = match[1];
-      button.classList.add("choice");
-      return button;
-    });
+game.start();
+assert(game.state.running, "Game did not start");
+assert(elements["title-screen"].classList.contains("hidden"), "Title screen did not hide");
+assert(elements["game-ui"].classList.contains("hidden") === false, "Game HUD did not appear");
+assert(game.rooms.length === 4, "Expected four exhibition rooms");
+assert(game.interactables.filter((item) => item.kind === "exhibit").length === 4, "Expected four exhibits");
+assert(game.canMove(700, 400), "Open floor was incorrectly blocked");
+assert(!game.canMove(750, 400), "Wall collision failed");
+
+function reachable(from, to) {
+  const step = 20;
+  const queue = [[Math.round(from.x / step) * step, Math.round(from.y / step) * step]];
+  const visited = new Set(queue.map(([x, y]) => `${x},${y}`));
+  while (queue.length) {
+    const [x, y] = queue.shift();
+    if (Math.hypot(x - to.x, y - to.y) < 45) return true;
+    for (const [dx, dy] of [[step, 0], [-step, 0], [0, step], [0, -step]]) {
+      const next = [x + dx, y + dy];
+      const key = `${next[0]},${next[1]}`;
+      if (next[0] >= 80 && next[0] <= 2320 && next[1] >= 80 && next[1] <= 1420 && !visited.has(key) && game.canMove(next[0], next[1])) { visited.add(key); queue.push(next); }
+    }
   }
-});
-
-const document = {
-  getElementById: (id) => elements[id] ?? null,
-  querySelectorAll: (selector) => selector === ".choice" ? elements.choices.children : [],
-  addEventListener: (type, handler) => { (documentListeners[type] ??= []).push(handler); }
-};
-const window = { scrollTo() {} };
-vm.runInNewContext(source, { document, window, console });
-
-function emit(type, event) { for (const handler of documentListeners[type] ?? []) handler(event); }
-function assert(condition, message) { if (!condition) throw new Error(message); }
-function assertStatsInRange() {
-  for (const key of ["production", "inequality", "conflict", "stability", "state"]) {
-    const value = Number(elements[`${key}-value`].textContent);
-    assert(value >= 0 && value <= 100, `${key} escaped 0–100: ${value}`);
-  }
+  return false;
 }
 
-let paths = 0;
-for (let path = 0; path < 3 ** 5; path += 1) {
-  let code = path;
-  elements["start-button"].click();
-  assert(elements["event-counter"].textContent === "SỰ KIỆN 01 / 05", "Start did not reset counter");
-  for (let eventIndex = 0; eventIndex < 5; eventIndex += 1) {
-    const choiceIndex = code % 3;
-    code = Math.floor(code / 3);
-    assert(elements.choices.children.length === 3, `Event ${eventIndex + 1} did not render 3 choices`);
-    if (eventIndex === 0) emit("keydown", { key: String.fromCharCode(65 + choiceIndex) });
-    else elements.choices.children[choiceIndex].click();
-    const selected = elements.choices.children[choiceIndex];
-    assert(selected.classList.contains("selected"), `Event ${eventIndex + 1} selection not marked`);
-    assert(elements.choices.children.filter((button) => !button.classList.contains("selected")).every((button) => button.disabled), "Unselected choice remained enabled");
-    assert(!elements.feedback.classList.contains("hidden"), `Event ${eventIndex + 1} feedback did not appear`);
-    assertStatsInRange();
-    emit("keydown", { key: "Enter" });
-  }
-  assert(!elements["result-screen"].classList.contains("hidden"), `Path ${path} did not reach result`);
-  assert((elements.journey.innerHTML.match(/journey-step/g) ?? []).length === 5, `Path ${path} has incomplete journey`);
-  paths += 1;
+for (const exhibit of game.interactables.filter((item) => item.kind === "exhibit")) assert(reachable({ x: 250, y: 1220 }, exhibit), `No walkable route to ${exhibit.id}`);
+
+const exhibits = game.interactables.filter((item) => item.kind === "exhibit");
+for (const exhibit of exhibits) {
+  game.state.player = { x: exhibit.x, y: exhibit.y };
+  game.interact();
+  assert(game.state.dialogueOpen, `Dialogue did not open for ${exhibit.id}`);
+  assert(elements["dialogue-choices"].children.length === 2, `${exhibit.id} did not expose two choices`);
+  elements["dialogue-choices"].children[0].click();
+  assert(game.state.evidence.has(exhibit.id), `${exhibit.id} evidence was not collected`);
+  elements["dialogue-close"].click();
+  assert(!game.state.dialogueOpen, `${exhibit.id} dialogue did not close`);
 }
+assert(game.state.evidence.size === 4, "Evidence counter did not reach 4/4");
+game.state.player = { x: 2180, y: 1115 };
+game.interact();
+assert(game.state.dialogueOpen, "Final gate did not open");
+elements["dialogue-choices"].children[0].click();
+elements["dialogue-close"].click();
+assert(!game.state.running, "Ending did not stop the game loop");
+assert(!elements["ending-screen"].classList.contains("hidden"), "Ending screen did not appear");
 
-function playPath(choiceIndexes) {
-  elements["start-button"].click();
-  for (const choiceIndex of choiceIndexes) {
-    elements.choices.children[choiceIndex].click();
-    elements["next-button"].click();
-  }
-  return elements["result-title"].innerHTML;
-}
-
-const stableEnding = playPath([0, 0, 0, 0, 1]);
-assert(stableEnding.includes("TRẬT TỰ"), "Stable path did not produce the stable ending");
-const transformedEnding = playPath([1, 1, 1, 2, 2]);
-assert(transformedEnding.includes("MÂU THUẪN"), "High-conflict path did not produce the transformed ending");
-
-elements["debrief-button"].click();
-assert(!elements.debrief.classList.contains("hidden"), "Debrief did not open");
-elements["debrief-button"].click();
-assert(elements.debrief.classList.contains("hidden"), "Debrief did not close");
-elements["restart-button"].click();
-assert(elements["event-counter"].textContent === "SỰ KIỆN 01 / 05", "Restart did not reset the game");
-elements["play-again-button"].click();
-assert(!elements["game-screen"].classList.contains("hidden"), "Play again did not return to game");
-
-console.log(`PASS: ${paths}/243 gameplay paths; keyboard A/B/C + Enter; selection locking; stat bounds; debrief; restart; play-again`);
+console.log("PASS: start, HUD, four-room navigation model, wall collision, four evidence interactions, final gate, and ending");

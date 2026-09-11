@@ -1,36 +1,40 @@
-# THE STATE // CRISIS ENGINE — web game mô phỏng xã hội
+# THE STATE // EXHIBITION 01
 
-Game mô phỏng xã hội theo lượt cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**.
+Game khám phá triển lãm chính trị cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**.
 
-Đây là một trải nghiệm game ngắn cho cả lớp: người chơi bỏ phiếu A/B/C qua 5 lượt, nhìn bản đồ xã hội và các chỉ số dịch chuyển sau mỗi quyết định. Giao diện dùng ngôn ngữ của một crisis/strategy game — HUD, social field, telemetry, action cards và resolution report — thay vì bố cục website thông thường.
+Đây là game Canvas 2D chạy trực tiếp trên trình duyệt, không phải dashboard: người chơi điều khiển một nhân vật đi qua triển lãm, tìm bốn mảnh bằng chứng, tương tác với hiện vật bằng `E`, đưa ra lựa chọn và mở cánh cửa kết thúc.
 
 ## Chạy local
 
-Có thể mở `dist/index.html` trực tiếp, hoặc chạy một static server trong thư mục dự án.
-
-## Deploy Vercel
-
-Import thư mục dự án vào Vercel. Cấu hình rewrite đã đưa `dist/index.html` thành trang chủ; không cần database, API hay biến môi trường.
-
-Nếu dùng CLI sau khi đã đăng nhập:
+Mở `dist/index.html` trực tiếp hoặc chạy static server từ thư mục dự án:
 
 ```bash
-npx vercel --prod
+python3 -m http.server 4173 --directory dist
 ```
 
-Kiểm tra release trước khi deploy:
+Sau đó mở `http://localhost:4173`.
+
+## Điều khiển
+
+- `WASD` hoặc phím mũi tên: di chuyển.
+- `E`: tương tác với người lưu trữ, hiện vật hoặc cánh cửa.
+- `ESC`: đóng bảng tương tác.
+
+## Nội dung chơi
+
+1. Điều kiện vật chất — sản phẩm dư thừa và tư liệu sản xuất.
+2. Giai cấp & sở hữu — sự phân hóa lợi ích.
+3. Nhà nước & quyền lực — thiết chế, luật lệ và quyền lực.
+4. Mâu thuẫn & chuyển hóa — khi quan hệ cũ trở thành lực cản.
+
+Mỗi phòng cho người chơi một lựa chọn. Các lựa chọn thay đổi hai chỉ số ẩn: mức tập trung quyền lực và áp lực mâu thuẫn. Kết thúc hiển thị lại dấu vết đó rồi nối sang phần lý thuyết.
+
+## Kiểm thử
 
 ```bash
+node --check dist/app.js
 node test/static-check.mjs
 node test/smoke-test.mjs
 ```
 
-## Vòng chơi
-
-1. Điều kiện ban đầu
-2. Phân hóa xã hội
-3. Nhà nước xuất hiện
-4. Mâu thuẫn phát triển
-5. Bước chuyển / Cách mạng xã hội
-
-Mục tiêu của MVP là tạo một trải nghiệm 5–7 phút để cả lớp chơi trước khi nhóm chuyển sang phần thuyết trình: “Tại sao xã hội lại biến đổi?”
+Game không cần backend, database, API hay biến môi trường. `vercel.json` phục vụ `dist/index.html` ở route `/` và giữ asset rewrites cho Vercel.

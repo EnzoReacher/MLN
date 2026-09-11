@@ -3,130 +3,53 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#070711" />
-    <meta name="description" content="THE STATE — một game mô phỏng xã hội theo lượt dưới góc nhìn Triết học Mác – Lênin." />
-    <title>THE STATE // CRISIS ENGINE</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <meta name="theme-color" content="#080b12" />
+    <meta name="description" content="THE STATE: Exhibition 01 — game khám phá triển lãm chính trị." />
+    <title>THE STATE // EXHIBITION 01</title>
     <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./phase34.css" />
   </head>
   <body>
-    <div class="scanline-layer" aria-hidden="true"></div>
     <main class="game-shell">
-      <section id="intro-screen" class="screen intro-screen" aria-labelledby="intro-title">
-        <div class="intro-nav">
-          <div class="game-logo"><span class="logo-mark">✦</span><span>THE STATE</span><small>CRISIS ENGINE / 01</small></div>
-          <div class="nav-signal"><span class="signal-dot"></span> SIMULATION READY <span class="nav-slash">//</span> CLASSROOM BUILD</div>
+      <canvas id="game-canvas" aria-label="Không gian triển lãm tương tác"></canvas>
+
+      <section id="title-screen" class="overlay title-screen" aria-labelledby="game-title">
+        <div class="title-noise" aria-hidden="true"></div>
+        <div class="title-content">
+          <p class="overline">THE STATE / EXHIBITION 01</p>
+          <h1 id="game-title">WHO<br /><em>HOLDS</em><br />THE ROOM?</h1>
+          <p class="title-copy">Một triển lãm không trưng bày câu trả lời.<br />Bạn phải bước vào trong để nhìn thấy cấu trúc vận hành.</p>
+          <button id="start-button" class="primary-button" type="button"><span>VÀO TRIỂN LÃM</span><b>ENTER</b></button>
+          <div class="control-strip"><span><kbd>WASD</kbd> DI CHUYỂN</span><span><kbd>E</kbd> TƯƠNG TÁC</span><span><kbd>ESC</kbd> ĐÓNG</span></div>
         </div>
-
-        <div class="intro-stage">
-          <div class="intro-copy">
-            <p class="eyebrow"><span class="eyebrow-line"></span> TURN-BASED SOCIAL SIMULATION</p>
-            <h1 id="intro-title"><span>THE</span><em>STATE</em></h1>
-            <p class="intro-lead">Không phải một bài trình chiếu.<br /><strong>Một xã hội đang chờ bạn ra quyết định.</strong></p>
-            <div class="mission-card">
-              <div class="mission-head"><span>MISSION 01</span><span>5 TURNS / 1 SOCIETY</span></div>
-              <p>Điều khiển những lực kéo vô hình giữa sản xuất, giai cấp, Nhà nước và mâu thuẫn.</p>
-              <div class="mission-tags"><span>CLASS VOTE</span><span>LIVE MODEL</span><span>NO RESET</span></div>
-            </div>
-            <button id="start-button" class="game-button primary-button" type="button"><span class="button-icon">▶</span><span>KHỞI ĐỘNG MÔ PHỎNG</span><span class="button-key">ENTER</span></button>
-            <p class="micro-copy">Cả lớp chọn A / B / C · mỗi lựa chọn làm lệch cán cân xã hội</p>
-          </div>
-
-          <div class="reactor-stage" aria-label="Mô hình xã hội đang chờ khởi động">
-            <div class="reactor-hud top-hud"><span>CORE STATUS</span><b>STANDBY</b></div>
-            <div class="reactor-grid" aria-hidden="true"></div>
-            <div class="reactor-orbit orbit-a" aria-hidden="true"></div>
-            <div class="reactor-orbit orbit-b" aria-hidden="true"></div>
-            <div class="reactor-orbit orbit-c" aria-hidden="true"></div>
-            <div class="reactor-core"><span class="core-cross">+</span><span>SOCIAL<br />CORE</span><i></i></div>
-            <span class="reactor-node node-one">PRODUCTION</span>
-            <span class="reactor-node node-two">CLASS</span>
-            <span class="reactor-node node-three">STATE</span>
-            <span class="reactor-node node-four">CONFLICT</span>
-            <div class="reactor-hud bottom-hud"><span>PRESSURE</span><b>000%</b></div>
-          </div>
-        </div>
-
-        <div class="intro-footer"><span>MARXIST–LENINIST LENS</span><span class="footer-rule"></span><span>5–7 MINUTE CLASSROOM RUN</span><span class="footer-version">BUILD 0.4 / STATIC</span></div>
+        <div class="title-side-note">A CLASSROOM GAME<br /><span>MARXIST–LENINIST LENS</span></div>
       </section>
 
-      <section id="game-screen" class="screen game-screen hidden" aria-labelledby="event-question">
-        <header class="game-hud">
-          <div class="hud-brand"><span class="logo-mark">✦</span><div><b>THE STATE</b><small>CRISIS ENGINE</small></div></div>
-          <div class="hud-turn"><span class="hud-label">SIMULATION TURN</span><strong id="event-counter">01 / 05</strong><span class="hud-cycle" id="cycle-label">CYCLE 01</span></div>
-          <div class="hud-status"><span class="status-pulse"></span><span>LIVE MODEL</span><button id="restart-button" class="hud-restart" type="button">RESTART <b>↻</b></button></div>
+      <section id="game-ui" class="game-ui hidden" aria-live="polite">
+        <header class="topbar">
+          <div class="brand"><span class="brand-mark">+</span><div><strong>THE STATE</strong><small>EXHIBITION 01</small></div></div>
+          <div class="objective"><span class="ui-label">CURRENT OBJECTIVE</span><strong id="objective-text">Khám phá các khu triển lãm</strong></div>
+          <div class="evidence-counter"><span class="ui-label">EVIDENCE</span><strong><span id="evidence-count">0</span><b>/</b>4</strong></div>
         </header>
 
-        <div class="phase-track" aria-label="Tiến trình mô phỏng">
-          <div class="phase-node active"><span>01</span><b>VẬT CHẤT</b></div><i></i><div class="phase-node"><span>02</span><b>GIAI CẤP</b></div><i></i><div class="phase-node"><span>03</span><b>NHÀ NƯỚC</b></div><i></i><div class="phase-node"><span>04</span><b>KHỦNG HOẢNG</b></div><i></i><div class="phase-node"><span>05</span><b>BƯỚC CHUYỂN</b></div>
-        </div>
-
-        <div class="game-board">
-          <aside class="world-panel game-panel">
-            <div class="panel-title"><span>01 / SOCIAL FIELD</span><b>LIVE</b></div>
-            <div class="society-map" aria-label="Bản đồ lực lượng xã hội">
-              <div class="map-grid" aria-hidden="true"></div>
-              <div class="map-crosshair crosshair-a" aria-hidden="true"></div><div class="map-crosshair crosshair-b" aria-hidden="true"></div>
-              <div class="map-lines" aria-hidden="true"><span class="line line-a"></span><span class="line line-b"></span><span class="line line-c"></span><span class="line line-d"></span></div>
-              <div class="map-node node-production"><span class="node-icon">↗</span><b>SẢN XUẤT</b><small id="production-chip">32</small></div>
-              <div class="map-node node-classes"><span class="node-icon">◒</span><b>GIAI CẤP</b><small id="inequality-chip">22</small></div>
-              <div class="map-node node-state"><span class="node-icon">▣</span><b>NHÀ NƯỚC</b><small id="state-chip">00</small></div>
-              <div class="map-node node-conflict"><span class="node-icon">✳</span><b>MÂU THUẪN</b><small id="conflict-chip">18</small></div>
-              <div class="map-core"><span class="pulse-ring"></span><b id="map-phase">ĐANG HÌNH THÀNH</b><small>SOCIAL CORE</small></div>
-            </div>
-            <div class="field-status"><span class="status-pulse"></span><span id="world-status">Xã hội đang ổn định</span></div>
-            <div class="field-readout"><span>FIELD INTEGRITY</span><b>ACTIVE</b><span class="readout-bars">▮▮▮▮▯</span></div>
-          </aside>
-
-          <section class="decision-panel">
-            <div class="decision-kicker"><span class="event-index-box" id="event-index">01</span><div><span id="event-category">NỀN TẢNG VẬT CHẤT</span><b id="chapter-name">ĐIỀU KIỆN BAN ĐẦU</b></div><span class="kicker-signal">●●●</span></div>
-            <div id="event-card" class="event-card game-panel">
-              <div class="event-card-top"><span class="alert-icon">!</span><span>CRISIS SIGNAL DETECTED</span><span class="event-rule"></span><span>DECISION REQUIRED</span></div>
-              <h2 class="event-question" id="event-question"></h2>
-              <p class="event-context" id="event-context"></p>
-              <div class="vote-banner"><span class="vote-mark">◉</span><b>CẢ LỚP CÙNG BỎ PHIẾU</b><span>chọn một hành động để tiếp tục lượt chơi</span><span class="vote-keys">A / B / C</span></div>
-              <div id="choices" class="choices" role="group" aria-label="Các hành động chiến lược"></div>
-            </div>
-            <div id="feedback" class="feedback game-panel hidden" aria-live="polite">
-              <div class="feedback-top"><span class="alert-icon success">✓</span><span id="feedback-title">TURN RESOLVED / SOCIAL FIELD UPDATED</span><span class="feedback-rule"></span><span>DATA LOCKED</span></div>
-              <p id="feedback-copy"></p>
-              <div class="delta-list" id="delta-list"></div>
-              <button id="next-button" class="game-button next-button" type="button"><span>RESOLVE NEXT TURN</span><span>→</span><b>ENTER</b></button>
-            </div>
-          </section>
-
-          <aside class="telemetry-panel game-panel">
-            <div class="panel-title"><span>02 / TELEMETRY</span><b>STATS</b></div>
-            <div class="telemetry-intro"><span>THE SOCIAL BALANCE</span><strong>///</strong><small>LIVE VALUES</small></div>
-            <div class="metrics-stack">
-              <div class="metric metric-production"><div class="metric-label"><span>FORCES OF PRODUCTION</span><b id="production-value">32</b></div><div class="meter"><span id="production-bar"></span></div></div>
-              <div class="metric metric-inequality"><div class="metric-label"><span>CLASS DIVISION</span><b id="inequality-value">22</b></div><div class="meter"><span id="inequality-bar"></span></div></div>
-              <div class="metric metric-conflict"><div class="metric-label"><span>CONTRADICTION</span><b id="conflict-value">18</b></div><div class="meter"><span id="conflict-bar"></span></div></div>
-              <div class="metric metric-stability"><div class="metric-label"><span>SOCIAL STABILITY</span><b id="stability-value">74</b></div><div class="meter"><span id="stability-bar"></span></div></div>
-              <div class="metric metric-state"><div class="metric-label"><span>STATE POWER</span><b id="state-value">00</b></div><div class="meter"><span id="state-bar"></span></div></div>
-            </div>
-            <div class="telemetry-log"><div class="log-title"><span>SYSTEM LOG</span><span>● REC</span></div><p>&gt; Awaiting collective decision...</p><p>&gt; Every choice leaves a trace.</p><div class="log-cursor">_</div></div>
-          </aside>
-        </div>
-        <div class="game-footer"><span>THE STATE / SOCIAL SIMULATION</span><span class="footer-rule"></span><span>DO NOT SEARCH FOR THE RIGHT ANSWER. WATCH THE SYSTEM MOVE.</span><span>RUN 001</span></div>
+        <div class="zone-card"><span class="zone-index" id="zone-index">00</span><div><span class="ui-label">YOU ARE IN</span><strong id="zone-name">SẢNH ĐÓN</strong></div></div>
+        <div id="interaction-prompt" class="interaction-prompt hidden"><span class="prompt-key">E</span><span id="prompt-text">Tương tác</span></div>
+        <div class="minimap" aria-label="Sơ đồ triển lãm"><div class="mini-title">EXHIBITION MAP</div><div class="mini-map-art"><span class="mini-room mini-base">01</span><span class="mini-room mini-class">02</span><span class="mini-room mini-state">03</span><span class="mini-room mini-revolt">04</span><i class="mini-player"></i></div></div>
+        <div class="bottom-hint"><span class="pulse-dot"></span><span id="status-text">Tìm điểm sáng trong các phòng.</span></div>
       </section>
 
-      <section id="result-screen" class="screen result-screen hidden" aria-labelledby="result-title">
-        <header class="result-hud"><div class="hud-brand"><span class="logo-mark">✦</span><div><b>THE STATE</b><small>SIMULATION COMPLETE</small></div></div><span>RUN 001 / FINAL REPORT</span><span class="result-status">FIELD STABILIZED</span></header>
-        <div class="result-stage">
-          <div class="result-heading"><p class="eyebrow"><span class="eyebrow-line"></span> FIVE TURNS HAVE PASSED</p><h2 id="result-title">MÂU THUẪN<br /><em>ĐÃ LÊN TIẾNG.</em></h2><p id="result-summary"></p><div class="result-score"><span>SOCIAL PRESSURE INDEX</span><strong id="result-score-value">—</strong><small>/ 100</small></div></div>
-          <div class="result-reactor"><div class="result-orbit orbit-outer"></div><div class="result-orbit orbit-middle"></div><div class="result-orbit orbit-inner"></div><div class="result-core"><span id="result-core-word">BIẾN<br />ĐỔI</span></div><span class="result-label label-north">PRODUCTION</span><span class="result-label label-east">CONFLICT</span><span class="result-label label-south">STATE</span><span class="result-label label-west">CLASS</span></div>
+      <section id="dialogue" class="dialogue hidden" aria-labelledby="dialogue-title">
+        <div class="dialogue-backdrop"></div>
+        <div class="dialogue-card">
+          <div class="dialogue-meta"><span id="dialogue-type">ARCHIVE ENTRY</span><span id="dialogue-number">01 / 04</span></div>
+          <h2 id="dialogue-title">Điều kiện vật chất</h2>
+          <p id="dialogue-body"></p>
+          <div id="dialogue-choices" class="dialogue-choices"></div>
+          <button id="dialogue-close" class="text-button hidden" type="button">ĐÓNG <kbd>ESC</kbd></button>
         </div>
-        <div class="journey-wrap"><div class="journey-heading"><span>RUN TRACE / 05 TURNS</span><span>THE CHOICES THAT MOVED THE FIELD</span></div><div id="journey" class="journey"></div></div>
-        <div class="result-actions"><button id="debrief-button" class="game-button primary-button" type="button"><span class="button-icon">✦</span><span>DECODE THE THEORY</span><span>↗</span></button><button id="play-again-button" class="hud-restart" type="button">NEW RUN <b>↻</b></button></div>
-        <div id="debrief" class="debrief game-panel hidden">
-          <div class="debrief-heading"><p class="eyebrow"><span class="eyebrow-line"></span> THEORY DECODED</p><h3>Game không đưa ra một đáp án.<br /><em>Nó cho ta thấy một chuỗi quan hệ.</em></h3></div>
-          <div class="concept-grid"><article><span>01 / BASE</span><h4>Điều kiện kinh tế</h4><p>Lực lượng sản xuất và cách con người tổ chức việc sản xuất tạo nên nền tảng vật chất của đời sống xã hội.</p></article><article><span>02 / CLASS</span><h4>Phân hóa giai cấp</h4><p>Khi quyền kiểm soát tư liệu sản xuất không còn ngang nhau, lợi ích xã hội bắt đầu phân cực.</p></article><article><span>03 / STATE</span><h4>Nhà nước</h4><p>Nhà nước xuất hiện như một thiết chế quyền lực để tổ chức, quản lý và điều hòa các quan hệ xã hội trong bối cảnh mâu thuẫn đã phát triển.</p></article><article><span>04 / CHANGE</span><h4>Cách mạng xã hội</h4><p>Khi mâu thuẫn giữa lực lượng sản xuất và quan hệ sản xuất trở nên gay gắt, biến đổi căn bản có thể trở thành nhu cầu lịch sử.</p></article></div>
-          <div class="teacher-line"><span>CLASSROOM HANDOFF</span><p>“Tại sao chỉ vài lựa chọn của chúng ta lại khiến toàn bộ cấu trúc xã hội thay đổi?”</p></div><p class="model-note"><span>MODEL NOTE</span> Đây là mô hình minh họa theo lăng kính Triết học Mác – Lênin, không phải dữ liệu thống kê của một quốc gia cụ thể.</p>
-        </div>
+      </section>
+
+      <section id="ending-screen" class="overlay ending-screen hidden" aria-labelledby="ending-title">
+        <div class="ending-content"><p class="overline">EXHIBITION COMPLETE / FIELD REPORT</p><h2 id="ending-title">THE ROOM<br /><em>REMEMBERS.</em></h2><p id="ending-copy" class="ending-copy"></p><div class="ending-stats"><span><b id="ending-evidence">4/4</b><small>evidence recovered</small></span><span><b id="ending-power">—</b><small>power balance</small></span><span><b id="ending-conflict">—</b><small>social pressure</small></span></div><div class="ending-actions"><button id="restart-button" class="primary-button" type="button"><span>WALK THE EXHIBITION AGAIN</span><b>↻</b></button><button id="theory-button" class="text-button" type="button">MỞ GHI CHÚ LÝ THUYẾT</button></div><div id="theory-note" class="theory-note hidden"><strong>READ THE ROOM</strong><p>Điều kiện vật chất tổ chức đời sống xã hội. Khi quyền kiểm soát tư liệu sản xuất bị phân hóa, giai cấp và mâu thuẫn xuất hiện. Nhà nước hình thành như một thiết chế quyền lực trong bối cảnh đó; cách mạng xã hội là bước biến đổi căn bản khi quan hệ cũ trở thành lực cản.</p></div></div>
       </section>
     </main>
     <script src="./app.js"></script>

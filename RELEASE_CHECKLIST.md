@@ -1,55 +1,52 @@
-# Release checklist — THE STATE
+# Release checklist — THE STATE // EXHIBITION 01
 
-## Phase 3 — Release candidate
+## Vertical slice
 
-- [x] Đã thay presentation shell bằng game shell **Crisis Engine**: turn HUD, social field, action cards và telemetry.
-- [x] Palette nền midnight–indigo, accent cyan/magenta/gold/lime; không dùng nền trắng làm canvas chính.
-- [x] Có feedback resolution, action lock, meter pulse và keyboard Enter/A/B/C.
-- [x] Nội dung đi theo chuỗi điều kiện kinh tế → phân hóa → Nhà nước → mâu thuẫn → bước chuyển.
-- [x] Mỗi sự kiện có 3 lựa chọn và hệ quả riêng.
-- [x] Phần debrief liên hệ giai cấp, tư liệu sản xuất, mâu thuẫn, Nhà nước và cách mạng xã hội.
-- [x] Có ghi chú rõ đây là mô hình minh họa, không phải số liệu thống kê thực tế.
-- [x] Có cấu hình Vercel tĩnh, không cần backend, database hoặc biến môi trường.
-- [x] Có hỗ trợ phím A/B/C để chọn và Enter để tiếp tục khi trình chiếu.
-- [x] Rewrite Vercel đưa `dist/index.html` thành trang chủ và phục vụ các asset tĩnh.
-- [ ] Kiểm tra bằng URL preview thật trên browser — chờ xác thực Vercel; local browser preview bị môi trường chặn.
+- [x] Canvas 2D game shell thay cho dashboard.
+- [x] Màn hình mở đầu và hướng dẫn `WASD` / `E` / `ESC`.
+- [x] Nhân vật, camera theo nhân vật và tường va chạm.
+- [x] Bốn phòng triển lãm có màu nhận diện riêng.
+- [x] Bốn hiện vật tương tác, mỗi hiện vật có hai lựa chọn.
+- [x] Thu thập đủ `4/4` evidence để mở cánh cửa cuối.
+- [x] Kết thúc hiển thị mức tập trung quyền lực và áp lực mâu thuẫn.
+- [x] Có phần ghi chú nối gameplay với lý thuyết.
+- [x] Giao diện không dùng palette đỏ-vàng-trắng kiểu website cũ.
 
-## Phase 4 — Rehearsal and sign-off
-
-### Automated regression
+## Automated checks
 
 Chạy từ thư mục gốc:
 
 ```bash
+node --check dist/app.js
 node test/static-check.mjs
 node test/smoke-test.mjs
 ```
 
-Bài test phải xác nhận:
+Các test hiện xác nhận:
 
-- 243/243 đường chơi hoàn tất.
-- Mỗi lượt có đúng 3 lựa chọn.
-- Lựa chọn đã chọn được đánh dấu; lựa chọn còn lại bị khóa.
-- Phím A/B/C và Enter hoạt động.
-- Mọi chỉ số nằm trong khoảng 0–100.
-- Debrief, restart và play-again hoạt động.
+- Canvas game loop và HUD tồn tại.
+- Đủ bốn phòng và bốn exhibit.
+- Va chạm tường hoạt động ở vùng chặn và không chặn vùng sàn.
+- Mỗi exhibit mở được dialogue với hai lựa chọn.
+- Bốn evidence được ghi nhận.
+- Cánh cửa cuối mở đúng điều kiện và màn ending xuất hiện.
+- Các khái niệm `giai cấp`, `tư liệu sản xuất`, `mâu thuẫn`, `Nhà nước`, `cách mạng xã hội` có trong game.
+- Vercel rewrite giữ `/` về `dist/index.html`.
 
-### Automated sign-off already completed
+## Manual rehearsal
 
-- [x] Static release check pass.
-- [x] 243/243 paths pass in the final Phase 4 smoke test.
-- [x] 25 additional repeated smoke runs pass after the final code change.
-- [x] Stable and high-conflict ending branches both pass.
+1. Chạy `python3 -m http.server 4173 --directory dist`.
+2. Mở game bằng trình duyệt ở độ phân giải sẽ dùng khi thuyết trình.
+3. Bấm **VÀO TRIỂN LÃM**.
+4. Đi lần lượt tới bốn điểm sáng, nhấn `E`, chọn một phương án và đóng dialogue.
+5. Đi tới điểm `EXIT` ở phòng cuối; xác nhận màn tổng kết xuất hiện.
+6. Bấm **MỞ GHI CHÚ LÝ THUYẾT** và kiểm tra phần nối sang bài thuyết trình.
+7. Reload/restart và chơi lại một nhánh lựa chọn khác.
 
-### Manual rehearsal
+## Deployment
 
-1. Mở game trên màn hình sẽ dùng để thuyết trình.
-2. Người dẫn nói: “Trước khi bắt đầu, mời cả lớp cùng chơi một trò chơi.”
-3. Cho lớp bỏ phiếu A/B/C ở từng sự kiện; nhóm chỉ bấm lựa chọn thắng.
-4. Khi hiện kết quả, hỏi: “Tại sao chỉ vài lựa chọn lại khiến cấu trúc xã hội thay đổi?”
-5. Mở phần “Giải mã bằng lý luận” và chuyển sang bài thuyết trình.
-6. Giữ tổng thời lượng game trong 5–7 phút.
-
-### Release decision
-
-Chỉ bàn giao khi smoke test pass và người dẫn đã chơi trọn một vòng trên thiết bị trình chiếu. Không thêm tính năng mới sau buổi diễn tập cuối.
+- [ ] Commit và push source lên GitHub `EnzoReacher/MLN` branch `main`.
+- [ ] Redeploy Vercel.
+- [ ] Mở URL production ở route `/`, không dùng `/dist`.
+- [ ] Kiểm tra console browser không có lỗi.
+- [ ] Chơi trọn một vòng production trước khi trình chiếu.

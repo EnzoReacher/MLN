@@ -1,156 +1,87 @@
-const events = [
-  {
-    chapter: "ĐIỀU KIỆN BAN ĐẦU", category: "NỀN TẢNG VẬT CHẤT", phase: "ĐANG HÌNH THÀNH",
-    question: "Xã hội bắt đầu tạo ra nhiều hơn mức cần để tồn tại.",
-    context: "Một phần sản phẩm dư thừa xuất hiện. Ai sẽ kiểm soát nguồn lực mới này?",
-    choices: [
-      { label: "Chia sẻ theo lệ cũ", hint: "Ưu tiên cộng đồng", effect: { production: 7, inequality: -4, conflict: -3, stability: 4, state: 0 }, feedback: "Sản xuất vẫn phát triển, trong khi khoảng cách lợi ích chưa bị đẩy xa." },
-      { label: "Trao quyền kiểm soát cho một nhóm", hint: "Tập trung tư liệu sản xuất", effect: { production: 12, inequality: 14, conflict: 8, stability: -6, state: 0 }, feedback: "Sản xuất tăng nhanh, nhưng quyền kiểm soát nguồn lực bắt đầu phân hóa xã hội." },
-      { label: "Giữ nguyên cách làm cũ", hint: "Không thay đổi quan hệ sở hữu", effect: { production: 1, inequality: 0, conflict: 2, stability: -2, state: 0 }, feedback: "Trật tự cũ được giữ lại, nhưng năng lực sản xuất chưa được giải phóng hết." }
-    ]
-  },
-  {
-    chapter: "PHÂN HÓA XÃ HỘI", category: "GIAI CẤP & LỢI ÍCH", phase: "BẮT ĐẦU PHÂN CỰC",
-    question: "Không phải ai cũng còn đứng ở cùng một vị trí.",
-    context: "Một nhóm sở hữu kho lương và công cụ. Nhóm khác phải làm việc để tiếp cận chúng.",
-    choices: [
-      { label: "Mở quyền tiếp cận rộng hơn", hint: "Giảm độc quyền", effect: { production: 2, inequality: -10, conflict: -9, stability: 8, state: 0 }, feedback: "Mâu thuẫn hạ nhiệt. Xã hội tìm được một khoảng cân bằng mới—ít nhất là tạm thời." },
-      { label: "Bảo vệ đặc quyền hiện có", hint: "Củng cố sở hữu riêng", effect: { production: 4, inequality: 11, conflict: 12, stability: -8, state: 4 }, feedback: "Lợi ích đối lập trở nên rõ ràng hơn; cần một quyền lực đủ mạnh để bảo vệ trật tự này." },
-      { label: "Để các nhóm tự thương lượng", hint: "Không có thiết chế chung", effect: { production: -2, inequality: 4, conflict: 9, stability: -9, state: 0 }, feedback: "Khi không có quy tắc chung, tranh chấp lan từ nguồn lực sang toàn bộ đời sống xã hội." }
-    ]
-  },
-  {
-    chapter: "NHÀ NƯỚC XUẤT HIỆN", category: "THIẾT CHẾ QUYỀN LỰC", phase: "TRẬT TỰ ĐƯỢC TỔ CHỨC",
-    question: "Mâu thuẫn đã lớn hơn khả năng tự điều chỉnh của cộng đồng.",
-    context: "Xã hội cần luật lệ, cơ chế quản lý và một quyền lực có khả năng tổ chức đời sống chung.",
-    choices: [
-      { label: "Lập quy tắc chung có kiểm soát", hint: "Quản lý + trách nhiệm", effect: { production: 5, inequality: -3, conflict: -4, stability: 9, state: 15 }, feedback: "Một thiết chế chung hình thành. Nó tạo ổn định, nhưng câu hỏi về lợi ích mà nó bảo vệ vẫn còn đó." },
-      { label: "Trao quyền tuyệt đối cho trung tâm", hint: "Ổn định bằng cưỡng chế", effect: { production: 3, inequality: 8, conflict: 5, stability: 2, state: 25 }, feedback: "Trật tự được siết chặt. Quyền lực nhà nước tăng lên cùng với nguy cơ tách khỏi đời sống xã hội." },
-      { label: "Không lập thiết chế nào", hint: "Tự quản hoàn toàn", effect: { production: -3, inequality: 2, conflict: 14, stability: -14, state: 0 }, feedback: "Khi mâu thuẫn đã sâu, việc thiếu một cơ chế chung làm khủng hoảng lan rộng." }
-    ]
-  },
-  {
-    chapter: "MÂU THUẪN PHÁT TRIỂN", category: "KHỦNG HOẢNG XÃ HỘI", phase: "ÁP LỰC ĐẠT ĐỈNH",
-    question: "Lực lượng sản xuất muốn đi xa hơn, nhưng quan hệ cũ đang níu lại.",
-    context: "Năng lực tạo ra của cải đã đổi khác. Cách sở hữu và phân phối cũ trở thành điểm nghẽn.",
-    choices: [
-      { label: "Cải cách từng phần", hint: "Nới cấu trúc cũ", effect: { production: 5, inequality: -6, conflict: -5, stability: 5, state: 3 }, feedback: "Áp lực giảm nhưng chưa biến mất. Xã hội có thêm thời gian để điều chỉnh cấu trúc." },
-      { label: "Dùng quyền lực để giữ nguyên", hint: "Trấn áp bất đồng", effect: { production: -4, inequality: 10, conflict: 16, stability: -15, state: 12 }, feedback: "Sự yên lặng bề ngoài không giải quyết được mâu thuẫn bên trong; khủng hoảng sâu hơn." },
-      { label: "Thay đổi quan hệ nền tảng", hint: "Biến đổi căn bản", effect: { production: 8, inequality: -12, conflict: 20, stability: -10, state: -5 }, feedback: "Một lựa chọn căn bản làm trật tự cũ rung chuyển. Điều kiện cho bước chuyển lớn đã hiện ra." }
-    ]
-  },
-  {
-    chapter: "BƯỚC CHUYỂN", category: "CÁCH MẠNG XÃ HỘI", phase: "XÃ HỘI ĐANG BIẾN ĐỔI",
-    question: "Khi mâu thuẫn đã chín muồi, xã hội sẽ đi về đâu?",
-    context: "Đây không phải nút bấm “đúng/sai”. Đây là khoảnh khắc để nhìn lại những lực kéo mà chính bạn đã tạo ra.",
-    choices: [
-      { label: "Mở một lối chuyển hóa mới", hint: "Thay đổi cấu trúc", effect: { production: 10, inequality: -14, conflict: -8, stability: 5, state: -8 }, feedback: "Xã hội bước sang một cấu trúc mới. Biến đổi căn bản trở thành kết quả của cả một quá trình tích lũy." },
-      { label: "Thỏa hiệp để kéo dài trật tự", hint: "Ổn định ngắn hạn", effect: { production: 2, inequality: 3, conflict: -4, stability: 7, state: 4 }, feedback: "Khủng hoảng được trì hoãn. Nhưng những mâu thuẫn tạo ra nó vẫn cần một lời giải dài hạn." },
-      { label: "Để xung đột bùng nổ", hint: "Đứt gãy cũ–mới", effect: { production: -5, inequality: -7, conflict: 18, stability: -22, state: -12 }, feedback: "Đứt gãy xảy ra dữ dội. Cái cũ bị thách thức để mở đường cho một hình thái xã hội khác." }
-    ]
-  }
-];
+/* THE STATE / Exhibition 01 — a small canvas exploration game. */
+(() => {
+  "use strict";
 
-const initialStats = { production: 32, inequality: 22, conflict: 18, stability: 74, state: 0 };
-let stats = { ...initialStats };
-let eventIndex = 0;
-let selectedHistory = [];
+  const canvas = document.getElementById("game-canvas");
+  const ctx = canvas.getContext("2d");
+  const titleScreen = document.getElementById("title-screen");
+  const gameUi = document.getElementById("game-ui");
+  const dialogue = document.getElementById("dialogue");
+  const endingScreen = document.getElementById("ending-screen");
+  const prompt = document.getElementById("interaction-prompt");
+  const promptText = document.getElementById("prompt-text");
+  const zoneName = document.getElementById("zone-name");
+  const zoneIndex = document.getElementById("zone-index");
+  const statusText = document.getElementById("status-text");
+  const evidenceCount = document.getElementById("evidence-count");
+  const objectiveText = document.getElementById("objective-text");
+  const dialogueTitle = document.getElementById("dialogue-title");
+  const dialogueBody = document.getElementById("dialogue-body");
+  const dialogueType = document.getElementById("dialogue-type");
+  const dialogueNumber = document.getElementById("dialogue-number");
+  const dialogueChoices = document.getElementById("dialogue-choices");
+  const dialogueClose = document.getElementById("dialogue-close");
+  const miniPlayer = document.querySelector(".mini-player");
+  const keys = new Set();
+  const WORLD = { width: 2400, height: 1500 };
+  const PLAYER = { radius: 17, speed: 245 };
+  const state = { running: false, lastTime: 0, time: 0, camera: { x: 0, y: 0 }, player: { x: 250, y: 1220 }, evidence: new Set(), choices: [], currentInteractable: null, dialogueOpen: false, stats: { power: 0, conflict: 0 } };
 
-const $ = (id) => document.getElementById(id);
-const clamp = (value) => Math.max(0, Math.min(100, value));
-const pad = (value) => String(value).padStart(2, "0");
-const setText = (id, value) => { const element = $(id); if (element) element.textContent = value; };
+  const rooms = [
+    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", x: 130, y: 850, w: 590, h: 480, color: "#78ead0", label: "THE BASE" },
+    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", x: 820, y: 150, w: 650, h: 480, color: "#f0c878", label: "THE SPLIT" },
+    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", x: 1640, y: 150, w: 620, h: 480, color: "#a9a0ff", label: "THE STATE" },
+    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", x: 1580, y: 900, w: 680, h: 450, color: "#ef6b62", label: "THE FAULTLINE" }
+  ];
+  const walls = [
+    { x: 0, y: 0, w: WORLD.width, h: 50 }, { x: 0, y: WORLD.height - 50, w: WORLD.width, h: 50 }, { x: 0, y: 0, w: 50, h: WORLD.height }, { x: WORLD.width - 50, y: 0, w: 50, h: WORLD.height },
+    // Two split walls leave a broad central corridor (y 610–890) between all four rooms.
+    { x: 740, y: 50, w: 55, h: 560 }, { x: 740, y: 890, w: 55, h: 560 }, { x: 1510, y: 50, w: 55, h: 560 }, { x: 1510, y: 890, w: 55, h: 560 },
+    // Small museum plinths add cover without blocking the route between rooms.
+    { x: 250, y: 930, w: 105, h: 28 }, { x: 420, y: 1170, w: 130, h: 28 }, { x: 1010, y: 255, w: 120, h: 28 }, { x: 1240, y: 465, w: 105, h: 28 },
+    { x: 1810, y: 255, w: 120, h: 28 }, { x: 2040, y: 465, w: 110, h: 28 }, { x: 1760, y: 1030, w: 120, h: 28 }, { x: 2020, y: 1220, w: 125, h: 28 }
+  ];
+  const interactables = [
+    { id: "curator", x: 280, y: 1120, radius: 74, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Chào mừng đến Exhibition 01. Đi qua bốn phòng, tìm bốn mảnh bằng chứng và để chính không gian trả lời câu hỏi: nhà nước xuất hiện từ đâu?", choices: [{ label: "Bắt đầu khám phá", effect: {} }] },
+    { id: "base", x: 510, y: 1010, radius: 92, kind: "exhibit", title: "Điều kiện vật chất", type: "ARCHIVE 01", number: "01 / 04", body: "Một bánh răng, một kho lương, một dây chuyền. Khi con người tạo ra nhiều hơn mức cần để tồn tại, câu hỏi mới xuất hiện: ai kiểm soát sản phẩm dư thừa và tư liệu sản xuất?", choices: [{ label: "Mở rộng năng lực sản xuất cho cộng đồng", effect: { power: -2, conflict: -3 }, reply: "Năng lực sản xuất được giải phóng, nhưng cách tổ chức quan hệ xã hội sẽ phải thay đổi theo." }, { label: "Để một nhóm nắm quyền kiểm soát", effect: { power: 4, conflict: 3 }, reply: "Sản phẩm dư thừa trở thành nền tảng cho sự phân hóa lợi ích." }] },
+    { id: "class", x: 1110, y: 365, radius: 92, kind: "exhibit", title: "The Split / Đường phân chia", type: "ARCHIVE 02", number: "02 / 04", body: "Hai phía của căn phòng không còn đối xứng. Một phía sở hữu công cụ; phía kia sở hữu sức lao động. Giai cấp không chỉ là khác biệt thu nhập—nó là quan hệ với tư liệu sản xuất.", choices: [{ label: "Mở quyền tiếp cận rộng hơn", effect: { power: -3, conflict: -4 }, reply: "Ranh giới lợi ích dịu xuống, dù chưa biến mất." }, { label: "Bảo vệ đặc quyền sở hữu hiện có", effect: { power: 5, conflict: 5 }, reply: "Phân hóa được củng cố. Căn phòng trở nên yên lặng hơn, nhưng căng thẳng hơn." }] },
+    { id: "state", x: 1940, y: 365, radius: 92, kind: "exhibit", title: "Nhà nước / The State", type: "ARCHIVE 03", number: "03 / 04", body: "Khi mâu thuẫn xã hội không còn tự điều chỉnh được, một thiết chế quyền lực đứng lên tổ chức luật lệ và trật tự. Nhưng thiết chế ấy luôn cần được hỏi: nó đang bảo vệ quan hệ nào?", choices: [{ label: "Thiết lập luật chung có trách nhiệm giải trình", effect: { power: 2, conflict: -2 }, reply: "Trật tự xuất hiện cùng một câu hỏi mới: ai có quyền định nghĩa luật chung?" }, { label: "Trao quyền tuyệt đối cho trung tâm", effect: { power: 8, conflict: 5 }, reply: "Bộ máy trở nên mạnh hơn. Khoảng cách giữa quyền lực và đời sống xã hội cũng lớn hơn." }] },
+    { id: "revolt", x: 1930, y: 1115, radius: 98, kind: "exhibit", title: "The Faultline / Đường nứt", type: "ARCHIVE 04", number: "04 / 04", body: "Khi lực lượng sản xuất phát triển nhưng quan hệ cũ trở thành lực cản, mâu thuẫn đạt đến điểm chuyển hóa. Cách mạng xã hội không rơi xuống từ một ý tưởng—nó được tích lũy trong đời sống vật chất.", choices: [{ label: "Cải biến quan hệ nền tảng", effect: { power: -5, conflict: -6 }, reply: "Một cấu trúc mới bắt đầu từ việc thay đổi quan hệ đã tạo ra bế tắc." }, { label: "Giữ nguyên căn phòng như cũ", effect: { power: 8, conflict: 9 }, reply: "Cửa vẫn đóng. Mâu thuẫn chỉ bị đẩy sang một lượt chơi khác." }] },
+    { id: "gate", x: 2180, y: 1115, radius: 110, kind: "gate", title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END", body: "Bốn mảnh bằng chứng đã kết nối. Bạn đã nhìn thấy điều kiện vật chất, phân hóa giai cấp, sự hình thành của nhà nước và đường nứt của mâu thuẫn.", choices: [{ label: "Bước qua cánh cửa", effect: {}, reply: "Triển lãm khép lại. Nhưng câu hỏi vẫn theo bạn ra ngoài." }] }
+  ];
 
-function updatePhaseTrack() {
-  document.querySelectorAll(".phase-node").forEach((node, index) => node.classList.toggle("active", index === eventIndex));
-}
+  function resize() { const dpr = Math.min(window.devicePixelRatio || 1, 2); canvas.width = Math.floor(innerWidth * dpr); canvas.height = Math.floor(innerHeight * dpr); canvas.style.width = `${innerWidth}px`; canvas.style.height = `${innerHeight}px`; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  function resetState() { state.running = true; state.lastTime = performance.now(); state.time = 0; state.player = { x: 250, y: 1220 }; state.camera = { x: 0, y: 0 }; state.evidence.clear(); state.choices = []; state.currentInteractable = null; state.dialogueOpen = false; state.stats = { power: 0, conflict: 0 }; updateUi(); }
+  function start() { resetState(); titleScreen.classList.add("hidden"); endingScreen.classList.add("hidden"); gameUi.classList.remove("hidden"); dialogue.classList.add("hidden"); document.getElementById("theory-note").classList.add("hidden"); requestAnimationFrame(loop); }
+  function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+  function rectCircleCollision(circle, rect) { const x = clamp(circle.x, rect.x, rect.x + rect.w); const y = clamp(circle.y, rect.y, rect.y + rect.h); return Math.hypot(circle.x - x, circle.y - y) < circle.radius; }
+  function canMove(x, y) { const circle = { x, y, radius: PLAYER.radius }; return x > 65 && y > 65 && x < WORLD.width - 65 && y < WORLD.height - 65 && !walls.some((wall) => rectCircleCollision(circle, wall)); }
+  function move(dx, dy, dt) { const length = Math.hypot(dx, dy) || 1; const amount = PLAYER.speed * dt; const nextX = state.player.x + (dx / length) * amount; const nextY = state.player.y + (dy / length) * amount; if (canMove(nextX, state.player.y)) state.player.x = nextX; if (canMove(state.player.x, nextY)) state.player.y = nextY; }
+  function nearestInteractable() { let nearest = null; let distance = Infinity; for (const item of interactables) { const d = Math.hypot(state.player.x - item.x, state.player.y - item.y); if (d < item.radius && d < distance) { nearest = item; distance = d; } } return nearest; }
+  function currentRoom() { return rooms.find((room) => state.player.x > room.x && state.player.x < room.x + room.w && state.player.y > room.y && state.player.y < room.y + room.h) ?? null; }
+  function updateUi() { const room = currentRoom(); zoneName.textContent = room?.name ?? "HÀNH LANG CHUYỂN TIẾP"; zoneIndex.textContent = room?.index ?? "—"; evidenceCount.textContent = state.evidence.size; objectiveText.textContent = state.evidence.size === 4 ? "Tìm cánh cửa kết thúc" : "Khám phá các khu triển lãm"; const item = nearestInteractable(); state.currentInteractable = item; prompt.classList.toggle("hidden", !item || state.dialogueOpen || (item.id === "gate" && state.evidence.size < 4)); if (item && !(item.id === "gate" && state.evidence.size < 4)) promptText.textContent = item.kind === "curator" ? "Nói chuyện với người lưu trữ" : item.kind === "gate" ? "Mở cánh cửa cuối" : state.evidence.has(item.id) ? "Xem lại hiện vật" : `Khám phá ${item.title}`; statusText.textContent = state.evidence.size === 4 ? "Bốn mảnh bằng chứng đã kết nối. Tìm cánh cửa cuối." : "Tìm điểm sáng trong các phòng."; const miniX = clamp(8 + (state.player.x / WORLD.width) * 130, 8, 143); const miniY = clamp(9 + (state.player.y / WORLD.height) * 76, 9, 82); miniPlayer.style.left = `${miniX}px`; miniPlayer.style.top = `${miniY}px`; }
+  function openDialogue(item) { if (item.id === "gate" && state.evidence.size < 4) return; state.dialogueOpen = true; dialogue.classList.remove("hidden"); dialogueTitle.textContent = item.title; dialogueBody.textContent = item.body; dialogueType.textContent = item.type; dialogueNumber.textContent = item.number; dialogueChoices.innerHTML = ""; dialogueClose.classList.add("hidden"); item.choices.forEach((choice, index) => { const button = document.createElement("button"); button.className = "choice-button"; button.type = "button"; button.innerHTML = `<b>${String.fromCharCode(65 + index)}</b><span>${choice.label}</span>`; button.addEventListener("click", () => choose(item, choice)); dialogueChoices.append(button); }); }
+  function choose(item, choice) { if (item.kind === "exhibit") { state.evidence.add(item.id); state.stats.power += choice.effect.power || 0; state.stats.conflict += choice.effect.conflict || 0; state.choices.push({ exhibit: item.title, choice: choice.label }); } dialogueTitle.textContent = item.kind === "curator" ? "Cánh cửa đã mở" : item.kind === "gate" ? "Bản ghi cuối cùng" : "Mảnh bằng chứng đã ghi nhận"; dialogueBody.textContent = choice.reply || "Bốn phòng đang chờ bạn. Hãy đi sâu hơn vào triển lãm."; dialogueChoices.innerHTML = ""; dialogueClose.classList.remove("hidden"); dialogueClose.textContent = item.kind === "gate" ? "ĐI VÀO BẢN GHI CUỐI" : "TIẾP TỤC KHÁM PHÁ"; updateUi(); }
+  function closeDialogue() { state.dialogueOpen = false; dialogue.classList.add("hidden"); updateUi(); }
+  function interact() { if (state.dialogueOpen) return; const item = nearestInteractable(); if (item) openDialogue(item); }
+  function drawWorld() { const w = innerWidth; const h = innerHeight; ctx.clearRect(0, 0, w, h); ctx.save(); ctx.translate(-state.camera.x, -state.camera.y); ctx.fillStyle = "#101a1b"; ctx.fillRect(0, 0, WORLD.width, WORLD.height); drawFloor(); rooms.forEach(drawRoom); drawWalls(); interactables.forEach(drawInteractable); drawPlayer(); drawParticles(); ctx.restore(); drawVignette(w, h); }
+  function drawFloor() { ctx.fillStyle = "#0b1215"; ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100); ctx.strokeStyle = "rgba(120,234,208,.045)"; ctx.lineWidth = 1; for (let x = 75; x < WORLD.width - 50; x += 50) { ctx.beginPath(); ctx.moveTo(x, 50); ctx.lineTo(x, WORLD.height - 50); ctx.stroke(); } for (let y = 75; y < WORLD.height - 50; y += 50) { ctx.beginPath(); ctx.moveTo(50, y); ctx.lineTo(WORLD.width - 50, y); ctx.stroke(); } ctx.fillStyle = "rgba(120,234,208,.035)"; ctx.fillRect(65, 765, 2250, 35); ctx.fillRect(755, 65, 35, 1430); ctx.fillRect(1525, 65, 35, 1430); }
+  function drawRoom(room) { ctx.strokeStyle = `${room.color}66`; ctx.lineWidth = 2; ctx.strokeRect(room.x, room.y, room.w, room.h); ctx.fillStyle = `${room.color}09`; ctx.fillRect(room.x, room.y, room.w, room.h); ctx.font = "11px 'DM Mono', monospace"; ctx.fillStyle = `${room.color}99`; ctx.fillText(room.label, room.x + 20, room.y + 25); ctx.strokeStyle = `${room.color}33`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(room.x + 20, room.y + 39); ctx.lineTo(room.x + room.w - 20, room.y + 39); ctx.stroke(); }
+  function drawWalls() { ctx.fillStyle = "#182626"; ctx.strokeStyle = "rgba(186,224,207,.16)"; ctx.lineWidth = 1; walls.forEach((wall) => { ctx.fillRect(wall.x, wall.y, wall.w, wall.h); ctx.strokeRect(wall.x, wall.y, wall.w, wall.h); }); }
+  function drawInteractable(item) { const collected = state.evidence.has(item.id); const pulse = 1 + Math.sin(state.time * 2.3 + item.x) * .1; ctx.save(); ctx.translate(item.x, item.y); ctx.globalAlpha = item.kind === "curator" ? 1 : collected ? .55 : 1; const color = item.kind === "curator" ? "#f0c878" : item.kind === "gate" ? "#ef6b62" : rooms.find((room) => room.id === item.id)?.color || "#78ead0"; ctx.shadowColor = color; ctx.shadowBlur = collected ? 12 : 25; ctx.fillStyle = `${color}20`; ctx.beginPath(); ctx.arc(0, 0, 34 * pulse, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = color; ctx.fillRect(-7, -7, 14, 14); ctx.fillStyle = "#081012"; ctx.fillRect(-3, -3, 6, 6); if (collected) { ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-9, 1); ctx.lineTo(-2, 8); ctx.lineTo(11, -9); ctx.stroke(); } ctx.font = "10px 'DM Mono', monospace"; ctx.textAlign = "center"; ctx.fillStyle = color; ctx.fillText(item.kind === "curator" ? "CURATOR" : item.kind === "gate" ? "EXIT" : item.id.toUpperCase(), 0, 52); ctx.restore(); }
+  function drawPlayer() { const p = state.player; ctx.save(); ctx.translate(p.x, p.y); ctx.shadowColor = "#f0c878"; ctx.shadowBlur = 20; ctx.fillStyle = "#f0c878"; ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; ctx.strokeStyle = "#fff0bd"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 17, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = "#081012"; ctx.beginPath(); ctx.arc(4, -3, 3, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+  function drawParticles() { for (let i = 0; i < 38; i += 1) { const x = (i * 277 + 120) % WORLD.width; const y = (i * 149 + 80) % WORLD.height; const alpha = .08 + (Math.sin(state.time * .7 + i) + 1) * .04; ctx.fillStyle = `rgba(170,230,210,${alpha})`; ctx.fillRect(x, y, 2, 2); } }
+  function drawVignette(w, h) { const gradient = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .25, w / 2, h / 2, Math.max(w, h) * .72); gradient.addColorStop(0, "transparent"); gradient.addColorStop(1, "rgba(3,7,9,.66)"); ctx.fillStyle = gradient; ctx.fillRect(0, 0, w, h); }
+  function updateCamera() { state.camera.x = clamp(state.player.x - innerWidth / 2, 0, WORLD.width - innerWidth); state.camera.y = clamp(state.player.y - innerHeight / 2, 0, WORLD.height - innerHeight); }
+  function loop(timestamp) { if (!state.running) return; const dt = Math.min((timestamp - state.lastTime) / 1000, .05); state.lastTime = timestamp; state.time += dt; if (!state.dialogueOpen) { let dx = 0; let dy = 0; if (keys.has("w") || keys.has("arrowup")) dy -= 1; if (keys.has("s") || keys.has("arrowdown")) dy += 1; if (keys.has("a") || keys.has("arrowleft")) dx -= 1; if (keys.has("d") || keys.has("arrowright")) dx += 1; if (dx || dy) move(dx, dy, dt); updateCamera(); updateUi(); } drawWorld(); requestAnimationFrame(loop); }
+  function showEnding() { state.running = false; endingScreen.classList.remove("hidden"); document.getElementById("ending-evidence").textContent = `${state.evidence.size}/4`; document.getElementById("ending-power").textContent = state.stats.power > 5 ? "CENTRALIZED" : state.stats.power < -3 ? "DISTRIBUTED" : "CONTESTED"; document.getElementById("ending-conflict").textContent = state.stats.conflict > 7 ? "HIGH" : state.stats.conflict < -3 ? "LOW" : "ACTIVE"; document.getElementById("ending-copy").textContent = state.stats.conflict > 7 ? "Bạn đã đi hết triển lãm và thấy một điều khó chịu: trật tự có thể đứng vững trên bề mặt trong khi mâu thuẫn tiếp tục tích tụ bên dưới." : "Bạn đã đi hết triển lãm. Không gian không đưa ra đáp án thay bạn—nó cho thấy các quan hệ vật chất, quyền lực và mâu thuẫn nối vào nhau như thế nào."; }
+  function handleKeyDown(event) { const key = event.key.toLowerCase(); if (["w","a","s","d","arrowup","arrowdown","arrowleft","arrowright","e","escape","enter"].includes(key)) event.preventDefault(); if (key === "escape" && state.dialogueOpen) closeDialogue(); else if (key === "e" && !state.dialogueOpen) interact(); else if (key === "enter" && !state.dialogueOpen && state.evidence.size === 4 && Math.hypot(state.player.x - 2180, state.player.y - 1115) < 130) showEnding(); else keys.add(key); }
+  function handleKeyUp(event) { keys.delete(event.key.toLowerCase()); }
 
-function showScreen(id) {
-  ["intro-screen", "game-screen", "result-screen"].forEach((screen) => $(screen).classList.toggle("hidden", screen !== id));
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
-function renderStats() {
-  const mappings = {
-    production: "LỰC LƯỢNG SẢN XUẤT", inequality: "BẤT BÌNH ĐẲNG", conflict: "MÂU THUẪN", stability: "ỔN ĐỊNH", state: "QUYỀN LỰC NHÀ NƯỚC"
-  };
-  Object.keys(mappings).forEach((key) => {
-    const value = Math.round(stats[key]);
-    setText(`${key}-value`, pad(value));
-    const bar = $(`${key}-bar`);
-    if (bar) { bar.style.width = `${value}%`; bar.classList.remove("meter-pulse"); void bar.offsetWidth; bar.classList.add("meter-pulse"); }
-    setText(`${key}-chip`, pad(value));
-  });
-  setText("world-status", stats.conflict >= 65 ? "Mâu thuẫn đang lên đỉnh" : stats.stability <= 48 ? "Trật tự xã hội đang rung chuyển" : stats.state >= 30 ? "Nhà nước đang tổ chức trật tự" : "Xã hội đang ổn định");
-  setText("map-phase", eventIndex >= 4 ? "ĐANG BIẾN ĐỔI" : eventIndex >= 2 ? "TRẬT TỰ ĐƯỢC TỔ CHỨC" : "ĐANG HÌNH THÀNH");
-}
-
-function renderEvent() {
-  const event = events[eventIndex];
-  const eventCard = $("event-card");
-  $("game-screen").classList.remove("turn-resolved");
-  eventCard.classList.remove("event-enter");
-  void eventCard.offsetWidth;
-  eventCard.classList.add("event-enter");
-  $("event-counter").textContent = `SỰ KIỆN ${pad(eventIndex + 1)} / 05`;
-  $("event-index").textContent = pad(eventIndex + 1);
-  $("chapter-name").textContent = event.chapter;
-  $("event-category").textContent = event.category;
-  $("cycle-label").textContent = `CYCLE ${pad(eventIndex + 1)}`;
-  $("event-question").textContent = event.question;
-  $("event-context").textContent = event.context;
-  $("choices").innerHTML = event.choices.map((choice, index) => `<button class="choice" type="button" data-choice="${index}"><span class="choice-key">${String.fromCharCode(65 + index)}</span><span class="choice-text"><b>${choice.label}</b><br /><small>${choice.hint}</small></span><span class="choice-arrow">→</span></button>`).join("");
-  $("feedback").classList.add("hidden");
-  $("feedback").classList.remove("feedback-enter");
-  updatePhaseTrack();
-  document.querySelectorAll(".choice").forEach((button) => button.addEventListener("click", () => choose(Number(button.dataset.choice))));
-  renderStats();
-}
-
-function choose(choiceIndex) {
-  const event = events[eventIndex];
-  const choice = event.choices[choiceIndex];
-  selectedHistory.push({ event, choice });
-  Object.entries(choice.effect).forEach(([key, delta]) => { stats[key] = clamp(stats[key] + delta); });
-  $("game-screen").classList.add("turn-resolved");
-  document.querySelectorAll(".choice").forEach((button) => { button.disabled = true; if (Number(button.dataset.choice) === choiceIndex) button.classList.add("selected"); });
-  $("feedback-copy").textContent = choice.feedback;
-  $("delta-list").innerHTML = Object.entries(choice.effect).filter(([, delta]) => delta !== 0).map(([key, delta]) => `<span class="delta ${delta < 0 ? "negative" : ""}">${key === "state" ? "NHÀ NƯỚC" : key === "production" ? "SẢN XUẤT" : key === "inequality" ? "BẤT BÌNH ĐẲNG" : key === "conflict" ? "MÂU THUẪN" : "ỔN ĐỊNH"} <strong>${delta > 0 ? "+" : ""}${delta}</strong></span>`).join("");
-  $("feedback-title").textContent = eventIndex === events.length - 1 ? "HỆ QUẢ / MÔ PHỎNG HOÀN TẤT" : "HỆ QUẢ / XÃ HỘI ĐÃ DỊCH CHUYỂN";
-  $("next-button").innerHTML = eventIndex === events.length - 1 ? "Xem kết quả <span>↗</span>" : "Tiếp tục <span>→</span>";
-  $("feedback").classList.remove("feedback-enter");
-  void $("feedback").offsetWidth;
-  $("feedback").classList.add("feedback-enter");
-  $("feedback").classList.remove("hidden");
-  renderStats();
-}
-
-function showResult() {
-  const score = clamp(Math.round(stats.conflict * .65 + stats.production * .2 + (100 - stats.stability) * .15));
-  const transformed = stats.conflict >= 45 || stats.stability <= 50;
-  $("result-title").innerHTML = transformed ? "MÂU THUẪN<br /><em>ĐÃ LÊN TIẾNG.</em>" : "TRẬT TỰ<br /><em>ĐÃ DỊCH CHUYỂN.</em>";
-  $("result-core-word").innerHTML = transformed ? "BIẾN<br />ĐỔI" : "DỊCH<br />CHUYỂN";
-  $("result-summary").textContent = transformed ? "Bạn vừa đi qua một chuỗi biến đổi: từ nền tảng vật chất, xã hội phân hóa, Nhà nước xuất hiện, rồi mâu thuẫn phát triển đến điểm buộc phải lựa chọn." : "Bạn đã giữ được ổn định tương đối, nhưng những lực kéo bên dưới trật tự vẫn chưa biến mất. Một xã hội có thể im lặng mà chưa thật sự giải quyết được mâu thuẫn.";
-  $("result-score-value").textContent = pad(score);
-  $("journey").innerHTML = selectedHistory.map((item, index) => `<div class="journey-step"><span>0${index + 1}</span><b>${item.event.chapter}</b><p>${item.choice.label}</p></div>`).join("");
-  showScreen("result-screen");
-}
-
-function startGame() { stats = { ...initialStats }; eventIndex = 0; selectedHistory = []; showScreen("game-screen"); renderEvent(); }
-
-$("start-button").addEventListener("click", startGame);
-$("restart-button").addEventListener("click", startGame);
-$("play-again-button").addEventListener("click", startGame);
-$("next-button").addEventListener("click", () => { if (eventIndex === events.length - 1) showResult(); else { eventIndex += 1; renderEvent(); } });
-$("debrief-button").addEventListener("click", () => { $("debrief").classList.toggle("hidden"); $("debrief-button").querySelector("span").textContent = $("debrief").classList.contains("hidden") ? "Giải mã bằng lý luận" : "Ẩn phần giải mã"; if (!$("debrief").classList.contains("hidden")) $("debrief").scrollIntoView({ behavior: "smooth", block: "start" }); });
-document.addEventListener("keydown", (event) => {
-  const key = event.key.toLowerCase();
-  if (!$('intro-screen').classList.contains("hidden") && key === "enter") { startGame(); return; }
-  if ($("game-screen").classList.contains("hidden")) return;
-  const keyIndex = { a: 0, b: 1, c: 2 }[key];
-  if (keyIndex !== undefined) {
-    const choice = document.querySelectorAll(".choice")[keyIndex];
-    if (choice && !choice.disabled) choice.click();
-  }
-  if (key === "enter" && !$("feedback").classList.contains("hidden")) $("next-button").click();
-});
+  document.getElementById("start-button").addEventListener("click", start);
+  document.getElementById("restart-button").addEventListener("click", start);
+  dialogueClose.addEventListener("click", () => { if (state.currentInteractable?.id === "gate" && state.evidence.size === 4) { closeDialogue(); showEnding(); } else closeDialogue(); });
+  document.getElementById("theory-button").addEventListener("click", () => document.getElementById("theory-note").classList.toggle("hidden"));
+  window.addEventListener("resize", resize); window.addEventListener("keydown", handleKeyDown); window.addEventListener("keyup", handleKeyUp); resize();
+  window.__THE_STATE__ = { state, rooms, interactables, resetState, canMove, start, interact, openDialogue, choose, showEnding };
+})();
