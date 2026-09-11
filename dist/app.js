@@ -1,4 +1,4 @@
-/* THE STATE / Exhibition 01 — a small canvas exploration game. */
+/* THE STATE / Exhibition 01 — content-first canvas exploration game. */
 (() => {
   "use strict";
 
@@ -20,69 +20,814 @@
   const dialogueBody = document.getElementById("dialogue-body");
   const dialogueType = document.getElementById("dialogue-type");
   const dialogueNumber = document.getElementById("dialogue-number");
-  const dialogueChoices = document.getElementById("dialogue-choices");
   const dialogueClose = document.getElementById("dialogue-close");
   const miniPlayer = document.querySelector(".mini-player");
+  const theoryNote = document.getElementById("theory-note");
+
+  const contentViewer = document.getElementById("content-viewer");
+  const viewerKicker = document.getElementById("viewer-kicker");
+  const viewerTitle = document.getElementById("viewer-title");
+  const viewerPage = document.getElementById("viewer-page");
+  const viewerPageTotal = document.getElementById("viewer-page-total");
+  const viewerProgressBar = document.getElementById("viewer-progress-bar");
+  const viewerSectionLabel = document.getElementById("viewer-section-label");
+  const viewerSectionTitle = document.getElementById("viewer-section-title");
+  const viewerLead = document.getElementById("viewer-lead");
+  const viewerParagraphs = document.getElementById("viewer-paragraphs");
+  const viewerImagePlaceholder = document.getElementById("viewer-image-placeholder");
+  const viewerImage = document.getElementById("viewer-image");
+  const viewerCaption = document.getElementById("viewer-caption");
+  const viewerImageCount = document.getElementById("viewer-image-count");
+  const viewerPrevImage = document.getElementById("viewer-prev-image");
+  const viewerNextImage = document.getElementById("viewer-next-image");
+  const viewerNote = document.getElementById("viewer-note");
+  const viewerNext = document.getElementById("viewer-next");
+  const viewerClose = document.getElementById("viewer-close");
+
+  const imageLightbox = document.getElementById("image-lightbox");
+  const lightboxImage = document.getElementById("lightbox-image");
+  const lightboxCaption = document.getElementById("lightbox-caption");
+  const lightboxClose = document.getElementById("lightbox-close");
+
   const keys = new Set();
-  const WORLD = { width: 2400, height: 1500 };
+  const WORLD = { width: 2800, height: 1200 };
   const PLAYER = { radius: 17, speed: 245 };
-  const state = { running: false, lastTime: 0, time: 0, camera: { x: 0, y: 0 }, player: { x: 250, y: 1220 }, evidence: new Set(), choices: [], currentInteractable: null, dialogueOpen: false, stats: { power: 0, conflict: 0 } };
+
+  function normaliseImage(image) {
+    if (typeof image === "string") return { src: image, alt: "Ảnh tư liệu", caption: "" };
+    if (!image || typeof image.src !== "string" || !image.src.trim()) return null;
+    return {
+      src: image.src.trim(),
+      alt: typeof image.alt === "string" && image.alt.trim() ? image.alt.trim() : "Ảnh tư liệu",
+      caption: typeof image.caption === "string" ? image.caption : ""
+    };
+  }
+
+  function normaliseSection(section, index) {
+    const paragraphs = Array.isArray(section?.paragraphs)
+      ? section.paragraphs.filter((paragraph) => typeof paragraph === "string" && paragraph.trim())
+      : [];
+    const images = Array.isArray(section?.images) ? section.images.map(normaliseImage).filter(Boolean) : [];
+    return {
+      label: typeof section?.label === "string" && section.label.trim() ? section.label.trim() : `SECTION ${String(index + 1).padStart(2, "0")}`,
+      title: typeof section?.title === "string" && section.title.trim() ? section.title.trim() : "Nội dung chương",
+      lead: typeof section?.lead === "string" ? section.lead.trim() : "",
+      paragraphs: paragraphs.length ? paragraphs : ["Nội dung chi tiết của mục này đang được chuẩn bị."],
+      images
+    };
+  }
+
+  function normaliseChapter(chapter, index) {
+    const sections = Array.isArray(chapter?.sections) ? chapter.sections.map(normaliseSection) : [];
+    return {
+      id: typeof chapter?.id === "string" && chapter.id.trim() ? chapter.id.trim() : `chapter-${index + 1}`,
+      code: typeof chapter?.code === "string" && chapter.code.trim() ? chapter.code.trim() : String(index + 1).padStart(2, "0"),
+      label: typeof chapter?.label === "string" ? chapter.label.trim() : "ARCHIVE",
+      title: typeof chapter?.title === "string" ? chapter.title.trim() : "Chương triển lãm",
+      sections: sections.length ? sections : [normaliseSection({}, 0)]
+    };
+  }
+
+  const rawContent = Array.isArray(window.THE_STATE_CONTENT) ? window.THE_STATE_CONTENT : [];
+  const content = rawContent.map(normaliseChapter);
+  const contentById = new Map(content.map((chapter) => [chapter.id, chapter]));
+
+  const state = {
+    running: false,
+    frameRequested: false,
+    lastTime: 0,
+    time: 0,
+    camera: { x: 0, y: 0 },
+    player: { x: 190, y: 950 },
+    evidence: new Set(),
+    viewedPages: new Set(),
+    imagesViewed: new Set(),
+    currentInteractable: null,
+    dialogueOpen: false,
+    viewerOpen: false,
+    viewerChapter: null,
+    viewerPage: 0,
+    viewerImage: 0
+  };
 
   const rooms = [
-    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", x: 130, y: 850, w: 590, h: 480, color: "#c9363d", label: "THE BASE", artifact: "TƯ LIỆU SẢN XUẤT", thesis: "Điều kiện kinh tế là nền tảng của đời sống xã hội.", quote: "Ai kiểm soát sản xuất?" },
-    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", x: 820, y: 150, w: 650, h: 480, color: "#e2b45d", label: "THE SPLIT", artifact: "GIAI CẤP", thesis: "Sở hữu khác nhau tạo ra lợi ích đối lập.", quote: "Ai sở hữu công cụ?" },
-    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", x: 1640, y: 150, w: 620, h: 480, color: "#d7c2a5", label: "THE STATE", artifact: "THIẾT CHẾ NHÀ NƯỚC", thesis: "Nhà nước tổ chức quyền lực trong xã hội có mâu thuẫn.", quote: "Quyền lực bảo vệ ai?" },
-    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", x: 1580, y: 900, w: 680, h: 450, color: "#9f2635", label: "THE FAULTLINE", artifact: "CÁCH MẠNG XÃ HỘI", thesis: "Mâu thuẫn phát triển có thể mở ra biến đổi căn bản.", quote: "Khi nào cái cũ thành lực cản?" }
-  ];
-  const walls = [
-    { x: 0, y: 0, w: WORLD.width, h: 50 }, { x: 0, y: WORLD.height - 50, w: WORLD.width, h: 50 }, { x: 0, y: 0, w: 50, h: WORLD.height }, { x: WORLD.width - 50, y: 0, w: 50, h: WORLD.height },
-    // Two split walls leave a broad central corridor (y 610–890) between all four rooms.
-    { x: 740, y: 50, w: 55, h: 560 }, { x: 740, y: 890, w: 55, h: 560 }, { x: 1510, y: 50, w: 55, h: 560 }, { x: 1510, y: 890, w: 55, h: 560 },
-    // Small museum plinths add cover without blocking the route between rooms.
-    { x: 250, y: 930, w: 105, h: 28 }, { x: 420, y: 1170, w: 130, h: 28 }, { x: 1010, y: 255, w: 120, h: 28 }, { x: 1240, y: 465, w: 105, h: 28 },
-    { x: 1810, y: 255, w: 120, h: 28 }, { x: 2040, y: 465, w: 110, h: 28 }, { x: 1760, y: 1030, w: 120, h: 28 }, { x: 2020, y: 1220, w: 125, h: 28 }
-  ];
-  const interactables = [
-    { id: "curator", x: 280, y: 1120, radius: 74, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Chào mừng đến Exhibition 01. Đi qua bốn phòng, tìm bốn mảnh bằng chứng và để chính không gian trả lời câu hỏi: nhà nước xuất hiện từ đâu?", choices: [{ label: "Bắt đầu khám phá", effect: {} }] },
-    { id: "base", x: 510, y: 1010, radius: 92, kind: "exhibit", title: "Điều kiện vật chất", type: "ARCHIVE 01", number: "01 / 04", body: "Một bánh răng, một kho lương, một dây chuyền. Khi con người tạo ra nhiều hơn mức cần để tồn tại, câu hỏi mới xuất hiện: ai kiểm soát sản phẩm dư thừa và tư liệu sản xuất?", choices: [{ label: "Mở rộng năng lực sản xuất cho cộng đồng", effect: { power: -2, conflict: -3 }, reply: "Năng lực sản xuất được giải phóng, nhưng cách tổ chức quan hệ xã hội sẽ phải thay đổi theo." }, { label: "Để một nhóm nắm quyền kiểm soát", effect: { power: 4, conflict: 3 }, reply: "Sản phẩm dư thừa trở thành nền tảng cho sự phân hóa lợi ích." }] },
-    { id: "class", x: 1110, y: 365, radius: 92, kind: "exhibit", title: "The Split / Đường phân chia", type: "ARCHIVE 02", number: "02 / 04", body: "Hai phía của căn phòng không còn đối xứng. Một phía sở hữu công cụ; phía kia sở hữu sức lao động. Giai cấp không chỉ là khác biệt thu nhập—nó là quan hệ với tư liệu sản xuất.", choices: [{ label: "Mở quyền tiếp cận rộng hơn", effect: { power: -3, conflict: -4 }, reply: "Ranh giới lợi ích dịu xuống, dù chưa biến mất." }, { label: "Bảo vệ đặc quyền sở hữu hiện có", effect: { power: 5, conflict: 5 }, reply: "Phân hóa được củng cố. Căn phòng trở nên yên lặng hơn, nhưng căng thẳng hơn." }] },
-    { id: "state", x: 1940, y: 365, radius: 92, kind: "exhibit", title: "Nhà nước / The State", type: "ARCHIVE 03", number: "03 / 04", body: "Khi mâu thuẫn xã hội không còn tự điều chỉnh được, một thiết chế quyền lực đứng lên tổ chức luật lệ và trật tự. Nhưng thiết chế ấy luôn cần được hỏi: nó đang bảo vệ quan hệ nào?", choices: [{ label: "Thiết lập luật chung có trách nhiệm giải trình", effect: { power: 2, conflict: -2 }, reply: "Trật tự xuất hiện cùng một câu hỏi mới: ai có quyền định nghĩa luật chung?" }, { label: "Trao quyền tuyệt đối cho trung tâm", effect: { power: 8, conflict: 5 }, reply: "Bộ máy trở nên mạnh hơn. Khoảng cách giữa quyền lực và đời sống xã hội cũng lớn hơn." }] },
-    { id: "revolt", x: 1930, y: 1115, radius: 98, kind: "exhibit", title: "The Faultline / Đường nứt", type: "ARCHIVE 04", number: "04 / 04", body: "Khi lực lượng sản xuất phát triển nhưng quan hệ cũ trở thành lực cản, mâu thuẫn đạt đến điểm chuyển hóa. Cách mạng xã hội không rơi xuống từ một ý tưởng—nó được tích lũy trong đời sống vật chất.", choices: [{ label: "Cải biến quan hệ nền tảng", effect: { power: -5, conflict: -6 }, reply: "Một cấu trúc mới bắt đầu từ việc thay đổi quan hệ đã tạo ra bế tắc." }, { label: "Giữ nguyên căn phòng như cũ", effect: { power: 8, conflict: 9 }, reply: "Cửa vẫn đóng. Mâu thuẫn chỉ bị đẩy sang một lượt chơi khác." }] },
-    { id: "gate", x: 2180, y: 1115, radius: 110, kind: "gate", title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END", body: "Bốn mảnh bằng chứng đã kết nối. Bạn đã nhìn thấy điều kiện vật chất, phân hóa giai cấp, sự hình thành của nhà nước và đường nứt của mâu thuẫn.", choices: [{ label: "Bước qua cánh cửa", effect: {}, reply: "Triển lãm khép lại. Nhưng câu hỏi vẫn theo bạn ra ngoài." }] }
+    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", x: 90, y: 150, w: 560, h: 900, color: "#c9363d", label: "THE BASE", artifact: "TƯ LIỆU SẢN XUẤT" },
+    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", x: 770, y: 150, w: 560, h: 900, color: "#e2b45d", label: "THE SPLIT", artifact: "GIAI CẤP" },
+    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", x: 1450, y: 150, w: 560, h: 900, color: "#d7c2a5", label: "THE STATE", artifact: "THIẾT CHẾ NHÀ NƯỚC" },
+    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", x: 2130, y: 150, w: 560, h: 900, color: "#9f2635", label: "THE FAULTLINE", artifact: "CÁCH MẠNG XÃ HỘI" }
   ];
 
-  function resize() { const dpr = Math.min(window.devicePixelRatio || 1, 2); canvas.width = Math.floor(innerWidth * dpr); canvas.height = Math.floor(innerHeight * dpr); canvas.style.width = `${innerWidth}px`; canvas.style.height = `${innerHeight}px`; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
-  function resetState() { state.running = true; state.lastTime = performance.now(); state.time = 0; state.player = { x: 250, y: 1220 }; state.camera = { x: 0, y: 0 }; state.evidence.clear(); state.choices = []; state.currentInteractable = null; state.dialogueOpen = false; state.stats = { power: 0, conflict: 0 }; updateUi(); }
-  function start() { resetState(); titleScreen.classList.add("hidden"); endingScreen.classList.add("hidden"); quitScreen.classList.add("hidden"); gameUi.classList.remove("hidden"); dialogue.classList.add("hidden"); document.getElementById("theory-note").classList.add("hidden"); requestAnimationFrame(loop); }
+  const walls = [
+    { x: 0, y: 0, w: WORLD.width, h: 50 },
+    { x: 0, y: WORLD.height - 50, w: WORLD.width, h: 50 },
+    { x: 0, y: 0, w: 50, h: WORLD.height },
+    { x: WORLD.width - 50, y: 0, w: 50, h: WORLD.height },
+    { x: 650, y: 50, w: 120, h: 470 },
+    { x: 650, y: 680, w: 120, h: 470 },
+    { x: 1330, y: 50, w: 120, h: 470 },
+    { x: 1330, y: 680, w: 120, h: 470 },
+    { x: 2010, y: 50, w: 120, h: 470 },
+    { x: 2010, y: 680, w: 120, h: 470 }
+  ];
+
+  const interactables = [
+    { id: "curator", x: 180, y: 950, radius: 74, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Đây là một tuyến triển lãm có thứ tự. Đi tới từng hiện vật, nhấn E để đọc hồ sơ và xem ảnh. Khi hoàn tất một chương, cổng tiếp theo sẽ mở." },
+    { id: "base", x: 370, y: 590, radius: 105, kind: "exhibit", chapterId: "base", title: "Hồ sơ điều kiện vật chất", type: "ARCHIVE 01", number: "01 / 04" },
+    { id: "gate-class", x: 710, y: 600, radius: 105, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
+    { id: "class", x: 1050, y: 590, radius: 105, kind: "exhibit", chapterId: "class", title: "Hồ sơ giai cấp và sở hữu", type: "ARCHIVE 02", number: "02 / 04" },
+    { id: "gate-state", x: 1390, y: 600, radius: 105, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
+    { id: "state", x: 1730, y: 590, radius: 105, kind: "exhibit", chapterId: "state", title: "Hồ sơ Nhà nước và quyền lực", type: "ARCHIVE 03", number: "03 / 04" },
+    { id: "gate-revolt", x: 2070, y: 600, radius: 105, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
+    { id: "revolt", x: 2370, y: 590, radius: 105, kind: "exhibit", chapterId: "revolt", title: "Hồ sơ mâu thuẫn và chuyển hóa", type: "ARCHIVE 04", number: "04 / 04" },
+    { id: "gate-end", x: 2550, y: 920, radius: 110, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
+  ];
+
+  const roomById = new Map(rooms.map((room) => [room.id, room]));
+  const exhibitById = new Map(interactables.filter((item) => item.kind === "exhibit").map((item) => [item.id, item]));
+
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.floor(innerWidth * dpr);
+    canvas.height = Math.floor(innerHeight * dpr);
+    canvas.style.width = `${innerWidth}px`;
+    canvas.style.height = `${innerHeight}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function resetState() {
+    keys.clear();
+    state.running = true;
+    state.lastTime = performance.now();
+    state.time = 0;
+    state.player = { x: 190, y: 950 };
+    state.camera = { x: 0, y: 0 };
+    state.evidence.clear();
+    state.viewedPages.clear();
+    state.imagesViewed.clear();
+    state.currentInteractable = null;
+    state.dialogueOpen = false;
+    state.viewerOpen = false;
+    state.viewerChapter = null;
+    state.viewerPage = 0;
+    state.viewerImage = 0;
+    updateCamera();
+    updateUi();
+  }
+
+  function start() {
+    resetState();
+    titleScreen.classList.add("hidden");
+    endingScreen.classList.add("hidden");
+    quitScreen.classList.add("hidden");
+    gameUi.classList.remove("hidden");
+    dialogue.classList.add("hidden");
+    contentViewer.classList.add("hidden");
+    imageLightbox.classList.add("hidden");
+    theoryNote.classList.add("hidden");
+    scheduleLoop();
+  }
+
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
-  function rectCircleCollision(circle, rect) { const x = clamp(circle.x, rect.x, rect.x + rect.w); const y = clamp(circle.y, rect.y, rect.y + rect.h); return Math.hypot(circle.x - x, circle.y - y) < circle.radius; }
-  function canMove(x, y) { const circle = { x, y, radius: PLAYER.radius }; return x > 65 && y > 65 && x < WORLD.width - 65 && y < WORLD.height - 65 && !walls.some((wall) => rectCircleCollision(circle, wall)); }
-  function move(dx, dy, dt) { const length = Math.hypot(dx, dy) || 1; const amount = PLAYER.speed * dt; const nextX = state.player.x + (dx / length) * amount; const nextY = state.player.y + (dy / length) * amount; if (canMove(nextX, state.player.y)) state.player.x = nextX; if (canMove(state.player.x, nextY)) state.player.y = nextY; }
-  function nearestInteractable() { let nearest = null; let distance = Infinity; for (const item of interactables) { const d = Math.hypot(state.player.x - item.x, state.player.y - item.y); if (d < item.radius && d < distance) { nearest = item; distance = d; } } return nearest; }
-  function currentRoom() { return rooms.find((room) => state.player.x > room.x && state.player.x < room.x + room.w && state.player.y > room.y && state.player.y < room.y + room.h) ?? null; }
-  function updateUi() { const room = currentRoom(); zoneName.textContent = room?.name ?? "HÀNH LANG CHUYỂN TIẾP"; zoneIndex.textContent = room?.index ?? "—"; evidenceCount.textContent = state.evidence.size; objectiveText.textContent = state.evidence.size === 4 ? "Tìm cánh cửa kết thúc" : "Khám phá các khu triển lãm"; const item = nearestInteractable(); state.currentInteractable = item; prompt.classList.toggle("hidden", !item || state.dialogueOpen); prompt.classList.toggle("locked", Boolean(item?.id === "gate" && state.evidence.size < 4)); if (item) promptText.textContent = item.kind === "curator" ? "Nói chuyện với người lưu trữ" : item.kind === "gate" ? state.evidence.size === 4 ? "E — Bước vào cổng kết thúc" : `Cổng khóa — còn ${4 - state.evidence.size} evidence` : state.evidence.has(item.id) ? "Xem lại hiện vật" : `Khám phá ${item.title}`; statusText.textContent = state.evidence.size === 4 ? "Bốn mảnh bằng chứng đã kết nối. Tìm cánh cửa cuối." : "Tìm điểm sáng trong các phòng."; const miniX = clamp(8 + (state.player.x / WORLD.width) * 130, 8, 143); const miniY = clamp(9 + (state.player.y / WORLD.height) * 76, 9, 82); miniPlayer.style.left = `${miniX}px`; miniPlayer.style.top = `${miniY}px`; }
-  function openDialogue(item) { state.dialogueOpen = true; dialogue.classList.remove("hidden"); dialogueTitle.textContent = item.id === "gate" && state.evidence.size < 4 ? "Cổng đang khóa" : item.title; dialogueBody.textContent = item.id === "gate" && state.evidence.size < 4 ? `Cần thu thập đủ 4 mảnh bằng chứng trước khi rời triển lãm. Hiện có ${state.evidence.size}/4.` : item.body; dialogueType.textContent = item.id === "gate" && state.evidence.size < 4 ? "EXIT / LOCKED" : item.type; dialogueNumber.textContent = item.number; dialogueChoices.innerHTML = ""; dialogueClose.classList.add("hidden"); item.choices.forEach((choice, index) => { const button = document.createElement("button"); button.className = "choice-button"; button.type = "button"; button.innerHTML = `<b>${String.fromCharCode(65 + index)}</b><span>${item.id === "gate" && state.evidence.size < 4 ? "Quay lại triển lãm" : choice.label}</span>`; button.addEventListener("click", () => choose(item, choice)); dialogueChoices.append(button); }); }
-  function choose(item, choice) { if (item.kind === "exhibit") { state.evidence.add(item.id); state.stats.power += choice.effect.power || 0; state.stats.conflict += choice.effect.conflict || 0; state.choices.push({ exhibit: item.title, choice: choice.label }); } const lockedGate = item.id === "gate" && state.evidence.size < 4; dialogueTitle.textContent = item.kind === "curator" ? "Cánh cửa đã mở" : lockedGate ? "Cổng vẫn đang khóa" : item.kind === "gate" ? "Bản ghi cuối cùng" : "Mảnh bằng chứng đã ghi nhận"; dialogueBody.textContent = lockedGate ? `Chưa thể rời đi. Còn ${4 - state.evidence.size} mảnh evidence cần tìm.` : choice.reply || "Bốn phòng đang chờ bạn. Hãy đi sâu hơn vào triển lãm."; dialogueChoices.innerHTML = ""; dialogueClose.classList.remove("hidden"); dialogueClose.textContent = item.kind === "gate" && !lockedGate ? "ĐI VÀO CỔNG KẾT THÚC" : "TIẾP TỤC KHÁM PHÁ"; updateUi(); }
-  function closeDialogue() { state.dialogueOpen = false; dialogue.classList.add("hidden"); updateUi(); }
-  function interact() { if (state.dialogueOpen) return; const item = nearestInteractable(); if (!item) return; if (item.id === "gate" && state.evidence.size === 4) { showEnding(); return; } openDialogue(item); }
-  function drawWorld() { const w = innerWidth; const h = innerHeight; ctx.clearRect(0, 0, w, h); ctx.save(); ctx.translate(-state.camera.x, -state.camera.y); ctx.fillStyle = "#170c0e"; ctx.fillRect(0, 0, WORLD.width, WORLD.height); drawFloor(); drawCentralBanner(); rooms.forEach(drawRoom); drawWalls(); interactables.forEach(drawInteractable); drawPlayer(); drawParticles(); ctx.restore(); drawVignette(w, h); }
-  function drawFloor() { ctx.fillStyle = "#100b0c"; ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100); ctx.strokeStyle = "rgba(226,180,93,.045)"; ctx.lineWidth = 1; for (let x = 75; x < WORLD.width - 50; x += 50) { ctx.beginPath(); ctx.moveTo(x, 50); ctx.lineTo(x, WORLD.height - 50); ctx.stroke(); } for (let y = 75; y < WORLD.height - 50; y += 50) { ctx.beginPath(); ctx.moveTo(50, y); ctx.lineTo(WORLD.width - 50, y); ctx.stroke(); } ctx.fillStyle = "rgba(201,54,61,.08)"; ctx.fillRect(65, 765, 2250, 35); ctx.fillRect(755, 65, 35, 1430); ctx.fillRect(1525, 65, 35, 1430); }
-  function drawCentralBanner() { ctx.fillStyle = "rgba(142,31,43,.48)"; ctx.fillRect(870, 732, 660, 40); ctx.strokeStyle = "rgba(226,180,93,.42)"; ctx.strokeRect(870, 732, 660, 40); drawHammerSickle(900, 752, .55, "#e2b45d"); ctx.font = "11px 'DM Mono', monospace"; ctx.fillStyle = "#f0d181"; ctx.fillText("ĐIỀU KIỆN VẬT CHẤT  →  NHÀ NƯỚC  →  CÁCH MẠNG XÃ HỘI", 935, 757); }
-  function drawHammerSickle(x, y, scale, color) { ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.save(); ctx.rotate(-.72); ctx.fillRect(-17, -21, 31, 9); ctx.fillRect(-3, -12, 7, 35); ctx.restore(); ctx.beginPath(); ctx.arc(7, 8, 23, -1.3, 1.13); ctx.stroke(); ctx.beginPath(); ctx.moveTo(7, -15); ctx.lineTo(-15, 19); ctx.stroke(); ctx.restore(); }
-  function drawRoom(room) { ctx.strokeStyle = `${room.color}aa`; ctx.lineWidth = 2; ctx.strokeRect(room.x, room.y, room.w, room.h); ctx.fillStyle = `${room.color}0d`; ctx.fillRect(room.x, room.y, room.w, room.h); ctx.font = "11px 'DM Mono', monospace"; ctx.fillStyle = `${room.color}dd`; ctx.fillText(`${room.index} / ${room.label}`, room.x + 20, room.y + 25); ctx.strokeStyle = `${room.color}55`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(room.x + 20, room.y + 39); ctx.lineTo(room.x + room.w - 20, room.y + 39); ctx.stroke(); const cardX = room.x + 22; const cardY = room.y + 60; const cardW = Math.min(room.w - 44, 430); ctx.fillStyle = "rgba(8,6,7,.76)"; ctx.fillRect(cardX, cardY, cardW, 94); ctx.strokeStyle = `${room.color}66`; ctx.strokeRect(cardX, cardY, cardW, 94); ctx.fillStyle = room.color; ctx.font = "bold 13px 'Space Grotesk', sans-serif"; ctx.fillText(room.artifact, cardX + 15, cardY + 23); ctx.fillStyle = "#c4aa91"; ctx.font = "11px 'Space Grotesk', sans-serif"; drawWrappedText(room.thesis, cardX + 15, cardY + 48, cardW - 30, 17); ctx.fillStyle = "#e2b45d"; ctx.font = "italic 11px Georgia, serif"; ctx.fillText(`“${room.quote}”`, cardX + 15, cardY + 82); drawHammerSickle(room.x + room.w - 66, room.y + 87, .75, room.color); drawRoomArtifact(room); }
-  function drawWrappedText(text, x, y, maxWidth, lineHeight) { const words = text.split(" "); let line = ""; let lineY = y; for (const word of words) { const next = line ? `${line} ${word}` : word; if (ctx.measureText(next).width > maxWidth && line) { ctx.fillText(line, x, lineY); line = word; lineY += lineHeight; } else line = next; } if (line) ctx.fillText(line, x, lineY); }
-  function drawRoomArtifact(room) { const x = room.x + room.w - 100; const y = room.y + room.h - 92; ctx.save(); ctx.translate(x, y); ctx.strokeStyle = `${room.color}88`; ctx.fillStyle = `${room.color}18`; ctx.lineWidth = 2; if (room.id === "base") { ctx.beginPath(); ctx.arc(0, 0, 31, 0, Math.PI * 2); ctx.stroke(); for (let i = 0; i < 8; i += 1) { const a = i * Math.PI / 4; ctx.beginPath(); ctx.moveTo(Math.cos(a) * 22, Math.sin(a) * 22); ctx.lineTo(Math.cos(a) * 39, Math.sin(a) * 39); ctx.stroke(); } } else if (room.id === "class") { ctx.beginPath(); ctx.moveTo(-40, 30); ctx.lineTo(0, -30); ctx.lineTo(40, 30); ctx.stroke(); ctx.beginPath(); ctx.arc(-24, 5, 12, 0, Math.PI * 2); ctx.arc(24, 5, 12, 0, Math.PI * 2); ctx.stroke(); } else if (room.id === "state") { ctx.strokeRect(-42, -25, 84, 58); ctx.beginPath(); ctx.moveTo(-30, 30); ctx.lineTo(-30, -10); ctx.moveTo(0, 30); ctx.lineTo(0, -10); ctx.moveTo(30, 30); ctx.lineTo(30, -10); ctx.stroke(); } else { ctx.beginPath(); ctx.moveTo(-42, -28); ctx.lineTo(-12, -2); ctx.lineTo(-28, 25); ctx.lineTo(4, 8); ctx.lineTo(24, 35); ctx.lineTo(43, -28); ctx.stroke(); } ctx.restore(); }
-  function drawWalls() { ctx.fillStyle = "#281314"; ctx.strokeStyle = "rgba(226,180,93,.2)"; ctx.lineWidth = 1; walls.forEach((wall) => { ctx.fillRect(wall.x, wall.y, wall.w, wall.h); ctx.strokeRect(wall.x, wall.y, wall.w, wall.h); }); }
-  function drawInteractable(item) { const collected = state.evidence.has(item.id); const pulse = 1 + Math.sin(state.time * 2.3 + item.x) * .1; ctx.save(); ctx.translate(item.x, item.y); const color = item.kind === "curator" ? "#e2b45d" : item.kind === "gate" ? "#c9363d" : rooms.find((room) => room.id === item.id)?.color || "#e2b45d"; ctx.globalAlpha = item.kind === "curator" || item.kind === "gate" ? 1 : collected ? .55 : 1; ctx.shadowColor = color; ctx.shadowBlur = collected ? 12 : 25; if (item.kind === "gate") { ctx.fillStyle = "rgba(201,54,61,.16)"; ctx.fillRect(-38, -54, 76, 108); ctx.shadowBlur = 0; ctx.fillStyle = "#100708"; ctx.fillRect(-29, -45, 58, 96); ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.strokeRect(-38, -54, 76, 108); ctx.strokeStyle = "rgba(226,180,93,.75)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-17, 43); ctx.lineTo(-17, -23); ctx.quadraticCurveTo(0, -42, 17, -23); ctx.lineTo(17, 43); ctx.stroke(); drawHammerSickle(0, -67, .58, "#e2b45d"); ctx.font = "10px 'DM Mono', monospace"; ctx.textAlign = "center"; ctx.fillStyle = color; ctx.fillText(state.evidence.size === 4 ? "ENTER GATE" : "LOCKED", 0, 77); ctx.restore(); return; } ctx.fillStyle = `${color}20`; ctx.beginPath(); ctx.arc(0, 0, 34 * pulse, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = color; ctx.fillRect(-7, -7, 14, 14); ctx.fillStyle = "#160b0d"; ctx.fillRect(-3, -3, 6, 6); if (collected) { ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-9, 1); ctx.lineTo(-2, 8); ctx.lineTo(11, -9); ctx.stroke(); } ctx.font = "10px 'DM Mono', monospace"; ctx.textAlign = "center"; ctx.fillStyle = color; ctx.fillText(item.kind === "curator" ? "CURATOR" : item.id.toUpperCase(), 0, 52); ctx.restore(); }
-  function drawPlayer() { const p = state.player; ctx.save(); ctx.translate(p.x, p.y); ctx.shadowColor = "#e2b45d"; ctx.shadowBlur = 20; ctx.fillStyle = "#e2b45d"; ctx.beginPath(); ctx.arc(0, 0, 11, 0, Math.PI * 2); ctx.fill(); ctx.shadowBlur = 0; ctx.strokeStyle = "#f7df9b"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 0, 17, 0, Math.PI * 2); ctx.stroke(); ctx.fillStyle = "#160b0d"; ctx.beginPath(); ctx.arc(4, -3, 3, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-  function drawParticles() { for (let i = 0; i < 38; i += 1) { const x = (i * 277 + 120) % WORLD.width; const y = (i * 149 + 80) % WORLD.height; const alpha = .08 + (Math.sin(state.time * .7 + i) + 1) * .04; ctx.fillStyle = `rgba(226,180,93,${alpha})`; ctx.fillRect(x, y, 2, 2); } }
-  function drawVignette(w, h) { const gradient = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) * .25, w / 2, h / 2, Math.max(w, h) * .72); gradient.addColorStop(0, "transparent"); gradient.addColorStop(1, "rgba(8,3,4,.72)"); ctx.fillStyle = gradient; ctx.fillRect(0, 0, w, h); }
-  function updateCamera() { state.camera.x = clamp(state.player.x - innerWidth / 2, 0, WORLD.width - innerWidth); state.camera.y = clamp(state.player.y - innerHeight / 2, 0, WORLD.height - innerHeight); }
-  function loop(timestamp) { if (!state.running) return; const dt = Math.min((timestamp - state.lastTime) / 1000, .05); state.lastTime = timestamp; state.time += dt; if (!state.dialogueOpen) { let dx = 0; let dy = 0; if (keys.has("w") || keys.has("arrowup")) dy -= 1; if (keys.has("s") || keys.has("arrowdown")) dy += 1; if (keys.has("a") || keys.has("arrowleft")) dx -= 1; if (keys.has("d") || keys.has("arrowright")) dx += 1; if (dx || dy) move(dx, dy, dt); updateCamera(); updateUi(); } drawWorld(); requestAnimationFrame(loop); }
-  function showEnding() { state.running = false; endingScreen.classList.remove("hidden"); document.getElementById("ending-evidence").textContent = `${state.evidence.size}/4`; document.getElementById("ending-power").textContent = state.stats.power > 5 ? "CENTRALIZED" : state.stats.power < -3 ? "DISTRIBUTED" : "CONTESTED"; document.getElementById("ending-conflict").textContent = state.stats.conflict > 7 ? "HIGH" : state.stats.conflict < -3 ? "LOW" : "ACTIVE"; document.getElementById("ending-copy").textContent = state.stats.conflict > 7 ? "Bạn đã đi hết triển lãm và thấy một điều khó chịu: trật tự có thể đứng vững trên bề mặt trong khi mâu thuẫn tiếp tục tích tụ bên dưới." : "Bạn đã đi hết triển lãm. Không gian không đưa ra đáp án thay bạn—nó cho thấy các quan hệ vật chất, quyền lực và mâu thuẫn nối vào nhau như thế nào."; }
-  function quitGame() { state.running = false; keys.clear(); state.dialogueOpen = false; dialogue.classList.add("hidden"); gameUi.classList.add("hidden"); endingScreen.classList.add("hidden"); quitScreen.classList.remove("hidden"); }
-  function returnToTitle() { state.running = false; keys.clear(); quitScreen.classList.add("hidden"); endingScreen.classList.add("hidden"); gameUi.classList.add("hidden"); titleScreen.classList.remove("hidden"); }
-  function handleKeyDown(event) { const key = event.key.toLowerCase(); if (["w","a","s","d","arrowup","arrowdown","arrowleft","arrowright","e","escape","enter"].includes(key)) event.preventDefault(); if (key === "escape" && state.dialogueOpen) closeDialogue(); else if (key === "e" && state.dialogueOpen && !dialogueClose.classList.contains("hidden")) dialogueClose.click(); else if (key === "e" && !state.dialogueOpen) interact(); else if (key === "enter" && !state.dialogueOpen && state.evidence.size === 4 && Math.hypot(state.player.x - 2180, state.player.y - 1115) < 130) showEnding(); else keys.add(key); }
+
+  function rectCircleCollision(circle, rect) {
+    const x = clamp(circle.x, rect.x, rect.x + rect.w);
+    const y = clamp(circle.y, rect.y, rect.y + rect.h);
+    return Math.hypot(circle.x - x, circle.y - y) < circle.radius;
+  }
+
+  function gateUnlocked(item) {
+    return item.kind !== "gate" || !item.requiredEvidence || state.evidence.has(item.requiredEvidence);
+  }
+
+  function canMove(x, y) {
+    const circle = { x, y, radius: PLAYER.radius };
+    const lockedGateCollision = interactables.some((item) => item.kind === "gate" && !gateUnlocked(item) && rectCircleCollision(circle, { x: item.x - 60, y: item.y - 80, w: 120, h: 160 }));
+    return x > 65 && y > 65 && x < WORLD.width - 65 && y < WORLD.height - 65 && !walls.some((wall) => rectCircleCollision(circle, wall)) && !lockedGateCollision;
+  }
+
+  function move(dx, dy, dt) {
+    const length = Math.hypot(dx, dy) || 1;
+    const amount = PLAYER.speed * dt;
+    const nextX = state.player.x + (dx / length) * amount;
+    const nextY = state.player.y + (dy / length) * amount;
+    if (canMove(nextX, state.player.y)) state.player.x = nextX;
+    if (canMove(state.player.x, nextY)) state.player.y = nextY;
+  }
+
+  function nearestInteractable() {
+    let nearest = null;
+    let distance = Infinity;
+    for (const item of interactables) {
+      const currentDistance = Math.hypot(state.player.x - item.x, state.player.y - item.y);
+      if (currentDistance < item.radius && currentDistance < distance) {
+        nearest = item;
+        distance = currentDistance;
+      }
+    }
+    return nearest;
+  }
+
+  function currentRoom() {
+    return rooms.find((room) => state.player.x > room.x && state.player.x < room.x + room.w && state.player.y > room.y && state.player.y < room.y + room.h) ?? null;
+  }
+
+  function nextExhibit() {
+    return rooms.map((room) => exhibitById.get(room.id)).find((item) => item && !state.evidence.has(item.id)) ?? null;
+  }
+
+  function chapterAvailable(chapterId) {
+    const index = rooms.findIndex((room) => room.id === chapterId);
+    return index <= 0 || state.evidence.has(rooms[index - 1].id);
+  }
+
+  function updateUi() {
+    const room = currentRoom();
+    const next = nextExhibit();
+    const item = nearestInteractable();
+    const chapterCount = rooms.length;
+    const completedCount = state.evidence.size;
+
+    zoneName.textContent = room?.name ?? "HÀNH LANG CHUYỂN TIẾP";
+    zoneIndex.textContent = room?.index ?? "—";
+    evidenceCount.textContent = completedCount;
+    objectiveText.textContent = completedCount === chapterCount
+      ? "Tới cánh cửa cuối để khép lại hồ sơ"
+      : next
+        ? `Tới hiện vật chương ${next.number.slice(0, 2)} và đọc hồ sơ`
+        : "Đi theo tuyến triển lãm";
+
+    state.currentInteractable = item;
+    prompt.classList.toggle("hidden", !item || state.dialogueOpen || state.viewerOpen);
+    prompt.classList.toggle("locked", Boolean(item?.kind === "gate" && !gateUnlocked(item)));
+    if (item) {
+      if (item.kind === "curator") promptText.textContent = "E — XEM HƯỚNG DẪN TUYẾN";
+      else if (item.kind === "gate") promptText.textContent = gateUnlocked(item)
+        ? item.final ? "E — KẾT THÚC TRIỂN LÃM" : `E — QUA CỔNG SANG ${item.target}`
+        : `CỔNG KHÓA — HOÀN TẤT ${item.requiredEvidence.toUpperCase()}`;
+      else promptText.textContent = state.evidence.has(item.id) ? "E — XEM LẠI HỒ SƠ" : `E — MỞ HỒ SƠ ${item.number.slice(0, 2)}`;
+    }
+
+    statusText.textContent = completedCount === chapterCount
+      ? "Bốn chương đã được ghi nhận. Cánh cửa cuối đang chờ."
+      : next
+        ? `Đọc đủ hồ sơ ${next.number.slice(0, 2)} để mở cổng kế tiếp.`
+        : "Đi theo tuyến triển lãm.";
+
+    const miniX = clamp(8 + (state.player.x / WORLD.width) * 130, 8, 143);
+    const miniY = clamp(9 + (state.player.y / WORLD.height) * 76, 9, 82);
+    miniPlayer.style.left = `${miniX}px`;
+    miniPlayer.style.top = `${miniY}px`;
+  }
+
+  function openDialogue(item) {
+    const lockedGate = item.kind === "gate" && !gateUnlocked(item);
+    state.dialogueOpen = true;
+    dialogue.classList.remove("hidden");
+    dialogueTitle.textContent = lockedGate ? "Cổng đang khóa" : item.title;
+    dialogueBody.textContent = lockedGate
+      ? `Bạn phải hoàn tất chương ${item.requiredEvidence.toUpperCase()} trước khi sang ${item.target}.`
+      : item.body;
+    dialogueType.textContent = lockedGate ? "GATE / LOCKED" : item.type;
+    dialogueNumber.textContent = item.number;
+    dialogueClose.classList.remove("hidden");
+    dialogueClose.textContent = "ĐÓNG HỒ SƠ";
+    updateUi();
+  }
+
+  function closeDialogue() {
+    state.dialogueOpen = false;
+    dialogue.classList.add("hidden");
+    updateUi();
+  }
+
+  function activeChapter() { return state.viewerChapter ? contentById.get(state.viewerChapter) : null; }
+
+  function activeSection() {
+    const chapter = activeChapter();
+    return chapter?.sections[state.viewerPage] ?? null;
+  }
+
+  function imageKey() { return `${state.viewerChapter}:${state.viewerPage}:${state.viewerImage}`; }
+  function pageKey() { return `${state.viewerChapter}:${state.viewerPage}`; }
+
+  function setViewerButtonLabel(label) {
+    const buttonLabel = viewerNext.querySelector("span");
+    if (buttonLabel) buttonLabel.textContent = label;
+    else viewerNext.textContent = label;
+  }
+
+  function renderViewerImage(section) {
+    const images = section?.images ?? [];
+    const image = images[state.viewerImage] ?? null;
+    viewerImageCount.textContent = images.length ? `${state.viewerImage + 1} / ${images.length}` : "0 / 0";
+    viewerPrevImage.disabled = images.length < 2;
+    viewerNextImage.disabled = images.length < 2;
+    viewerCaption.textContent = "";
+    viewerImage.classList.add("hidden");
+    viewerImagePlaceholder.classList.remove("hidden");
+    viewerImage.onerror = null;
+    viewerImage.onload = null;
+
+    if (!image) {
+      viewerImagePlaceholder.innerHTML = "<span>IMAGE SLOT</span><strong>Ảnh tư liệu sẽ được đặt tại đây</strong><small>Khung này đã sẵn sàng nhận ảnh của chương.</small>";
+      return;
+    }
+
+    viewerImagePlaceholder.innerHTML = "<span>LOADING IMAGE</span><strong>Đang mở ảnh tư liệu…</strong><small>Nếu ảnh chưa có trong thư mục assets, khung sẽ tự chuyển về trạng thái chờ.</small>";
+    viewerImage.alt = image.alt;
+    viewerImage.onerror = () => {
+      viewerImage.classList.add("hidden");
+      viewerImagePlaceholder.classList.remove("hidden");
+      viewerImagePlaceholder.innerHTML = "<span>IMAGE SLOT</span><strong>Chưa tải được ảnh này</strong><small>Kiểm tra lại đường dẫn trong content.js khi nhóm thêm ảnh.</small>";
+      viewerCaption.textContent = image.caption;
+    };
+    viewerImage.onload = () => {
+      viewerImagePlaceholder.classList.add("hidden");
+      viewerImage.classList.remove("hidden");
+      state.imagesViewed.add(imageKey());
+    };
+    viewerImage.src = image.src;
+    viewerImage.classList.remove("hidden");
+    viewerImagePlaceholder.classList.add("hidden");
+    viewerCaption.textContent = image.caption;
+  }
+
+  function renderViewer() {
+    const chapter = activeChapter();
+    if (!chapter) return;
+    const sections = chapter.sections;
+    state.viewerPage = clamp(state.viewerPage, 0, sections.length - 1);
+    const section = activeSection();
+    if (!section) return;
+
+    state.viewedPages.add(pageKey());
+    viewerKicker.textContent = `ARCHIVE ${chapter.code} / ${chapter.label}`;
+    viewerTitle.textContent = chapter.title;
+    viewerPage.textContent = String(state.viewerPage + 1).padStart(2, "0");
+    viewerPageTotal.textContent = String(sections.length).padStart(2, "0");
+    viewerProgressBar.style.width = `${((state.viewerPage + 1) / sections.length) * 100}%`;
+    viewerSectionLabel.textContent = section.label;
+    viewerSectionTitle.textContent = section.title;
+    viewerLead.textContent = section.lead;
+    viewerParagraphs.innerHTML = "";
+    section.paragraphs.forEach((paragraph) => {
+      const node = document.createElement("p");
+      node.textContent = paragraph;
+      viewerParagraphs.append(node);
+    });
+    state.viewerImage = clamp(state.viewerImage, 0, Math.max(0, section.images.length - 1));
+    renderViewerImage(section);
+
+    const lastPage = state.viewerPage === sections.length - 1;
+    if (lastPage) {
+      setViewerButtonLabel(state.evidence.has(chapter.id) ? "ĐÓNG HỒ SƠ" : `HOÀN TẤT CHƯƠNG ${chapter.code}`);
+      viewerNote.textContent = state.evidence.has(chapter.id)
+        ? "Hồ sơ đã được ghi nhận. Bạn có thể đóng hoặc xem lại các mục."
+        : "Bạn đã tới trang cuối. Ghi nhận chương để mở cổng tiếp theo.";
+    } else {
+      setViewerButtonLabel("MỤC TIẾP THEO");
+      viewerNote.textContent = section.images.length
+        ? "Đọc mục này và nhấn vào ảnh để xem lớn; dùng mũi tên để đổi ảnh."
+        : "Đọc kỹ mục này rồi chuyển sang mục tiếp theo.";
+    }
+    updateUi();
+  }
+
+  function openContentViewer(chapterId) {
+    const chapter = contentById.get(chapterId);
+    if (!chapter) {
+      openDialogue({ id: chapterId, kind: "curator", title: "Hồ sơ đang chờ nội dung", type: "ARCHIVE / EMPTY", number: "—", body: "Chương này chưa có dữ liệu trong content.js." });
+      return false;
+    }
+    if (!chapterAvailable(chapterId)) return false;
+    state.dialogueOpen = false;
+    dialogue.classList.add("hidden");
+    state.viewerOpen = true;
+    state.viewerChapter = chapterId;
+    state.viewerPage = 0;
+    state.viewerImage = 0;
+    contentViewer.classList.remove("hidden");
+    renderViewer();
+    return true;
+  }
+
+  function closeContentViewer() {
+    state.viewerOpen = false;
+    state.viewerChapter = null;
+    state.viewerPage = 0;
+    state.viewerImage = 0;
+    contentViewer.classList.add("hidden");
+    closeLightbox();
+    updateUi();
+  }
+
+  function completeChapter(chapterId) {
+    if (!contentById.has(chapterId)) return false;
+    state.evidence.add(chapterId);
+    updateUi();
+    return true;
+  }
+
+  function nextViewerPage() {
+    const chapter = activeChapter();
+    if (!chapter) return;
+    if (state.viewerPage < chapter.sections.length - 1) {
+      state.viewerPage += 1;
+      state.viewerImage = 0;
+      renderViewer();
+      return;
+    }
+    if (!state.evidence.has(chapter.id)) completeChapter(chapter.id);
+    closeContentViewer();
+  }
+
+  function cycleImage(delta) {
+    const section = activeSection();
+    const images = section?.images ?? [];
+    if (images.length < 2) return;
+    state.viewerImage = (state.viewerImage + delta + images.length) % images.length;
+    renderViewerImage(section);
+  }
+
+  function openLightbox() {
+    const section = activeSection();
+    const image = section?.images?.[state.viewerImage];
+    if (!image || viewerImage.classList.contains("hidden")) return;
+    lightboxImage.alt = image.alt;
+    lightboxImage.src = image.src;
+    lightboxCaption.textContent = image.caption;
+    imageLightbox.classList.remove("hidden");
+  }
+
+  function closeLightbox() {
+    imageLightbox.classList.add("hidden");
+    lightboxImage.src = "";
+  }
+
+  function interact() {
+    if (state.dialogueOpen || state.viewerOpen) return;
+    const item = nearestInteractable();
+    if (!item) return;
+    if (item.kind === "gate") {
+      if (!gateUnlocked(item)) {
+        openDialogue(item);
+        return;
+      }
+      if (item.final) {
+        showEnding();
+        return;
+      }
+      state.player.x = clamp(state.player.x + 130, 70, WORLD.width - 70);
+      updateCamera();
+      updateUi();
+      return;
+    }
+    if (item.kind === "curator") {
+      openDialogue(item);
+      return;
+    }
+    openContentViewer(item.chapterId);
+  }
+
+  function drawWorld() {
+    const width = innerWidth;
+    const height = innerHeight;
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    ctx.translate(-state.camera.x, -state.camera.y);
+    ctx.fillStyle = "#2b1d20";
+    ctx.fillRect(0, 0, WORLD.width, WORLD.height);
+    drawFloor();
+    rooms.forEach(drawRoom);
+    drawWalls();
+    interactables.forEach(drawInteractable);
+    drawPlayer();
+    drawParticles();
+    ctx.restore();
+    drawVignette(width, height);
+  }
+
+  function drawFloor() {
+    ctx.fillStyle = "#281c1f";
+    ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100);
+    const glow = ctx.createRadialGradient(1400, 600, 80, 1400, 600, 1100);
+    glow.addColorStop(0, "rgba(226,180,93,.15)");
+    glow.addColorStop(1, "rgba(201,54,61,0)");
+    ctx.fillStyle = glow;
+    ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100);
+    ctx.strokeStyle = "rgba(226,180,93,.09)";
+    ctx.lineWidth = 1;
+    for (let x = 75; x < WORLD.width - 50; x += 50) {
+      ctx.beginPath();
+      ctx.moveTo(x, 50);
+      ctx.lineTo(x, WORLD.height - 50);
+      ctx.stroke();
+    }
+    for (let y = 75; y < WORLD.height - 50; y += 50) {
+      ctx.beginPath();
+      ctx.moveTo(50, y);
+      ctx.lineTo(WORLD.width - 50, y);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(201,54,61,.16)";
+    ctx.fillRect(65, 570, 2670, 60);
+  }
+
+  function drawRoom(room) {
+    const collected = state.evidence.has(room.id);
+    ctx.strokeStyle = `${room.color}${collected ? "dd" : "88"}`;
+    ctx.lineWidth = collected ? 3 : 2;
+    ctx.strokeRect(room.x, room.y, room.w, room.h);
+    ctx.fillStyle = collected ? `${room.color}16` : `${room.color}09`;
+    ctx.fillRect(room.x, room.y, room.w, room.h);
+    ctx.font = "11px 'DM Mono', monospace";
+    ctx.fillStyle = `${room.color}ee`;
+    ctx.fillText(`${room.index} / ${room.label}`, room.x + 22, room.y + 30);
+    ctx.strokeStyle = `${room.color}55`;
+    ctx.beginPath();
+    ctx.moveTo(room.x + 22, room.y + 46);
+    ctx.lineTo(room.x + room.w - 22, room.y + 46);
+    ctx.stroke();
+  }
+
+  function drawChapterObject(item) {
+    const room = roomById.get(item.id);
+    const color = room?.color || "#e2b45d";
+    const pulse = 1 + Math.sin(state.time * 2.3 + item.x) * 0.06;
+    const collected = state.evidence.has(item.id);
+    ctx.save();
+    ctx.translate(item.x, item.y);
+    ctx.globalAlpha = collected ? 0.48 : 1;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 22;
+    ctx.strokeStyle = color;
+    ctx.fillStyle = `${color}28`;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, 0, 92 * pulse, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    if (item.id === "base") {
+      ctx.fillRect(-78, 27, 156, 22);
+      for (let index = -60; index <= 60; index += 30) {
+        ctx.fillStyle = index % 60 ? "#e2b45d" : "#c9363d";
+        ctx.fillRect(index, 31, 17, 14);
+      }
+      ctx.fillStyle = color;
+      ctx.fillRect(-66, -47, 42, 74);
+      ctx.fillRect(24, -47, 42, 74);
+      ctx.beginPath();
+      ctx.arc(0, -7, 34, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-18, -7);
+      ctx.lineTo(18, -7);
+      ctx.moveTo(0, -25);
+      ctx.lineTo(0, 11);
+      ctx.stroke();
+    } else if (item.id === "class") {
+      ctx.beginPath();
+      ctx.moveTo(0, -62);
+      ctx.lineTo(-62, 20);
+      ctx.lineTo(62, 20);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-78, 33);
+      ctx.lineTo(78, 33);
+      ctx.stroke();
+      ctx.fillStyle = "#f0d181";
+      ctx.beginPath();
+      ctx.arc(-53, 12, 22, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#9f2635";
+      ctx.beginPath();
+      ctx.arc(53, 12, 22, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (item.id === "state") {
+      ctx.fillStyle = "#d7c2a5";
+      ctx.fillRect(-62, 18, 124, 33);
+      ctx.fillRect(-42, -48, 18, 66);
+      ctx.fillRect(-9, -64, 18, 82);
+      ctx.fillRect(24, -48, 18, 66);
+      ctx.strokeStyle = "#c9363d";
+      ctx.beginPath();
+      ctx.arc(0, -20, 78, state.time * 0.5, state.time * 0.5 + Math.PI * 1.45);
+      ctx.stroke();
+    } else if (item.id === "revolt") {
+      ctx.fillStyle = "rgba(201,54,61,.28)";
+      ctx.fillRect(-82, -34, 63, 68);
+      ctx.fillRect(19, -34, 63, 68);
+      ctx.strokeStyle = "#f0d181";
+      ctx.beginPath();
+      ctx.moveTo(-5, -67);
+      ctx.lineTo(-19, -28);
+      ctx.lineTo(9, 0);
+      ctx.lineTo(-12, 32);
+      ctx.lineTo(14, 68);
+      ctx.stroke();
+      ctx.strokeStyle = "#c9363d";
+      ctx.beginPath();
+      ctx.arc(0, 0, 48 * pulse, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawWalls() {
+    ctx.fillStyle = "#43272b";
+    ctx.strokeStyle = "rgba(226,180,93,.3)";
+    ctx.lineWidth = 1;
+    walls.forEach((wall) => {
+      ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+      ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
+    });
+  }
+
+  function drawInteractable(item) {
+    const color = item.kind === "curator" ? "#e2b45d" : item.kind === "gate" ? "#c9363d" : roomById.get(item.id)?.color || "#e2b45d";
+    if (item.kind === "exhibit") {
+      drawChapterObject(item);
+      return;
+    }
+
+    ctx.save();
+    ctx.translate(item.x, item.y);
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 22;
+    if (item.kind === "gate") {
+      const unlocked = gateUnlocked(item);
+      ctx.fillStyle = unlocked ? "rgba(226,180,93,.18)" : "rgba(201,54,61,.2)";
+      ctx.fillRect(-47, -70, 94, 140);
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = "#281c1f";
+      ctx.fillRect(-36, -60, 72, 120);
+      ctx.strokeStyle = unlocked ? "#e2b45d" : color;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(-47, -70, 94, 140);
+      ctx.beginPath();
+      ctx.moveTo(-23, 54);
+      ctx.lineTo(-23, -20);
+      ctx.quadraticCurveTo(0, -50, 23, -20);
+      ctx.lineTo(23, 54);
+      ctx.stroke();
+      ctx.font = "10px 'DM Mono', monospace";
+      ctx.textAlign = "center";
+      ctx.fillStyle = unlocked ? "#f0d181" : color;
+      ctx.fillText(unlocked ? item.final ? "EXIT" : "OPEN" : "LOCKED", 0, 91);
+      ctx.restore();
+      return;
+    }
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, 0, 33 + Math.sin(state.time * 2) * 4, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = color;
+    ctx.fillRect(-8, -8, 16, 16);
+    ctx.restore();
+  }
+
+  function drawPlayer() {
+    const player = state.player;
+    ctx.save();
+    ctx.translate(player.x, player.y);
+    ctx.shadowColor = "#e2b45d";
+    ctx.shadowBlur = 20;
+    ctx.fillStyle = "#e2b45d";
+    ctx.beginPath();
+    ctx.arc(0, 0, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "#f7df9b";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 0, 17, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "#160b0d";
+    ctx.beginPath();
+    ctx.arc(4, -3, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawParticles() {
+    for (let index = 0; index < 38; index += 1) {
+      const x = (index * 277 + 120) % WORLD.width;
+      const y = (index * 149 + 80) % WORLD.height;
+      const alpha = 0.08 + (Math.sin(state.time * 0.7 + index) + 1) * 0.04;
+      ctx.fillStyle = `rgba(226,180,93,${alpha})`;
+      ctx.fillRect(x, y, 2, 2);
+    }
+  }
+
+  function drawVignette(width, height) {
+    const gradient = ctx.createRadialGradient(width / 2, height / 2, Math.min(width, height) * 0.25, width / 2, height / 2, Math.max(width, height) * 0.78);
+    gradient.addColorStop(0, "transparent");
+    gradient.addColorStop(1, "rgba(13,6,8,.35)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function updateCamera() {
+    state.camera.x = clamp(state.player.x - innerWidth / 2, 0, WORLD.width - innerWidth);
+    state.camera.y = clamp(state.player.y - innerHeight / 2, 0, WORLD.height - innerHeight);
+  }
+
+  function scheduleLoop() {
+    if (state.frameRequested || !state.running) return;
+    state.frameRequested = true;
+    requestAnimationFrame(loop);
+  }
+
+  function loop(timestamp) {
+    state.frameRequested = false;
+    if (!state.running) return;
+    const dt = Math.min((timestamp - state.lastTime) / 1000, 0.05);
+    state.lastTime = timestamp;
+    state.time += dt;
+    if (!state.dialogueOpen && !state.viewerOpen) {
+      let dx = 0;
+      let dy = 0;
+      if (keys.has("w") || keys.has("arrowup")) dy -= 1;
+      if (keys.has("s") || keys.has("arrowdown")) dy += 1;
+      if (keys.has("a") || keys.has("arrowleft")) dx -= 1;
+      if (keys.has("d") || keys.has("arrowright")) dx += 1;
+      if (dx || dy) move(dx, dy, dt);
+      updateCamera();
+      updateUi();
+    }
+    drawWorld();
+    scheduleLoop();
+  }
+
+  function showEnding() {
+    state.running = false;
+    state.viewerOpen = false;
+    state.dialogueOpen = false;
+    contentViewer.classList.add("hidden");
+    dialogue.classList.add("hidden");
+    endingScreen.classList.remove("hidden");
+    document.getElementById("ending-evidence").textContent = `${state.evidence.size}/${rooms.length}`;
+    document.getElementById("ending-pages").textContent = String(state.viewedPages.size);
+    document.getElementById("ending-images").textContent = String(state.imagesViewed.size);
+    document.getElementById("ending-copy").textContent = "Bạn đã đi hết tuyến triển lãm. Các điều kiện vật chất, quan hệ sở hữu, thiết chế Nhà nước và mâu thuẫn xã hội hiện lên như một chuỗi liên tục—được đọc bằng những hồ sơ bạn đã mở, không phải bằng một đáp án có sẵn.";
+  }
+
+  function quitGame() {
+    state.running = false;
+    state.frameRequested = false;
+    keys.clear();
+    state.dialogueOpen = false;
+    state.viewerOpen = false;
+    dialogue.classList.add("hidden");
+    contentViewer.classList.add("hidden");
+    closeLightbox();
+    gameUi.classList.add("hidden");
+    endingScreen.classList.add("hidden");
+    quitScreen.classList.remove("hidden");
+  }
+
+  function returnToTitle() {
+    state.running = false;
+    state.frameRequested = false;
+    keys.clear();
+    state.dialogueOpen = false;
+    state.viewerOpen = false;
+    closeLightbox();
+    quitScreen.classList.add("hidden");
+    endingScreen.classList.add("hidden");
+    gameUi.classList.add("hidden");
+    titleScreen.classList.remove("hidden");
+  }
+
+  function handleKeyDown(event) {
+    const key = event.key.toLowerCase();
+    const handledKeys = ["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", "e", "escape", "enter", " "];
+    if (handledKeys.includes(key)) event.preventDefault();
+
+    if (imageLightbox && !imageLightbox.classList.contains("hidden")) {
+      if (key === "escape" || key === "e") closeLightbox();
+      else if (key === "arrowleft") cycleImage(-1);
+      else if (key === "arrowright") cycleImage(1);
+      return;
+    }
+    if (state.viewerOpen) {
+      if (key === "escape") closeContentViewer();
+      else if (key === "enter" || key === " ") nextViewerPage();
+      else if (key === "arrowleft") cycleImage(-1);
+      else if (key === "arrowright") cycleImage(1);
+      return;
+    }
+    if (state.dialogueOpen) {
+      if (key === "escape" || key === "e" || key === "enter" || key === " ") closeDialogue();
+      return;
+    }
+    if (key === "e") interact();
+    else keys.add(key);
+  }
+
   function handleKeyUp(event) { keys.delete(event.key.toLowerCase()); }
 
   document.getElementById("start-button").addEventListener("click", start);
@@ -90,8 +835,43 @@
   document.getElementById("quit-button").addEventListener("click", quitGame);
   document.getElementById("ending-exit-button").addEventListener("click", quitGame);
   document.getElementById("return-title-button").addEventListener("click", returnToTitle);
-  dialogueClose.addEventListener("click", () => { if (state.currentInteractable?.id === "gate" && state.evidence.size === 4) { closeDialogue(); showEnding(); } else closeDialogue(); });
-  document.getElementById("theory-button").addEventListener("click", () => document.getElementById("theory-note").classList.toggle("hidden"));
-  window.addEventListener("resize", resize); window.addEventListener("keydown", handleKeyDown); window.addEventListener("keyup", handleKeyUp); resize();
-  window.__THE_STATE__ = { state, rooms, interactables, resetState, canMove, start, interact, openDialogue, choose, showEnding, quitGame, returnToTitle };
+  document.getElementById("theory-button").addEventListener("click", () => theoryNote.classList.toggle("hidden"));
+  dialogueClose.addEventListener("click", closeDialogue);
+  viewerClose.addEventListener("click", closeContentViewer);
+  viewerNext.addEventListener("click", nextViewerPage);
+  viewerPrevImage.addEventListener("click", () => cycleImage(-1));
+  viewerNextImage.addEventListener("click", () => cycleImage(1));
+  viewerImage.addEventListener("click", openLightbox);
+  lightboxClose.addEventListener("click", closeLightbox);
+  imageLightbox.querySelector(".image-lightbox-backdrop")?.addEventListener("click", closeLightbox);
+  window.addEventListener("resize", resize);
+  window.addEventListener("keydown", handleKeyDown);
+  window.addEventListener("keyup", handleKeyUp);
+  window.addEventListener("blur", () => keys.clear());
+  resize();
+
+  window.__THE_STATE__ = {
+    state,
+    rooms,
+    walls,
+    interactables,
+    content,
+    contentById,
+    resetState,
+    start,
+    interact,
+    openDialogue,
+    closeDialogue,
+    openContentViewer,
+    closeContentViewer,
+    nextViewerPage,
+    cycleImage,
+    completeChapter,
+    showEnding,
+    quitGame,
+    returnToTitle,
+    canMove,
+    drawWorld,
+    updateUi
+  };
 })();
