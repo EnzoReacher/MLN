@@ -66,3 +66,5 @@ node test/smoke-test.mjs
 Smoke test mô phỏng cả tuyến: vào game, mở/đóng hồ sơ, đọc đủ ba mục mỗi chương, kiểm tra ảnh và lightbox, cổng tuần tự, ending, nút thoát và quay lại màn hình đầu.
 
 Game không cần backend, database, API hay biến môi trường. `vercel.json` phục vụ `dist/index.html` ở route `/` và giữ asset rewrites cho Vercel.
+
+Renderer được tối ưu cho máy trình chiếu/laptop phổ thông: không dùng shadow map động, giới hạn pixel ratio, dùng vật liệu nhẹ hơn cho hình học tĩnh và giảm tần suất cập nhật HUD mà không ảnh hưởng điều khiển.
