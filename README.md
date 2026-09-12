@@ -1,6 +1,6 @@
 # THE STATE // EXHIBITION 01
 
-Game Canvas 2D khám phá một triển lãm chính trị cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**.
+Game 3D WebGL khám phá một triển lãm chính trị cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**.
 
 Người chơi điều khiển nhân vật đi qua một tuyến triển lãm bốn chương. Ở mỗi phòng, người chơi phải tới đúng hiện vật, nhấn `E`, đọc từng mục và xem ảnh tư liệu. Chỉ khi đi hết hồ sơ chương đó, cổng kế tiếp mới mở. Đây là một game khám phá tuyến tính, không phải dashboard và không dùng câu hỏi A/B.
 
@@ -16,7 +16,8 @@ Mở <http://localhost:4173>.
 
 ## Điều khiển
 
-- `WASD` hoặc phím mũi tên: di chuyển.
+- Click vào không gian triển lãm để khóa chuột, rồi dùng `WASD` hoặc phím mũi tên để di chuyển.
+- Rê chuột: nhìn quanh trong không gian 3D.
 - `E`: mở hiện vật, hồ sơ hướng dẫn hoặc cổng.
 - `Enter` / nút **MỤC TIẾP THEO**: chuyển trang trong hồ sơ.
 - `←` / `→`: chuyển ảnh khi mục hiện tại có nhiều ảnh.
