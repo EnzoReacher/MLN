@@ -16,7 +16,7 @@ for (const asset of ["dist/styles.css", "dist/content.js", "dist/app.js"]) {
   assert(fs.existsSync(path.join(root, asset)), `Missing referenced asset: ${asset}`);
 }
 
-assert(html.includes('id="game-canvas"') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "Canvas/content shell is incomplete");
+assert(html.includes('id="game-canvas"') && html.includes('three@0.161.0') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
 assert(html.includes('id="content-viewer"') && html.includes('id="viewer-image"') && html.includes('id="viewer-next"'), "Content viewer shell is incomplete");
 assert(html.includes('id="image-lightbox"') && html.includes('id="lightbox-image"'), "Image detail viewer shell is incomplete");
 assert(app.includes("requestAnimationFrame(loop)") && app.includes("getContext(\"2d\")"), "Canvas game loop is missing");
@@ -27,15 +27,15 @@ for (const concept of ["giai cấp", "tư liệu sản xuất", "mâu thuẫn", 
 }
 
 for (const marker of [
-  "WASD", "interaction-prompt", "evidence-count", "EXHIBITION MAP", "Cánh cửa cuối", "quit-button", "quit-screen",
-  "drawChapterObject", "openContentViewer", "renderViewer", "normaliseChapter", "contentById", "viewer-image-placeholder",
-  "viewer-progress-bar", "gate-class", "gate-state", "gate-revolt", "gate-end", "requiredEvidence", "TƯ LIỆU SẢN XUẤT",
-  "CÁCH MẠNG XÃ HỘI"
+  "WASD", "MOUSE", "interaction-prompt", "evidence-count", "EXHIBITION MAP", "Cánh cửa cuối", "quit-button", "quit-screen",
+  "THREE.WebGLRenderer", "initThreeGallery", "makeArtworkTexture", "openContentViewer", "renderViewer", "normaliseChapter", "contentById", "viewer-image-placeholder",
+  "viewer-progress-bar", "gate-class", "gate-state", "gate-revolt", "gate-end", "requiredEvidence", "tư liệu sản xuất",
+  "cách mạng xã hội"
 ]) assert(html.includes(marker) || app.includes(marker) || content.includes(marker), `Missing game/content marker: ${marker}`);
 
-assert((app.match(/kind: "exhibit"/g) ?? []).length === 4, "Expected exactly four evidence exhibits");
-assert((app.match(/kind: "gate"/g) ?? []).length === 4, "Expected three chapter gates plus one ending gate");
-assert(app.includes("function rectCircleCollision") && app.includes("function canMove"), "Collision system missing");
+assert(app.includes("...rooms.map((room) => ({") && app.includes('kind: "exhibit"'), "Expected four generated evidence exhibits");
+assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
+assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
 assert(app.includes("section.images") && app.includes("viewerImage.onerror") && app.includes("function cycleImage"), "Image/content data flow is missing");
 assert(content.includes("sections:") && content.includes("images: []"), "Content contract is missing sections/images arrays");
 
