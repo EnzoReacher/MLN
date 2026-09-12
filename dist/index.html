@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#292829" />
-    <meta name="description" content="THE STATE: Exhibition 01 — game khám phá triển lãm chính trị." />
+    <meta name="description" content="THE STATE: Exhibition 01 — game 3D khám phá triển lãm chính trị." />
     <title>THE STATE // EXHIBITION 01</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -18,9 +18,9 @@
           <div class="archive-seal" aria-hidden="true">01</div>
           <p class="overline">THE STATE / EXHIBITION 01 / POLITICAL ARCHIVE</p>
           <h1 id="game-title">WHO<br /><em>HOLDS</em><br />THE ROOM?</h1>
-          <p class="title-copy">Một triển lãm về Nhà nước và Cách mạng xã hội.<br />Bạn phải bước vào trong để nhìn thấy cấu trúc vận hành.</p>
+          <p class="title-copy">Một triển lãm 3D về Nhà nước và Cách mạng xã hội.<br />Bước vào từng phòng, đến gần tranh, rồi mở hồ sơ phía sau hình ảnh.</p>
           <button id="start-button" class="primary-button" type="button"><span>VÀO TRIỂN LÃM</span><b>ENTER</b></button>
-          <div class="control-strip"><span><kbd>WASD</kbd> DI CHUYỂN</span><span><kbd>E</kbd> MỞ HỒ SƠ</span><span><kbd>ESC</kbd> ĐÓNG</span></div>
+          <div class="control-strip"><span><kbd>WASD</kbd> DI CHUYỂN</span><span><kbd>MOUSE</kbd> NHÌN</span><span><kbd>E</kbd> MỞ HỒ SƠ</span></div>
         </div>
         <div class="title-side-note">A CLASSROOM GAME<br /><span>MARXIST–LENINIST ARCHIVE</span></div>
       </section>
@@ -78,6 +78,7 @@
         <div class="quit-content"><div class="archive-seal" aria-hidden="true">—</div><p class="overline">ARCHIVE CLOSED / SESSION ENDED</p><h2 id="quit-title">CẢM ƠN BẠN ĐÃ<br /><em>THAM QUAN.</em></h2><p>Triển lãm kết thúc ở đây. Nhưng những câu hỏi về quyền lực, giai cấp, Nhà nước và biến đổi xã hội vẫn tiếp tục bên ngoài căn phòng.</p><div class="quit-rule"></div><div class="quit-actions"><button id="return-title-button" class="primary-button" type="button"><span>VỀ MÀN HÌNH ĐẦU</span><b>↩</b></button><span>THE STATE / POLITICAL ARCHIVE</span></div></div>
       </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
     <script src="./content.js"></script>
     <script src="./app.js"></script>
   </body>
