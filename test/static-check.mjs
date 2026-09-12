@@ -37,6 +37,7 @@ for (const marker of [
 assert(app.includes("...rooms.map((room) => ({") && app.includes('kind: "exhibit"'), "Expected four generated evidence exhibits");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
 assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
+assert(app.includes("antialias: false") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial"), "Performance-safe renderer configuration is missing");
 assert(app.includes("section.images") && app.includes("viewerImage.onerror") && app.includes("function cycleImage"), "Image/content data flow is missing");
 assert(content.includes("sections:") && content.includes("images: []"), "Content contract is missing sections/images arrays");
 
