@@ -19,6 +19,7 @@
 - [x] Không còn mechanic lens/relation field cũ.
 - [x] Không còn hộp lý thuyết tĩnh trong room.
 - [x] Màn ending hiển thị số chương, panel và ảnh đã xem.
+- [x] Renderer có cấu hình hiệu năng an toàn cho laptop/máy chiếu: pixel ratio giới hạn, không shadow map động, vật liệu nhẹ.
 
 ## Nội dung cần thay trước khi trình chiếu
 
