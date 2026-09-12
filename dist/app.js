@@ -1,9 +1,8 @@
-/* THE STATE / Exhibition 01 — content-first canvas exploration game. */
+/* THE STATE / Exhibition 01 — lightweight 3D gallery game. */
 (() => {
   "use strict";
 
   const canvas = document.getElementById("game-canvas");
-  const ctx = canvas.getContext("2d");
   const titleScreen = document.getElementById("title-screen");
   const gameUi = document.getElementById("game-ui");
   const dialogue = document.getElementById("dialogue");
@@ -43,16 +42,65 @@
   const viewerNote = document.getElementById("viewer-note");
   const viewerNext = document.getElementById("viewer-next");
   const viewerClose = document.getElementById("viewer-close");
-
   const imageLightbox = document.getElementById("image-lightbox");
   const lightboxImage = document.getElementById("lightbox-image");
   const lightboxCaption = document.getElementById("lightbox-caption");
   const lightboxClose = document.getElementById("lightbox-close");
 
+  const THREE = window.THREE || null;
   const keys = new Set();
-  const WORLD = { width: 5300, height: 1400 };
-  const CAMERA_ZOOM = 1.24;
-  const PLAYER = { radius: 17, speed: 245 };
+  const PLAYER = { height: 1.65, speed: 4.4 };
+  const GALLERY = { halfWidth: 7, roomHeight: 5.5, minZ: -88, maxZ: 9 };
+
+  const rooms = [
+    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10, color: "#c67b53", accent: "#e1b46d", artwork: "production" },
+    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", label: "THE SPLIT", centerZ: -24, zBack: -14, zFront: -34, color: "#d6a75e", accent: "#f0d394", artwork: "class" },
+    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58, color: "#b9c0b3", accent: "#e6d9bd", artwork: "state" },
+    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", label: "THE FAULTLINE", centerZ: -72, zBack: -62, zFront: -82, color: "#c95e62", accent: "#f1b07d", artwork: "revolt" }
+  ];
+
+  const gates = [
+    { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
+    { id: "gate-state", x: 0, z: -36, radius: 2.5, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
+    { id: "gate-revolt", x: 0, z: -60, radius: 2.5, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
+    { id: "gate-end", x: 0, z: -84, radius: 2.5, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
+  ];
+
+  const interactables = [
+    { id: "curator", x: -4.3, z: 6.6, radius: 1.8, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Đây là một tuyến triển lãm có thứ tự. Đi tới từng bức tranh, nhấn E để đọc hồ sơ và xem ảnh. Khi hoàn tất một chương, cổng tiếp theo sẽ mở." },
+    ...rooms.map((room) => ({ id: room.id, x: -5.9, z: room.centerZ, radius: 3.8, kind: "exhibit", chapterId: room.id, title: `Hồ sơ ${room.name.toLowerCase()}`, type: `ARCHIVE / ${room.index}`, number: `${room.index} / 04` })),
+    ...gates
+  ];
+
+  const roomById = new Map(rooms.map((room) => [room.id, room]));
+  const content = (Array.isArray(window.THE_STATE_CONTENT) ? window.THE_STATE_CONTENT : []).map(normaliseChapter);
+  const contentById = new Map(content.map((chapter) => [chapter.id, chapter]));
+
+  const state = {
+    running: false,
+    frameRequested: false,
+    lastTime: 0,
+    time: 0,
+    player: { x: 0, z: 7 },
+    look: { yaw: 0, pitch: 0 },
+    evidence: new Set(),
+    passedGates: new Set(),
+    viewedPages: new Set(),
+    imagesViewed: new Set(),
+    currentInteractable: null,
+    dialogueOpen: false,
+    viewerOpen: false,
+    viewerChapter: null,
+    viewerPage: 0,
+    viewerImage: 0
+  };
+
+  let renderer = null;
+  let scene = null;
+  let camera = null;
+  let worldGroup = null;
+  let clock = null;
+  let gateMeshes = new Map();
 
   function normaliseImage(image) {
     if (typeof image === "string") return { src: image, alt: "Ảnh tư liệu", caption: "" };
@@ -89,70 +137,103 @@
     };
   }
 
-  const rawContent = Array.isArray(window.THE_STATE_CONTENT) ? window.THE_STATE_CONTENT : [];
-  const content = rawContent.map(normaliseChapter);
-  const contentById = new Map(content.map((chapter) => [chapter.id, chapter]));
+  function viewport() {
+    return { width: window.innerWidth || 1280, height: window.innerHeight || 720 };
+  }
 
-  const state = {
-    running: false,
-    frameRequested: false,
-    lastTime: 0,
-    time: 0,
-    camera: { x: 0, y: 0 },
-    player: { x: 220, y: 650 },
-    evidence: new Set(),
-    viewedPages: new Set(),
-    imagesViewed: new Set(),
-    currentInteractable: null,
-    dialogueOpen: false,
-    viewerOpen: false,
-    viewerChapter: null,
-    viewerPage: 0,
-    viewerImage: 0
-  };
+  function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
 
-  const rooms = [
-    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", x: 100, y: 120, w: 1050, h: 1160, color: "#c75b58", label: "THE BASE", artifact: "TƯ LIỆU SẢN XUẤT" },
-    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", x: 1450, y: 120, w: 1050, h: 1160, color: "#d3a95f", label: "THE SPLIT", artifact: "GIAI CẤP" },
-    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", x: 2800, y: 120, w: 1050, h: 1160, color: "#c8c0ae", label: "THE STATE", artifact: "THIẾT CHẾ NHÀ NƯỚC" },
-    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", x: 4150, y: 120, w: 1050, h: 1160, color: "#c75b68", label: "THE FAULTLINE", artifact: "CÁCH MẠNG XÃ HỘI" }
-  ];
+  function gateUnlocked(item) {
+    return item.kind !== "gate" || !item.requiredEvidence || state.evidence.has(item.requiredEvidence);
+  }
 
-  const walls = [
-    { x: 0, y: 0, w: WORLD.width, h: 50 },
-    { x: 0, y: WORLD.height - 50, w: WORLD.width, h: 50 },
-    { x: 0, y: 0, w: 50, h: WORLD.height },
-    { x: WORLD.width - 50, y: 0, w: 50, h: WORLD.height },
-    { x: 1150, y: 50, w: 300, h: 510 },
-    { x: 1150, y: 760, w: 300, h: 590 },
-    { x: 2500, y: 50, w: 300, h: 510 },
-    { x: 2500, y: 760, w: 300, h: 590 },
-    { x: 3850, y: 50, w: 300, h: 510 },
-    { x: 3850, y: 760, w: 300, h: 590 }
-  ];
+  function gatePassed(item) {
+    return state.passedGates.has(item.id);
+  }
 
-  const interactables = [
-    { id: "curator", x: 220, y: 650, radius: 74, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Đây là một tuyến triển lãm có thứ tự. Đi tới từng hiện vật, nhấn E để đọc hồ sơ và xem ảnh. Khi hoàn tất một chương, cổng tiếp theo sẽ mở." },
-    { id: "base", x: 625, y: 700, radius: 105, kind: "exhibit", chapterId: "base", title: "Hồ sơ điều kiện vật chất", type: "ARCHIVE 01", number: "01 / 04" },
-    { id: "gate-class", x: 1300, y: 650, radius: 105, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
-    { id: "class", x: 1975, y: 700, radius: 105, kind: "exhibit", chapterId: "class", title: "Hồ sơ giai cấp và sở hữu", type: "ARCHIVE 02", number: "02 / 04" },
-    { id: "gate-state", x: 2650, y: 650, radius: 105, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
-    { id: "state", x: 3325, y: 700, radius: 105, kind: "exhibit", chapterId: "state", title: "Hồ sơ Nhà nước và quyền lực", type: "ARCHIVE 03", number: "03 / 04" },
-    { id: "gate-revolt", x: 4000, y: 650, radius: 105, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
-    { id: "revolt", x: 4675, y: 700, radius: 105, kind: "exhibit", chapterId: "revolt", title: "Hồ sơ mâu thuẫn và chuyển hóa", type: "ARCHIVE 04", number: "04 / 04" },
-    { id: "gate-end", x: 5000, y: 1040, radius: 110, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
-  ];
+  function canMove(x, z) {
+    if (x < -6.1 || x > 6.1 || z > GALLERY.maxZ || z < GALLERY.minZ) return false;
+    for (const gate of gates) {
+      if (!gatePassed(gate) && state.player.z > gate.z + 0.85 && z < gate.z + 0.85) return false;
+    }
+    return true;
+  }
 
-  const roomById = new Map(rooms.map((room) => [room.id, room]));
-  const exhibitById = new Map(interactables.filter((item) => item.kind === "exhibit").map((item) => [item.id, item]));
+  function move(dx, dz, dt) {
+    const length = Math.hypot(dx, dz) || 1;
+    const amount = PLAYER.speed * dt;
+    const nextX = state.player.x + (dx / length) * amount;
+    const nextZ = state.player.z + (dz / length) * amount;
+    if (canMove(nextX, nextZ)) {
+      state.player.x = nextX;
+      state.player.z = nextZ;
+    } else {
+      if (canMove(nextX, state.player.z)) state.player.x = nextX;
+      if (canMove(state.player.x, nextZ)) state.player.z = nextZ;
+    }
+  }
 
-  function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.floor(innerWidth * dpr);
-    canvas.height = Math.floor(innerHeight * dpr);
-    canvas.style.width = `${innerWidth}px`;
-    canvas.style.height = `${innerHeight}px`;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  function currentRoom() {
+    return rooms.find((room) => state.player.z <= room.zBack && state.player.z >= room.zFront) ?? null;
+  }
+
+  function nearestInteractable() {
+    let nearest = null;
+    let distance = Infinity;
+    for (const item of interactables) {
+      const currentDistance = Math.hypot(state.player.x - item.x, state.player.z - item.z);
+      if (currentDistance < item.radius && currentDistance < distance) {
+        nearest = item;
+        distance = currentDistance;
+      }
+    }
+    return nearest;
+  }
+
+  function nextExhibit() {
+    return rooms.map((room) => interactables.find((item) => item.id === room.id)).find((item) => item && !state.evidence.has(item.id)) ?? null;
+  }
+
+  function chapterAvailable(chapterId) {
+    const index = rooms.findIndex((room) => room.id === chapterId);
+    return index <= 0 || state.evidence.has(rooms[index - 1].id);
+  }
+
+  function updateUi() {
+    const room = currentRoom();
+    const next = nextExhibit();
+    const item = nearestInteractable();
+    const completedCount = state.evidence.size;
+
+    zoneName.textContent = room?.name ?? "HÀNH LANG CHUYỂN TIẾP";
+    zoneIndex.textContent = room?.index ?? "—";
+    evidenceCount.textContent = completedCount;
+    objectiveText.textContent = completedCount === rooms.length
+      ? "Tới cánh cửa cuối để khép lại hồ sơ"
+      : next
+        ? `Tới tranh lớn chương ${next.number.slice(0, 2)} và đọc hồ sơ`
+        : "Đi theo tuyến triển lãm";
+
+    state.currentInteractable = item;
+    prompt.classList.toggle("hidden", !item || state.dialogueOpen || state.viewerOpen);
+    prompt.classList.toggle("locked", Boolean(item?.kind === "gate" && !gateUnlocked(item)));
+    if (item) {
+      if (item.kind === "curator") promptText.textContent = "E — XEM HƯỚNG DẪN TUYẾN";
+      else if (item.kind === "gate") promptText.textContent = gateUnlocked(item)
+        ? item.final ? "E — KẾT THÚC TRIỂN LÃM" : `E — MỞ CỔNG SANG ${item.target}`
+        : `CỔNG KHÓA — HOÀN TẤT ${item.requiredEvidence.toUpperCase()}`;
+      else promptText.textContent = state.evidence.has(item.id) ? "E — XEM LẠI HỒ SƠ" : `E — MỞ HỒ SƠ ${item.number.slice(0, 2)}`;
+    }
+
+    statusText.textContent = completedCount === rooms.length
+      ? "Bốn chương đã được ghi nhận. Cánh cửa cuối đang chờ."
+      : next
+        ? `Đọc đủ hồ sơ ${next.number.slice(0, 2)} để mở cổng kế tiếp.`
+        : "Đi theo tuyến triển lãm.";
+
+    const progress = clamp((7 - state.player.z) / (7 - GALLERY.minZ), 0, 1);
+    miniPlayer.style.left = `${8 + progress * 135}px`;
+    miniPlayer.style.top = "49px";
   }
 
   function resetState() {
@@ -160,9 +241,10 @@
     state.running = true;
     state.lastTime = performance.now();
     state.time = 0;
-    state.player = { x: 220, y: 650 };
-    state.camera = { x: 0, y: 0 };
+    state.player = { x: 0, z: 7 };
+    state.look = { yaw: 0, pitch: 0 };
     state.evidence.clear();
+    state.passedGates.clear();
     state.viewedPages.clear();
     state.imagesViewed.clear();
     state.currentInteractable = null;
@@ -171,7 +253,6 @@
     state.viewerChapter = null;
     state.viewerPage = 0;
     state.viewerImage = 0;
-    updateCamera();
     updateUi();
   }
 
@@ -185,104 +266,14 @@
     contentViewer.classList.add("hidden");
     imageLightbox.classList.add("hidden");
     theoryNote.classList.add("hidden");
+    initThreeGallery();
     scheduleLoop();
-  }
-
-  function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
-
-  function rectCircleCollision(circle, rect) {
-    const x = clamp(circle.x, rect.x, rect.x + rect.w);
-    const y = clamp(circle.y, rect.y, rect.y + rect.h);
-    return Math.hypot(circle.x - x, circle.y - y) < circle.radius;
-  }
-
-  function gateUnlocked(item) {
-    return item.kind !== "gate" || !item.requiredEvidence || state.evidence.has(item.requiredEvidence);
-  }
-
-  function canMove(x, y) {
-    const circle = { x, y, radius: PLAYER.radius };
-    const lockedGateCollision = interactables.some((item) => item.kind === "gate" && !gateUnlocked(item) && rectCircleCollision(circle, { x: item.x - 60, y: item.y - 80, w: 120, h: 160 }));
-    return x > 65 && y > 65 && x < WORLD.width - 65 && y < WORLD.height - 65 && !walls.some((wall) => rectCircleCollision(circle, wall)) && !lockedGateCollision;
-  }
-
-  function move(dx, dy, dt) {
-    const length = Math.hypot(dx, dy) || 1;
-    const amount = PLAYER.speed * dt;
-    const nextX = state.player.x + (dx / length) * amount;
-    const nextY = state.player.y + (dy / length) * amount;
-    if (canMove(nextX, state.player.y)) state.player.x = nextX;
-    if (canMove(state.player.x, nextY)) state.player.y = nextY;
-  }
-
-  function nearestInteractable() {
-    let nearest = null;
-    let distance = Infinity;
-    for (const item of interactables) {
-      const currentDistance = Math.hypot(state.player.x - item.x, state.player.y - item.y);
-      if (currentDistance < item.radius && currentDistance < distance) {
-        nearest = item;
-        distance = currentDistance;
-      }
-    }
-    return nearest;
-  }
-
-  function currentRoom() {
-    return rooms.find((room) => state.player.x > room.x && state.player.x < room.x + room.w && state.player.y > room.y && state.player.y < room.y + room.h) ?? null;
-  }
-
-  function nextExhibit() {
-    return rooms.map((room) => exhibitById.get(room.id)).find((item) => item && !state.evidence.has(item.id)) ?? null;
-  }
-
-  function chapterAvailable(chapterId) {
-    const index = rooms.findIndex((room) => room.id === chapterId);
-    return index <= 0 || state.evidence.has(rooms[index - 1].id);
-  }
-
-  function updateUi() {
-    const room = currentRoom();
-    const next = nextExhibit();
-    const item = nearestInteractable();
-    const chapterCount = rooms.length;
-    const completedCount = state.evidence.size;
-
-    zoneName.textContent = room?.name ?? "HÀNH LANG CHUYỂN TIẾP";
-    zoneIndex.textContent = room?.index ?? "—";
-    evidenceCount.textContent = completedCount;
-    objectiveText.textContent = completedCount === chapterCount
-      ? "Tới cánh cửa cuối để khép lại hồ sơ"
-      : next
-        ? `Tới hiện vật chương ${next.number.slice(0, 2)} và đọc hồ sơ`
-        : "Đi theo tuyến triển lãm";
-
-    state.currentInteractable = item;
-    prompt.classList.toggle("hidden", !item || state.dialogueOpen || state.viewerOpen);
-    prompt.classList.toggle("locked", Boolean(item?.kind === "gate" && !gateUnlocked(item)));
-    if (item) {
-      if (item.kind === "curator") promptText.textContent = "E — XEM HƯỚNG DẪN TUYẾN";
-      else if (item.kind === "gate") promptText.textContent = gateUnlocked(item)
-        ? item.final ? "E — KẾT THÚC TRIỂN LÃM" : `E — QUA CỔNG SANG ${item.target}`
-        : `CỔNG KHÓA — HOÀN TẤT ${item.requiredEvidence.toUpperCase()}`;
-      else promptText.textContent = state.evidence.has(item.id) ? "E — XEM LẠI HỒ SƠ" : `E — MỞ HỒ SƠ ${item.number.slice(0, 2)}`;
-    }
-
-    statusText.textContent = completedCount === chapterCount
-      ? "Bốn chương đã được ghi nhận. Cánh cửa cuối đang chờ."
-      : next
-        ? `Đọc đủ hồ sơ ${next.number.slice(0, 2)} để mở cổng kế tiếp.`
-        : "Đi theo tuyến triển lãm.";
-
-    const miniX = clamp(8 + (state.player.x / WORLD.width) * 130, 8, 143);
-    const miniY = clamp(9 + (state.player.y / WORLD.height) * 76, 9, 82);
-    miniPlayer.style.left = `${miniX}px`;
-    miniPlayer.style.top = `${miniY}px`;
   }
 
   function openDialogue(item) {
     const lockedGate = item.kind === "gate" && !gateUnlocked(item);
     state.dialogueOpen = true;
+    document.exitPointerLock?.();
     dialogue.classList.remove("hidden");
     dialogueTitle.textContent = lockedGate ? "Cổng đang khóa" : item.title;
     dialogueBody.textContent = lockedGate
@@ -302,12 +293,7 @@
   }
 
   function activeChapter() { return state.viewerChapter ? contentById.get(state.viewerChapter) : null; }
-
-  function activeSection() {
-    const chapter = activeChapter();
-    return chapter?.sections[state.viewerPage] ?? null;
-  }
-
+  function activeSection() { return activeChapter()?.sections[state.viewerPage] ?? null; }
   function imageKey() { return `${state.viewerChapter}:${state.viewerPage}:${state.viewerImage}`; }
   function pageKey() { return `${state.viewerChapter}:${state.viewerPage}`; }
 
@@ -407,6 +393,7 @@
     state.viewerChapter = chapterId;
     state.viewerPage = 0;
     state.viewerImage = 0;
+    document.exitPointerLock?.();
     contentViewer.classList.remove("hidden");
     renderViewer();
     return true;
@@ -425,6 +412,7 @@
   function completeChapter(chapterId) {
     if (!contentById.has(chapterId)) return false;
     state.evidence.add(chapterId);
+    updateGateMeshes();
     updateUi();
     return true;
   }
@@ -478,8 +466,9 @@
         showEnding();
         return;
       }
-      state.player.x = clamp(state.player.x + 170, 70, WORLD.width - 70);
-      updateCamera();
+      state.passedGates.add(item.id);
+      state.player.z = item.z - 2.4;
+      updateGateMeshes();
       updateUi();
       return;
     }
@@ -490,283 +479,175 @@
     openContentViewer(item.chapterId);
   }
 
-  function drawWorld() {
-    const width = innerWidth;
-    const height = innerHeight;
-    ctx.clearRect(0, 0, width, height);
-    ctx.save();
-    ctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
-    ctx.translate(-state.camera.x, -state.camera.y);
-    ctx.fillStyle = "#2b292a";
-    ctx.fillRect(0, 0, WORLD.width, WORLD.height);
-    drawFloor();
-    rooms.forEach(drawRoom);
-    drawWalls();
-    interactables.forEach(drawInteractable);
-    drawPlayer();
-    drawParticles();
-    ctx.restore();
-    drawVignette(width, height);
-  }
-
-  function drawFloor() {
-    ctx.fillStyle = "#343131";
-    ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100);
-    const glow = ctx.createRadialGradient(WORLD.width / 2, 610, 80, WORLD.width / 2, 610, 2100);
-    glow.addColorStop(0, "rgba(224,190,133,.10)");
-    glow.addColorStop(1, "rgba(43,41,42,0)");
-    ctx.fillStyle = glow;
-    ctx.fillRect(50, 50, WORLD.width - 100, WORLD.height - 100);
-    ctx.fillStyle = "rgba(240,224,203,.045)";
-    ctx.fillRect(50, 613, WORLD.width - 100, 74);
-    ctx.strokeStyle = "rgba(247,239,227,.045)";
-    ctx.lineWidth = 1;
-    for (let x = 90; x < WORLD.width - 50; x += 260) {
-      ctx.beginPath();
-      ctx.moveTo(x, 50);
-      ctx.lineTo(x, WORLD.height - 50);
-      ctx.stroke();
+  function makeArtworkTexture(room) {
+    if (!THREE) return null;
+    const artCanvas = document.createElement("canvas");
+    artCanvas.width = 900;
+    artCanvas.height = 560;
+    const art = artCanvas.getContext("2d");
+    const palette = {
+      production: ["#242326", "#bd6b4e", "#dda967", "#e6d7bd"],
+      class: ["#27252a", "#d2a35e", "#9e504b", "#f1dfbd"],
+      state: ["#283235", "#8da69e", "#d4b478", "#f0e5d0"],
+      revolt: ["#29262a", "#bd4e58", "#e8a06c", "#f2d1a0"]
+    }[room.artwork];
+    art.fillStyle = palette[0];
+    art.fillRect(0, 0, artCanvas.width, artCanvas.height);
+    const wash = art.createLinearGradient(0, 0, artCanvas.width, artCanvas.height);
+    wash.addColorStop(0, `${palette[1]}cc`);
+    wash.addColorStop(.48, `${palette[0]}00`);
+    wash.addColorStop(1, `${palette[2]}bb`);
+    art.fillStyle = wash;
+    art.fillRect(0, 0, artCanvas.width, artCanvas.height);
+    art.globalAlpha = .34;
+    for (let index = 0; index < 13; index += 1) {
+      art.fillStyle = index % 2 ? palette[2] : palette[1];
+      art.fillRect(30 + index * 73, 35 + (index % 4) * 56, 180 + (index % 3) * 85, 20 + (index % 3) * 16);
     }
-    for (let y = 90; y < WORLD.height - 50; y += 180) {
-      ctx.beginPath();
-      ctx.moveTo(50, y);
-      ctx.lineTo(WORLD.width - 50, y);
-      ctx.stroke();
+    art.globalAlpha = .9;
+    art.strokeStyle = palette[3];
+    art.lineWidth = 8;
+    art.beginPath();
+    if (room.artwork === "production") {
+      art.moveTo(60, 410); art.lineTo(250, 180); art.lineTo(420, 370); art.lineTo(635, 120); art.lineTo(840, 300);
+      art.stroke();
+      art.fillStyle = palette[2]; art.fillRect(110, 430, 700, 42);
+    } else if (room.artwork === "class") {
+      art.moveTo(450, 32); art.lineTo(450, 525); art.stroke();
+      art.fillStyle = `${palette[1]}d9`; art.fillRect(58, 120, 270, 310);
+      art.fillStyle = `${palette[2]}d9`; art.fillRect(575, 208, 270, 222);
+      art.strokeStyle = palette[3]; art.lineWidth = 5; art.strokeRect(58, 120, 270, 310); art.strokeRect(575, 208, 270, 222);
+    } else if (room.artwork === "state") {
+      art.fillStyle = `${palette[1]}b8`;
+      art.fillRect(90, 120, 110, 330); art.fillRect(285, 72, 110, 378); art.fillRect(480, 155, 110, 295); art.fillRect(675, 98, 110, 352);
+      art.strokeStyle = palette[3]; art.lineWidth = 5; art.beginPath(); art.moveTo(42, 458); art.lineTo(855, 458); art.stroke();
+    } else {
+      art.strokeStyle = palette[2]; art.lineWidth = 12; art.beginPath();
+      art.moveTo(450, 8); art.lineTo(390, 142); art.lineTo(505, 254); art.lineTo(365, 378); art.lineTo(470, 548); art.stroke();
+      art.fillStyle = `${palette[1]}aa`; art.fillRect(50, 410, 280, 70); art.fillRect(590, 88, 250, 70);
     }
-    ctx.strokeStyle = "rgba(240,224,203,.12)";
-    ctx.beginPath();
-    ctx.moveTo(50, 613);
-    ctx.lineTo(WORLD.width - 50, 613);
-    ctx.moveTo(50, 687);
-    ctx.lineTo(WORLD.width - 50, 687);
-    ctx.stroke();
+    art.globalAlpha = 1;
+    art.strokeStyle = "rgba(255,247,233,.7)";
+    art.lineWidth = 10;
+    art.strokeRect(18, 18, artCanvas.width - 36, artCanvas.height - 36);
+    const texture = new THREE.CanvasTexture(artCanvas);
+    if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+    texture.anisotropy = 4;
+    return texture;
   }
 
-  function drawRoom(room) {
-    const collected = state.evidence.has(room.id);
-    ctx.fillStyle = collected ? `${room.color}14` : "rgba(247,239,227,.018)";
-    ctx.fillRect(room.x, room.y, room.w, room.h);
-    ctx.strokeStyle = collected ? `${room.color}d0` : `${room.color}86`;
-    ctx.lineWidth = collected ? 2.5 : 1.5;
-    ctx.strokeRect(room.x, room.y, room.w, room.h);
-    ctx.fillStyle = "rgba(247,239,227,.028)";
-    ctx.fillRect(room.x + 28, room.y + 92, room.w - 56, room.h - 120);
-    ctx.strokeStyle = "rgba(247,239,227,.09)";
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(room.x + 30, room.y + 78);
-    ctx.lineTo(room.x + room.w - 30, room.y + 78);
-    ctx.stroke();
-    ctx.font = "16px 'Space Grotesk', system-ui, sans-serif";
-    ctx.fillStyle = "#f1e7d8";
-    ctx.fillText(room.name, room.x + 32, room.y + 42);
-    ctx.font = "11px 'DM Mono', monospace";
-    ctx.fillStyle = `${room.color}e6`;
-    ctx.fillText(`${room.index} / ${room.label}`, room.x + 32, room.y + 64);
-    ctx.fillStyle = `${room.color}cc`;
-    ctx.fillRect(room.x + 32, room.y + room.h - 34, 76, 3);
-    ctx.fillStyle = "rgba(247,239,227,.18)";
-    ctx.fillRect(room.x + room.w - 108, room.y + room.h - 34, 76, 3);
+  function addBox(size, position, material, options = {}) {
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(size[0], size[1], size[2]), material);
+    mesh.position.set(position[0], position[1], position[2]);
+    mesh.castShadow = Boolean(options.castShadow);
+    mesh.receiveShadow = options.receiveShadow !== false;
+    worldGroup.add(mesh);
+    return mesh;
   }
 
-  function drawChapterObject(item) {
-    const room = roomById.get(item.id);
-    const color = room?.color || "#d3a95f";
-    const collected = state.evidence.has(item.id);
-    ctx.save();
-    ctx.translate(item.x, item.y);
-    ctx.globalAlpha = collected ? 0.52 : 1;
-    const light = ctx.createRadialGradient(0, 12, 20, 0, 12, 270);
-    light.addColorStop(0, `${color}20`);
-    light.addColorStop(1, `${color}00`);
-    ctx.fillStyle = light;
-    ctx.fillRect(-270, -220, 540, 440);
-    ctx.shadowColor = `${color}66`;
-    ctx.shadowBlur = 14;
-    ctx.fillStyle = "#4a4240";
-    ctx.fillRect(-160, 76, 320, 14);
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = `${color}c8`;
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(-160, 76, 320, 14);
-    ctx.fillStyle = color;
-    ctx.fillRect(-160, 91, 10, 7);
-    ctx.fillRect(150, 91, 10, 7);
-
-    if (item.id === "base") {
-      ctx.fillStyle = "#514846";
-      ctx.fillRect(-124, -45, 248, 112);
-      ctx.strokeStyle = color;
-      ctx.strokeRect(-124, -45, 248, 112);
-      ctx.fillStyle = "#eee1cd";
-      ctx.fillRect(-88, -20, 176, 20);
-      ctx.fillStyle = `${color}a8`;
-      ctx.fillRect(-88, 9, 126, 9);
-      ctx.fillRect(-88, 27, 160, 9);
-      ctx.fillRect(-88, 45, 94, 9);
-      ctx.fillStyle = color;
-      ctx.fillRect(-105, -66, 72, 16);
-      ctx.fillRect(-20, -66, 52, 16);
-      ctx.fillRect(45, -66, 60, 16);
-    } else if (item.id === "class") {
-      ctx.fillStyle = "#544a45";
-      ctx.fillRect(-128, -62, 112, 129);
-      ctx.fillRect(16, -15, 112, 82);
-      ctx.strokeStyle = color;
-      ctx.strokeRect(-128, -62, 112, 129);
-      ctx.strokeRect(16, -15, 112, 82);
-      ctx.fillStyle = "#efe1c9";
-      ctx.fillRect(-103, -38, 62, 12);
-      ctx.fillRect(41, 9, 62, 12);
-      ctx.fillStyle = `${color}aa`;
-      ctx.fillRect(-103, -14, 59, 8);
-      ctx.fillRect(41, 33, 58, 8);
-      ctx.fillRect(-103, 4, 41, 8);
-      ctx.fillRect(41, 51, 42, 8);
-    } else if (item.id === "state") {
-      ctx.fillStyle = "#514b47";
-      ctx.fillRect(-112, -76, 224, 143);
-      ctx.strokeStyle = color;
-      ctx.strokeRect(-112, -76, 224, 143);
-      ctx.fillStyle = "#eee4d4";
-      ctx.fillRect(-83, -46, 166, 20);
-      ctx.fillStyle = `${color}b0`;
-      ctx.fillRect(-83, -9, 166, 8);
-      ctx.fillRect(-83, 12, 122, 8);
-      ctx.fillRect(-83, 33, 145, 8);
-      ctx.fillStyle = color;
-      ctx.fillRect(-83, 51, 46, 7);
-      ctx.fillRect(-28, 51, 78, 7);
-      ctx.fillRect(59, 51, 24, 7);
-    } else if (item.id === "revolt") {
-      ctx.fillStyle = "#514244";
-      ctx.fillRect(-132, -64, 264, 131);
-      ctx.strokeStyle = color;
-      ctx.strokeRect(-132, -64, 264, 131);
-      ctx.fillStyle = `${color}aa`;
-      ctx.fillRect(-104, -33, 66, 10);
-      ctx.fillRect(38, -33, 72, 10);
-      ctx.fillRect(-104, -9, 88, 8);
-      ctx.fillRect(16, -9, 94, 8);
-      ctx.fillRect(-104, 14, 52, 8);
-      ctx.fillRect(8, 14, 60, 8);
-      ctx.strokeStyle = "#f0d7a7";
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.moveTo(-10, -64);
-      ctx.lineTo(-27, -32);
-      ctx.lineTo(4, -7);
-      ctx.lineTo(-18, 22);
-      ctx.lineTo(14, 66);
-      ctx.stroke();
-    }
-    ctx.fillStyle = color;
-    ctx.fillRect(-15, -112, 30, 5);
-    ctx.fillRect(-2, -107, 4, 14);
-    ctx.restore();
+  function addPainting(room) {
+    const frameMaterial = new THREE.MeshStandardMaterial({ color: Number.parseInt(room.accent.slice(1), 16), roughness: .7, metalness: .18 });
+    const frame = addBox([.28, 4.25, 6.9], [-6.82, 3.0, room.centerZ], frameMaterial, { castShadow: true });
+    frame.name = `frame-${room.id}`;
+    const artworkMaterial = new THREE.MeshStandardMaterial({ map: makeArtworkTexture(room), roughness: .72, metalness: .02, side: THREE.DoubleSide });
+    const artwork = new THREE.Mesh(new THREE.PlaneGeometry(6.45, 3.8), artworkMaterial);
+    artwork.position.set(-6.64, 3.0, room.centerZ);
+    artwork.rotation.y = Math.PI / 2;
+    artwork.castShadow = true;
+    worldGroup.add(artwork);
+    addBox([4.2, .18, .12], [-6.58, .76, room.centerZ], frameMaterial);
+    const spot = new THREE.PointLight(Number.parseInt(room.color.slice(1), 16), 1.8, 11, 2);
+    spot.position.set(-4.6, 4.9, room.centerZ + 1.4);
+    spot.castShadow = true;
+    worldGroup.add(spot);
   }
 
-  function drawWalls() {
-    ctx.fillStyle = "#292729";
-    ctx.strokeStyle = "rgba(240,224,203,.18)";
-    ctx.lineWidth = 1;
-    walls.forEach((wall) => {
-      ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
-      ctx.strokeRect(wall.x, wall.y, wall.w, wall.h);
-    });
+  function addRoom(room) {
+    const floorMaterial = new THREE.MeshStandardMaterial({ color: 0x665954, roughness: .94 });
+    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x514845, roughness: .88 });
+    const trimMaterial = new THREE.MeshStandardMaterial({ color: Number.parseInt(room.color.slice(1), 16), roughness: .65, metalness: .12 });
+    const length = room.zBack - room.zFront;
+    addBox([14, .22, length], [0, 0, room.centerZ], floorMaterial, { receiveShadow: true });
+    addBox([.26, 5.5, length], [-7, 2.75, room.centerZ], wallMaterial);
+    addBox([.26, 5.5, length], [7, 2.75, room.centerZ], wallMaterial);
+    addBox([14, .22, length], [0, 5.6, room.centerZ], new THREE.MeshStandardMaterial({ color: 0x3c3738, roughness: 1 }));
+    addBox([4.3, 5.5, .28], [-4.55, 2.75, room.zFront], wallMaterial);
+    addBox([4.3, 5.5, .28], [4.55, 2.75, room.zFront], wallMaterial);
+    addBox([4.4, .95, .28], [0, 5.08, room.zFront], wallMaterial);
+    addBox([.06, .08, length - .6], [0, .13, room.centerZ], new THREE.MeshStandardMaterial({ color: 0x806e61, roughness: .8 }));
+    addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
+    addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
+    addPainting(room);
+    const roomLight = new THREE.PointLight(Number.parseInt(room.accent.slice(1), 16), 1.2, 18, 2);
+    roomLight.position.set(1.4, 4.9, room.centerZ - 1.5);
+    worldGroup.add(roomLight);
   }
 
-  function drawInteractable(item) {
-    const color = item.kind === "curator" ? "#d3a95f" : item.kind === "gate" ? "#c75b58" : roomById.get(item.id)?.color || "#d3a95f";
-    if (item.kind === "exhibit") {
-      drawChapterObject(item);
-      return;
-    }
-
-    ctx.save();
-    ctx.translate(item.x, item.y);
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 12;
-    if (item.kind === "gate") {
-      const unlocked = gateUnlocked(item);
-      ctx.fillStyle = unlocked ? "rgba(211,169,95,.12)" : "rgba(199,91,88,.14)";
-      ctx.fillRect(-54, -82, 108, 164);
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = "#343031";
-      ctx.fillRect(-42, -69, 84, 138);
-      ctx.strokeStyle = unlocked ? "#d3a95f" : color;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(-54, -82, 108, 164);
-      ctx.beginPath();
-      ctx.moveTo(-27, 58);
-      ctx.lineTo(-27, -20);
-      ctx.quadraticCurveTo(0, -55, 27, -20);
-      ctx.lineTo(27, 58);
-      ctx.stroke();
-      ctx.font = "12px 'DM Mono', monospace";
-      ctx.textAlign = "center";
-      ctx.fillStyle = unlocked ? "#f0d7a7" : color;
-      ctx.fillText(unlocked ? item.final ? "EXIT" : "OPEN" : "LOCKED", 0, 103);
-      ctx.restore();
-      return;
-    }
-
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(0, 0, 26 + Math.sin(state.time * 2) * 2, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillStyle = color;
-    ctx.fillRect(-6, -6, 12, 12);
-    ctx.restore();
+  function addGate(gate) {
+    const material = new THREE.MeshStandardMaterial({ color: 0x492f34, roughness: .75, metalness: .1, emissive: 0x210e13, emissiveIntensity: .28 });
+    const accentMaterial = new THREE.MeshStandardMaterial({ color: 0xc67b53, roughness: .65, metalness: .25, emissive: 0x2c1515, emissiveIntensity: .35 });
+    addBox([.38, 4.65, .46], [-2.35, 2.35, gate.z], accentMaterial);
+    addBox([.38, 4.65, .46], [2.35, 2.35, gate.z], accentMaterial);
+    addBox([5.08, .38, .46], [0, 4.55, gate.z], accentMaterial);
+    const door = addBox([4.25, 4.25, .10], [0, 2.15, gate.z], material);
+    gateMeshes.set(gate.id, { door, accentMaterial, gate });
   }
 
-  function drawPlayer() {
-    const player = state.player;
-    ctx.save();
-    ctx.translate(player.x, player.y);
-    ctx.shadowColor = "#e2b45d";
-    ctx.shadowBlur = 20;
-    ctx.fillStyle = "#e2b45d";
-    ctx.beginPath();
-    ctx.arc(0, 0, 11, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = "#f7df9b";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.arc(0, 0, 17, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.fillStyle = "#160b0d";
-    ctx.beginPath();
-    ctx.arc(4, -3, 3, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  function drawParticles() {
-    for (let index = 0; index < 18; index += 1) {
-      const x = (index * 487 + 160) % WORLD.width;
-      const y = (index * 241 + 110) % WORLD.height;
-      const alpha = 0.035 + (Math.sin(state.time * 0.35 + index) + 1) * 0.018;
-      ctx.fillStyle = `rgba(240,224,203,${alpha})`;
-      ctx.fillRect(x, y, 2, 2);
+  function updateGateMeshes() {
+    for (const entry of gateMeshes.values()) {
+      const open = gatePassed(entry.gate);
+      entry.door.visible = !open;
+      const color = gateUnlocked(entry.gate) ? 0xd6ae6c : 0xbd5c5d;
+      entry.accentMaterial.color.setHex(color);
+      entry.accentMaterial.emissive.setHex(gateUnlocked(entry.gate) ? 0x4a3016 : 0x3d1118);
     }
   }
 
-  function drawVignette(width, height) {
-    const gradient = ctx.createRadialGradient(width / 2, height / 2, Math.min(width, height) * 0.25, width / 2, height / 2, Math.max(width, height) * 0.78);
-    gradient.addColorStop(0, "transparent");
-    gradient.addColorStop(1, "rgba(20,18,19,.22)");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+  function initThreeGallery() {
+    if (!THREE || renderer) return;
+    try {
+      const size = viewport();
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(size.width, size.height, false);
+      if ("outputColorSpace" in renderer && THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x302d2e);
+      scene.fog = new THREE.Fog(0x302d2e, 28, 104);
+      camera = new THREE.PerspectiveCamera(72, size.width / size.height, .1, 130);
+      camera.rotation.order = "YXZ";
+      clock = new THREE.Clock();
+      worldGroup = new THREE.Group();
+      scene.add(worldGroup);
+      scene.add(new THREE.HemisphereLight(0xf5e6d0, 0x332c2b, 1.4));
+      const keyLight = new THREE.DirectionalLight(0xffe8c3, 1.0);
+      keyLight.position.set(-5, 10, 8);
+      keyLight.castShadow = true;
+      keyLight.shadow.mapSize.set(1024, 1024);
+      scene.add(keyLight);
+      rooms.forEach(addRoom);
+      gates.forEach(addGate);
+      updateGateMeshes();
+      updateCamera();
+    } catch (error) {
+      renderer = null;
+      statusText.textContent = "Không thể khởi tạo không gian 3D trên trình duyệt này.";
+      console.warn("THE STATE WebGL fallback:", error);
+    }
   }
 
   function updateCamera() {
-    const viewWidth = innerWidth / CAMERA_ZOOM;
-    const viewHeight = innerHeight / CAMERA_ZOOM;
-    state.camera.x = clamp(state.player.x - viewWidth * 0.5, 0, Math.max(0, WORLD.width - viewWidth));
-    state.camera.y = clamp(state.player.y - viewHeight * 0.56, 0, Math.max(0, WORLD.height - viewHeight));
+    if (!camera) return;
+    camera.position.set(state.player.x, PLAYER.height, state.player.z);
+    camera.rotation.set(state.look.pitch, state.look.yaw, 0);
+  }
+
+  function renderFrame() {
+    if (!renderer || !scene || !camera) return;
+    updateCamera();
+    renderer.render(scene, camera);
   }
 
   function scheduleLoop() {
@@ -778,21 +659,24 @@
   function loop(timestamp) {
     state.frameRequested = false;
     if (!state.running) return;
-    const dt = Math.min((timestamp - state.lastTime) / 1000, 0.05);
+    const dt = Math.min((timestamp - state.lastTime) / 1000, .05);
     state.lastTime = timestamp;
     state.time += dt;
     if (!state.dialogueOpen && !state.viewerOpen) {
-      let dx = 0;
-      let dy = 0;
-      if (keys.has("w") || keys.has("arrowup")) dy -= 1;
-      if (keys.has("s") || keys.has("arrowdown")) dy += 1;
-      if (keys.has("a") || keys.has("arrowleft")) dx -= 1;
-      if (keys.has("d") || keys.has("arrowright")) dx += 1;
-      if (dx || dy) move(dx, dy, dt);
-      updateCamera();
+      let forward = 0;
+      let strafe = 0;
+      if (keys.has("w") || keys.has("arrowup")) forward += 1;
+      if (keys.has("s") || keys.has("arrowdown")) forward -= 1;
+      if (keys.has("a") || keys.has("arrowleft")) strafe -= 1;
+      if (keys.has("d") || keys.has("arrowright")) strafe += 1;
+      if (forward || strafe) {
+        const sin = Math.sin(state.look.yaw);
+        const cos = Math.cos(state.look.yaw);
+        move(strafe * cos - forward * sin, -strafe * sin - forward * cos, dt);
+      }
       updateUi();
     }
-    drawWorld();
+    renderFrame();
     scheduleLoop();
   }
 
@@ -800,6 +684,7 @@
     state.running = false;
     state.viewerOpen = false;
     state.dialogueOpen = false;
+    document.exitPointerLock?.();
     contentViewer.classList.add("hidden");
     dialogue.classList.add("hidden");
     endingScreen.classList.remove("hidden");
@@ -815,6 +700,7 @@
     keys.clear();
     state.dialogueOpen = false;
     state.viewerOpen = false;
+    document.exitPointerLock?.();
     dialogue.classList.add("hidden");
     contentViewer.classList.add("hidden");
     closeLightbox();
@@ -829,6 +715,7 @@
     keys.clear();
     state.dialogueOpen = false;
     state.viewerOpen = false;
+    document.exitPointerLock?.();
     closeLightbox();
     quitScreen.classList.add("hidden");
     endingScreen.classList.add("hidden");
@@ -859,11 +746,36 @@
       return;
     }
     if (key === "e") interact();
+    else if (key === "escape") document.exitPointerLock?.();
     else keys.add(key);
   }
 
   function handleKeyUp(event) { keys.delete(event.key.toLowerCase()); }
 
+  function handleMouseMove(event) {
+    if (!state.running || state.dialogueOpen || state.viewerOpen || document.pointerLockElement !== canvas) return;
+    state.look.yaw -= event.movementX * .0024;
+    state.look.pitch = clamp(state.look.pitch - event.movementY * .0021, -1.25, 1.25);
+  }
+
+  function resize() {
+    if (!renderer || !camera) return;
+    const size = viewport();
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(size.width, size.height, false);
+    camera.aspect = size.width / size.height;
+    camera.updateProjectionMatrix();
+  }
+
+  canvas.addEventListener("click", () => {
+    if (state.running && !state.dialogueOpen && !state.viewerOpen) canvas.requestPointerLock?.();
+  });
+  document.addEventListener?.("pointerlockchange", updateUi);
+  document.addEventListener?.("mousemove", handleMouseMove);
+  window.addEventListener("resize", resize);
+  window.addEventListener("keydown", handleKeyDown);
+  window.addEventListener("keyup", handleKeyUp);
+  window.addEventListener("blur", () => keys.clear());
   document.getElementById("start-button").addEventListener("click", start);
   document.getElementById("restart-button").addEventListener("click", start);
   document.getElementById("quit-button").addEventListener("click", quitGame);
@@ -878,16 +790,13 @@
   viewerImage.addEventListener("click", openLightbox);
   lightboxClose.addEventListener("click", closeLightbox);
   imageLightbox.querySelector(".image-lightbox-backdrop")?.addEventListener("click", closeLightbox);
-  window.addEventListener("resize", resize);
-  window.addEventListener("keydown", handleKeyDown);
-  window.addEventListener("keyup", handleKeyUp);
-  window.addEventListener("blur", () => keys.clear());
-  resize();
+
+  updateUi();
 
   window.__THE_STATE__ = {
     state,
     rooms,
-    walls,
+    gates,
     interactables,
     content,
     contentById,
@@ -905,7 +814,7 @@
     quitGame,
     returnToTitle,
     canMove,
-    drawWorld,
+    drawWorld: renderFrame,
     updateUi
   };
 })();
