@@ -13,4 +13,12 @@ if (sandbox.THREE.REVISION !== "159") {
   throw new Error(`Unexpected vendored Three.js revision: ${sandbox.THREE.REVISION}`);
 }
 
-console.log("PASS: vendored Three.js runtime exposes WebGLRenderer (r159)");
+for (const feature of [
+  "Scene", "PerspectiveCamera", "WebGLRenderer", "Clock", "Group", "Color", "Fog",
+  "Mesh", "BoxGeometry", "PlaneGeometry", "CanvasTexture", "MeshStandardMaterial",
+  "PointLight", "HemisphereLight", "DirectionalLight", "DoubleSide", "SRGBColorSpace"
+]) {
+  if (!(feature in sandbox.THREE)) throw new Error(`Vendored Three.js is missing ${feature}`);
+}
+
+console.log("PASS: vendored Three.js runtime exposes the full gallery API (r159)");
