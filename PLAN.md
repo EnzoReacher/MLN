@@ -2,7 +2,7 @@
 
 ## Hướng đã chốt
 
-Game 2D top-down chạy bằng Canvas + JavaScript thuần. Người chơi điều khiển một nhân vật trong một tuyến triển lãm chính trị, thay vì đọc một giao diện mô phỏng kiểu website.
+Game 3D WebGL chạy bằng Three.js bản cố định từ CDN, không backend và không build pipeline phức tạp. Người chơi bước vào một tuyến triển lãm chính trị, thay vì đọc một giao diện mô phỏng kiểu website.
 
 Luồng trải nghiệm đã chốt:
 
@@ -13,8 +13,8 @@ Nền tảng này phù hợp deadline 3–4 ngày: không cần Unity, backend, 
 ## Nền móng hiện tại
 
 - Màn hình mở đầu, HUD, minimap và hướng dẫn điều khiển.
-- Canvas world có camera bám nhân vật, sàn, tường, hành lang và bốn phòng.
-- Di chuyển bằng `WASD`/phím mũi tên với va chạm tường và cổng.
+- Không gian gallery 3D có sàn, tường, ánh sáng, khung tranh lớn và bốn phòng nối tiếp.
+- Di chuyển bằng `WASD`/phím mũi tên, nhìn bằng chuột; cổng có va chạm logic và chỉ mở đúng thứ tự.
 - Bốn chương theo mạch giáo trình: điều kiện vật chất → giai cấp → Nhà nước → mâu thuẫn/cách mạng xã hội.
 - Cổng 02, 03, 04 và cổng kết thúc hoạt động theo thứ tự; không thể đi tắt qua chương sau.
 - Hiện vật trong phòng chỉ là điểm tương tác trực quan, không vẽ hộp lý thuyết cố định.
