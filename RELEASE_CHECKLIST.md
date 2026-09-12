@@ -2,8 +2,8 @@
 
 ## Nền móng game
 
-- [x] Canvas 2D game shell thay cho dashboard.
-- [x] Màn hình mở đầu và hướng dẫn `WASD` / `E` / `ESC`.
+- [x] Three.js/WebGL 3D gallery shell thay cho dashboard.
+- [x] Màn hình mở đầu và hướng dẫn `WASD` / chuột / `E` / `ESC`.
 - [x] Nhân vật, camera theo nhân vật và tường va chạm.
 - [x] Bốn phòng triển lãm có màu nhận diện riêng.
 - [x] Bốn hiện vật trực quan; nội dung không nằm sẵn trong các hộp tĩnh.
@@ -40,7 +40,7 @@ node test/smoke-test.mjs
 
 Các test xác nhận:
 
-- Canvas game loop, HUD, content contract và viewer shell tồn tại.
+- Three.js game loop, HUD, content contract và viewer shell tồn tại.
 - Có đúng bốn exhibit và bốn gate.
 - Va chạm tường/cổng hoạt động; cổng sau không thể đi qua sớm.
 - Hồ sơ mở bằng `E`, có panel, đoạn văn, image slot và lightbox.
