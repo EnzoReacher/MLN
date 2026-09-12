@@ -2,7 +2,7 @@
 
 ## Hướng đã chốt
 
-Game 3D WebGL chạy bằng Three.js bản cố định từ CDN, không backend và không build pipeline phức tạp. Người chơi bước vào một tuyến triển lãm chính trị, thay vì đọc một giao diện mô phỏng kiểu website.
+Game 3D WebGL chạy bằng Three.js bản cố định được đóng gói local trong `dist/vendor/`, không backend và không build pipeline phức tạp. Người chơi bước vào một tuyến triển lãm chính trị, thay vì đọc một giao diện mô phỏng kiểu website.
 
 Luồng trải nghiệm đã chốt:
 

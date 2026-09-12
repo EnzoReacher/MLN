@@ -1,6 +1,6 @@
 # THE STATE // EXHIBITION 01
 
-Game 3D WebGL khám phá một triển lãm chính trị cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**.
+Game 3D WebGL khám phá một triển lãm chính trị cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**. Three.js được đóng gói ngay trong `dist/vendor/`, nên game không phụ thuộc CDN bên ngoài khi chạy trên Vercel.
 
 Người chơi điều khiển nhân vật đi qua một tuyến triển lãm bốn chương. Ở mỗi phòng, người chơi phải tới đúng hiện vật, nhấn `E`, đọc từng mục và xem ảnh tư liệu. Chỉ khi đi hết hồ sơ chương đó, cổng kế tiếp mới mở. Đây là một game khám phá tuyến tính, không phải dashboard và không dùng câu hỏi A/B.
 
@@ -58,6 +58,7 @@ Mỗi chương có các mục dạng:
 
 ```bash
 node --check dist/app.js
+node test/runtime-test.mjs
 node test/static-check.mjs
 node test/smoke-test.mjs
 ```

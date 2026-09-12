@@ -8,6 +8,9 @@
   const dialogue = document.getElementById("dialogue");
   const endingScreen = document.getElementById("ending-screen");
   const quitScreen = document.getElementById("quit-screen");
+  const runtimeError = document.getElementById("runtime-error");
+  const runtimeErrorMessage = document.getElementById("runtime-error-message");
+  const runtimeReloadButton = document.getElementById("runtime-reload-button");
   const prompt = document.getElementById("interaction-prompt");
   const promptText = document.getElementById("prompt-text");
   const zoneName = document.getElementById("zone-name");
@@ -253,6 +256,7 @@
     state.viewerChapter = null;
     state.viewerPage = 0;
     state.viewerImage = 0;
+    runtimeError?.classList.add("hidden");
     updateUi();
   }
 
@@ -268,6 +272,17 @@
     theoryNote.classList.add("hidden");
     initThreeGallery();
     scheduleLoop();
+  }
+
+  function reportRuntimeError(message) {
+    state.running = false;
+    state.frameRequested = false;
+    keys.clear();
+    document.exitPointerLock?.();
+    if (runtimeErrorMessage) runtimeErrorMessage.textContent = message;
+    runtimeError?.classList.remove("hidden");
+    prompt.classList.add("hidden");
+    statusText.textContent = "Không gian 3D chưa sẵn sàng.";
   }
 
   function openDialogue(item) {
@@ -604,7 +619,13 @@
   }
 
   function initThreeGallery() {
-    if (!THREE || renderer) return;
+    if (renderer) return;
+    if (!THREE) {
+      if (typeof canvas?.getContext === "function") {
+        reportRuntimeError("Không tải được bộ máy Three.js local. Kiểm tra dist/vendor/three.min.js rồi tải lại trang.");
+      }
+      return;
+    }
     try {
       const size = viewport();
       renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
@@ -633,7 +654,7 @@
       updateCamera();
     } catch (error) {
       renderer = null;
-      statusText.textContent = "Không thể khởi tạo không gian 3D trên trình duyệt này.";
+      reportRuntimeError("Trình duyệt không khởi tạo được WebGL cho không gian này. Hãy thử tải lại hoặc dùng Chrome/Brave với WebGL được bật.");
       console.warn("THE STATE WebGL fallback:", error);
     }
   }
@@ -770,6 +791,10 @@
   canvas.addEventListener("click", () => {
     if (state.running && !state.dialogueOpen && !state.viewerOpen) canvas.requestPointerLock?.();
   });
+  canvas.addEventListener("webglcontextlost", (event) => {
+    event.preventDefault();
+    reportRuntimeError("WebGL vừa bị mất kết nối. Hãy tải lại trang để khôi phục không gian 3D.");
+  });
   document.addEventListener?.("pointerlockchange", updateUi);
   document.addEventListener?.("mousemove", handleMouseMove);
   window.addEventListener("resize", resize);
@@ -781,6 +806,7 @@
   document.getElementById("quit-button").addEventListener("click", quitGame);
   document.getElementById("ending-exit-button").addEventListener("click", quitGame);
   document.getElementById("return-title-button").addEventListener("click", returnToTitle);
+  runtimeReloadButton?.addEventListener("click", () => window.location.reload());
   document.getElementById("theory-button").addEventListener("click", () => theoryNote.classList.toggle("hidden"));
   dialogueClose.addEventListener("click", closeDialogue);
   viewerClose.addEventListener("click", closeContentViewer);

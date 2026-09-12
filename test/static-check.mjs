@@ -12,12 +12,13 @@ const app = read("dist/app.js");
 const content = read("dist/content.js");
 const vercel = JSON.parse(read("vercel.json"));
 
-for (const asset of ["dist/styles.css", "dist/content.js", "dist/app.js"]) {
+for (const asset of ["dist/styles.css", "dist/content.js", "dist/app.js", "dist/vendor/three.min.js"]) {
   assert(fs.existsSync(path.join(root, asset)), `Missing referenced asset: ${asset}`);
 }
 
-assert(html.includes('id="game-canvas"') && html.includes('three@0.161.0') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
+assert(html.includes('id="game-canvas"') && html.includes('src="./vendor/three.min.js"') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
 assert(html.includes('id="content-viewer"') && html.includes('id="viewer-image"') && html.includes('id="viewer-next"'), "Content viewer shell is incomplete");
+assert(html.includes('id="runtime-error"') && html.includes('id="runtime-reload-button"') && app.includes("function reportRuntimeError"), "3D runtime recovery shell is incomplete");
 assert(html.includes('id="image-lightbox"') && html.includes('id="lightbox-image"'), "Image detail viewer shell is incomplete");
 assert(app.includes("requestAnimationFrame(loop)") && app.includes("getContext(\"2d\")"), "Canvas game loop is missing");
 
@@ -49,4 +50,4 @@ assert(css.split("{").length === css.split("}").length, "CSS braces are unbalanc
 assert(vercel.rewrites?.[0]?.destination === "/dist/index.html", "Vercel root rewrite is not explicit");
 assert(vercel.rewrites?.[1]?.destination === "/dist/$1", "Vercel asset rewrite is not configured");
 
-console.log("PASS: content-first Canvas shell, four sequential exhibits/gates, image viewer, no choices/lens/icons, responsive CSS, and Vercel rewrites");
+console.log("PASS: self-contained WebGL shell, four sequential exhibits/gates, image viewer, no choices/lens/icons, responsive CSS, and Vercel rewrites");

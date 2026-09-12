@@ -3,6 +3,7 @@
 ## Nền móng game
 
 - [x] Three.js/WebGL 3D gallery shell thay cho dashboard.
+- [x] Three.js runtime được đóng gói local; không phụ thuộc CDN runtime.
 - [x] Màn hình mở đầu và hướng dẫn `WASD` / chuột / `E` / `ESC`.
 - [x] Nhân vật, camera theo nhân vật và tường va chạm.
 - [x] Bốn phòng triển lãm có màu nhận diện riêng.
@@ -34,6 +35,7 @@ Chạy từ thư mục gốc:
 
 ```bash
 node --check dist/app.js
+node test/runtime-test.mjs
 node test/static-check.mjs
 node test/smoke-test.mjs
 ```
@@ -41,6 +43,7 @@ node test/smoke-test.mjs
 Các test xác nhận:
 
 - Three.js game loop, HUD, content contract và viewer shell tồn tại.
+- Runtime Three.js local thực sự expose được `WebGLRenderer` trước khi deploy.
 - Có đúng bốn exhibit và bốn gate.
 - Va chạm tường/cổng hoạt động; cổng sau không thể đi qua sớm.
 - Hồ sơ mở bằng `E`, có panel, đoạn văn, image slot và lightbox.

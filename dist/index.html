@@ -38,6 +38,15 @@
         <div class="bottom-hint"><span class="pulse-dot"></span><span id="status-text">Tìm điểm sáng trong các phòng.</span></div>
       </section>
 
+      <section id="runtime-error" class="runtime-error hidden" aria-live="assertive" aria-labelledby="runtime-error-title">
+        <div class="runtime-error-card">
+          <span class="overline">3D RUNTIME / RECOVERY</span>
+          <h2 id="runtime-error-title">Không thể mở không gian triển lãm.</h2>
+          <p id="runtime-error-message">Game chưa tải được bộ máy 3D. Hãy tải lại trang trước khi bắt đầu lại.</p>
+          <button id="runtime-reload-button" class="primary-button" type="button"><span>TẢI LẠI TRIỂN LÃM</span><b>↻</b></button>
+        </div>
+      </section>
+
       <section id="content-viewer" class="content-viewer hidden" aria-labelledby="viewer-title">
         <div class="viewer-backdrop"></div>
         <article class="viewer-card">
@@ -78,7 +87,7 @@
         <div class="quit-content"><div class="archive-seal" aria-hidden="true">—</div><p class="overline">ARCHIVE CLOSED / SESSION ENDED</p><h2 id="quit-title">CẢM ƠN BẠN ĐÃ<br /><em>THAM QUAN.</em></h2><p>Triển lãm kết thúc ở đây. Nhưng những câu hỏi về quyền lực, giai cấp, Nhà nước và biến đổi xã hội vẫn tiếp tục bên ngoài căn phòng.</p><div class="quit-rule"></div><div class="quit-actions"><button id="return-title-button" class="primary-button" type="button"><span>VỀ MÀN HÌNH ĐẦU</span><b>↩</b></button><span>THE STATE / POLITICAL ARCHIVE</span></div></div>
       </section>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
+    <script src="./vendor/three.min.js"></script>
     <script src="./content.js"></script>
     <script src="./app.js"></script>
   </body>
