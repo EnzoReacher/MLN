@@ -32,6 +32,7 @@
   const viewerPage = document.getElementById("viewer-page");
   const viewerPageTotal = document.getElementById("viewer-page-total");
   const viewerProgressBar = document.getElementById("viewer-progress-bar");
+  const viewerExhibitStrip = document.getElementById("viewer-exhibit-strip");
   const viewerSectionLabel = document.getElementById("viewer-section-label");
   const viewerSectionTitle = document.getElementById("viewer-section-title");
   const viewerLead = document.getElementById("viewer-lead");
@@ -111,10 +112,29 @@
       radius: 1.9,
       kind: "exhibit",
       chapterId: room.id,
+      sectionIndex: 0,
+      artworkIndex: 0,
+      artworkImage: room.artworks[0].image,
       title: `Hồ sơ ${room.name.toLowerCase()}`,
       type: `ARCHIVE / ${room.index}`,
-      number: `${room.index} / 04`
+      number: `${room.index} / 04`,
+      artworkNumber: "01 / 03"
     })),
+    ...rooms.flatMap((room) => room.artworks.slice(1).map((artwork, offset) => ({
+      id: `${room.id}-artwork-${offset + 2}`,
+      x: artwork.wall === "right" ? 5.15 : -5.15,
+      z: room.centerZ + (artwork.zOffset || 0),
+      radius: 1.9,
+      kind: "exhibit",
+      chapterId: room.id,
+      sectionIndex: offset + 1,
+      artworkIndex: offset + 1,
+      artworkImage: artwork.image,
+      title: `Hồ sơ ${room.name.toLowerCase()} — tranh ${offset + 2}`,
+      type: `ARCHIVE / ${room.index} / ${String(offset + 2).padStart(2, "0")}`,
+      number: `${room.index} / 04`,
+      artworkNumber: `${String(offset + 2).padStart(2, "0")} / 03`
+    }))),
     ...gates
   ];
 
@@ -270,7 +290,10 @@
       else if (item.kind === "gate") promptText.textContent = gateUnlocked(item)
         ? item.final ? "E — KẾT THÚC TRIỂN LÃM" : `E — MỞ CỔNG SANG ${item.target}`
         : `CỔNG KHÓA — HOÀN TẤT ${item.requiredEvidence.toUpperCase()}`;
-      else promptText.textContent = state.evidence.has(item.id) ? "E — XEM LẠI HỒ SƠ" : `E — MỞ HỒ SƠ ${item.number.slice(0, 2)}`;
+      else {
+        const panelRead = state.evidence.has(item.chapterId) || state.viewedPages.has(`${item.chapterId}:${item.sectionIndex}`);
+        promptText.textContent = panelRead ? `E — XEM LẠI TRANH ${item.artworkNumber}` : `E — XEM TRANH ${item.artworkNumber}`;
+      }
     }
 
     statusText.textContent = completedCount === rooms.length
@@ -357,6 +380,9 @@
   function activeSection() { return activeChapter()?.sections[state.viewerPage] ?? null; }
   function imageKey() { return `${state.viewerChapter}:${state.viewerPage}:${state.viewerImage}`; }
   function pageKey() { return `${state.viewerChapter}:${state.viewerPage}`; }
+  function chapterRead(chapter) {
+    return Boolean(chapter?.sections?.length) && chapter.sections.every((_, index) => state.viewedPages.has(`${chapter.id}:${index}`));
+  }
 
   function setViewerButtonLabel(label) {
     const buttonLabel = viewerNext.querySelector("span");
@@ -400,6 +426,29 @@
     viewerCaption.textContent = image.caption;
   }
 
+  function goToViewerPage(index) {
+    const chapter = activeChapter();
+    if (!chapter) return;
+    state.viewerPage = clamp(index, 0, chapter.sections.length - 1);
+    state.viewerImage = 0;
+    renderViewer();
+  }
+
+  function renderViewerExhibitStrip(chapter) {
+    if (!viewerExhibitStrip) return;
+    viewerExhibitStrip.innerHTML = "";
+    chapter.sections.forEach((section, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      const isActive = index === state.viewerPage;
+      const isRead = state.viewedPages.has(`${chapter.id}:${index}`);
+      button.className = `viewer-exhibit-tab${isActive ? " is-active" : ""}${isRead ? " is-read" : ""}`;
+      button.textContent = `${String(index + 1).padStart(2, "0")}  ${section.title}`;
+      button.addEventListener("click", () => goToViewerPage(index));
+      viewerExhibitStrip.append(button);
+    });
+  }
+
   function renderViewer() {
     const chapter = activeChapter();
     if (!chapter) return;
@@ -409,6 +458,7 @@
     if (!section) return;
 
     state.viewedPages.add(pageKey());
+    renderViewerExhibitStrip(chapter);
     viewerKicker.textContent = `ARCHIVE ${chapter.code} / ${chapter.label}`;
     viewerTitle.textContent = chapter.title;
     viewerPage.textContent = String(state.viewerPage + 1).padStart(2, "0");
@@ -428,10 +478,11 @@
 
     const lastPage = state.viewerPage === sections.length - 1;
     if (lastPage) {
-      setViewerButtonLabel(state.evidence.has(chapter.id) ? "ĐÓNG HỒ SƠ" : `HOÀN TẤT CHƯƠNG ${chapter.code}`);
-      viewerNote.textContent = state.evidence.has(chapter.id)
+      const complete = chapterRead(chapter);
+      setViewerButtonLabel(complete || state.evidence.has(chapter.id) ? "ĐÓNG HỒ SƠ" : "XEM MỤC CHƯA ĐỌC");
+      viewerNote.textContent = complete || state.evidence.has(chapter.id)
         ? "Hồ sơ đã được ghi nhận. Bạn có thể đóng hoặc xem lại các mục."
-        : "Bạn đã tới trang cuối. Ghi nhận chương để mở cổng tiếp theo.";
+        : "Một hoặc nhiều mục còn chưa đọc. Chọn mục chưa sáng ở thanh trên để hoàn tất phòng.";
     } else {
       setViewerButtonLabel("MỤC TIẾP THEO");
       viewerNote.textContent = section.images.length
@@ -441,7 +492,7 @@
     updateUi();
   }
 
-  function openContentViewer(chapterId) {
+  function openContentViewer(chapterId, sectionIndex = 0) {
     const chapter = contentById.get(chapterId);
     if (!chapter) {
       openDialogue({ id: chapterId, kind: "curator", title: "Hồ sơ đang chờ nội dung", type: "ARCHIVE / EMPTY", number: "—", body: "Chương này chưa có dữ liệu trong content.js." });
@@ -452,7 +503,7 @@
     dialogue.classList.add("hidden");
     state.viewerOpen = true;
     state.viewerChapter = chapterId;
-    state.viewerPage = 0;
+    state.viewerPage = clamp(Number.isInteger(sectionIndex) ? sectionIndex : 0, 0, chapter.sections.length - 1);
     state.viewerImage = 0;
     document.exitPointerLock?.();
     contentViewer.classList.remove("hidden");
@@ -471,7 +522,8 @@
   }
 
   function completeChapter(chapterId) {
-    if (!contentById.has(chapterId)) return false;
+    const chapter = contentById.get(chapterId);
+    if (!chapter || !chapterRead(chapter)) return false;
     state.evidence.add(chapterId);
     updateGateMeshes();
     updateUi();
@@ -482,9 +534,12 @@
     const chapter = activeChapter();
     if (!chapter) return;
     if (state.viewerPage < chapter.sections.length - 1) {
-      state.viewerPage += 1;
-      state.viewerImage = 0;
-      renderViewer();
+      goToViewerPage(state.viewerPage + 1);
+      return;
+    }
+    const nextUnread = chapter.sections.findIndex((_, index) => !state.viewedPages.has(`${chapter.id}:${index}`));
+    if (nextUnread >= 0) {
+      goToViewerPage(nextUnread);
       return;
     }
     if (!state.evidence.has(chapter.id)) completeChapter(chapter.id);
@@ -537,7 +592,7 @@
       openDialogue(item);
       return;
     }
-    openContentViewer(item.chapterId);
+    openContentViewer(item.chapterId, item.sectionIndex ?? 0);
   }
 
   function makeArtworkTexture(room) {

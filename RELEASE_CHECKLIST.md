@@ -7,7 +7,7 @@
 - [x] Màn hình mở đầu và hướng dẫn `WASD` / chuột / `E` / `ESC`.
 - [x] Nhân vật, camera theo nhân vật và tường va chạm.
 - [x] Bốn phòng triển lãm có màu nhận diện riêng.
-- [x] Mỗi phòng có một tranh chính để tương tác và hai tranh phụ để lấp không gian; nội dung không nằm sẵn trong các hộp tĩnh.
+- [x] Mỗi phòng có ba tranh liên kết với ba mục nội dung; `E` ở bất kỳ tranh nào mở đúng mục, còn thanh mục/`NEXT` cho phép đọc trọn phòng từ một vị trí.
 - [x] `E` mở hồ sơ chương, không tạo lựa chọn A/B.
 - [x] Viewer có nhiều panel, đoạn văn, chú thích ảnh, chuyển ảnh và lightbox.
 - [x] Ảnh thiếu có fallback rõ ràng, không hiện broken image.
@@ -21,7 +21,7 @@
 - [x] Màn ending hiển thị số chương, panel và ảnh đã xem.
 - [x] Renderer có cấu hình hiệu năng an toàn cho laptop/máy chiếu: pixel ratio giới hạn, không shadow map động, vật liệu nhẹ.
 - [x] Không dùng spotlight cục bộ, vùng sáng giả hoặc shadow-map động; gallery dùng ánh sáng nền/định hướng đồng đều để giữ FPS ổn định.
-- [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm tranh; viewer có khung ảnh lớn, `contain` và lightbox.
+- [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm từng tranh; viewer có khung ảnh lớn, `contain` và lightbox.
 
 ## Nội dung đã tích hợp
 
