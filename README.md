@@ -2,7 +2,7 @@
 
 Game 3D WebGL khám phá một triển lãm chính trị cho sản phẩm sáng tạo môn Triết học Mác–Lênin: **Nhà nước và Cách mạng xã hội**. Three.js được đóng gói ngay trong `dist/vendor/`, nên game không phụ thuộc CDN bên ngoài khi chạy trên Vercel.
 
-Người chơi điều khiển nhân vật đi qua một tuyến triển lãm bốn chương. Ở mỗi phòng, người chơi phải tới đúng hiện vật, nhấn `E`, đọc từng mục và xem ảnh tư liệu. Chỉ khi đi hết hồ sơ chương đó, cổng kế tiếp mới mở. Đây là một game khám phá tuyến tính, không phải dashboard và không dùng câu hỏi A/B.
+Người chơi điều khiển nhân vật đi qua một tuyến triển lãm bốn chương. Mỗi bức tranh là một exhibit độc lập: tới gần tranh nào, nhấn `E` thì chỉ hồ sơ của tranh đó xuất hiện. Tranh chính của mỗi phòng là mốc bắt buộc để mở cổng kế tiếp; hai tranh phụ là tư liệu mở rộng, hoàn toàn tùy chọn. Đây là một game khám phá tuyến tính, không phải dashboard và không dùng câu hỏi A/B.
 
 ## Chạy local
 
@@ -19,7 +19,7 @@ Mở <http://localhost:4173>.
 - Click vào không gian triển lãm để khóa chuột, rồi dùng `WASD` hoặc phím mũi tên để di chuyển.
 - Rê chuột: nhìn quanh trong không gian 3D.
 - `E`: mở hiện vật, hồ sơ hướng dẫn hoặc cổng.
-- `Enter` / nút **MỤC TIẾP THEO**: chuyển trang trong hồ sơ.
+- `Enter` / nút **GHI NHẬN & ĐÓNG** hoặc **ĐÓNG TRANH**: đóng hồ sơ đang xem; không tự chuyển sang tranh khác.
 - `←` / `→`: chuyển ảnh khi mục hiện tại có nhiều ảnh.
 - Bấm vào ảnh: mở ảnh ở chế độ xem lớn.
 - `ESC`: đóng ảnh lớn, hồ sơ hoặc thông báo.
@@ -52,7 +52,7 @@ Mỗi chương có các mục dạng:
 }
 ```
 
-18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Mỗi phòng có ba tranh tường liên kết với ba mục nội dung: tranh chính mở hồ sơ từ mục 01, còn hai tranh phụ mở thẳng mục tương ứng. Người chơi có thể nhấn `E` ở bất kỳ tranh nào hoặc mở một lần rồi dùng thanh ba mục và `NEXT`; không cần đi bộ đủ 12 lần. Chương chỉ được ghi nhận khi cả ba mục đã được xem. Mọi tranh đều được fit theo tỉ lệ gốc, không kéo méo hoặc bị thu nhỏ vào một khung sai tỉ lệ; viewer có khung trình chiếu và lightbox để xem trọn ảnh. Điểm tương tác `E` nằm ngay trước tâm từng tranh. Nội dung mỗi mục được giữ ở dạng ngắn để đọc trong lớp. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật section tương ứng cùng mapping tranh nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
+18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Mỗi phòng có ba tranh tường liên kết với ba mục nội dung: `E` ở tranh 01 mở mục 01, `E` ở tranh 02 mở mục 02, và `E` ở tranh 03 mở mục 03. Viewer không còn thanh điều hướng phòng nên không thể vô tình bật cả ba nội dung cùng lúc; nút đóng chỉ xử lý exhibit đang mở. Tranh chính được ghi nhận để mở cổng, còn tranh phụ bổ sung bối cảnh. Mọi tranh đều được fit theo tỉ lệ gốc, không kéo méo hoặc bị thu nhỏ vào một khung sai tỉ lệ; viewer có khung trình chiếu và lightbox để xem trọn ảnh. Mỗi phòng có thêm một thảm đỏ trung tâm với viền đồng mảnh và bảng nhãn thấp cạnh tranh, dùng hình học tĩnh nhẹ để giữ FPS ổn định. Điểm tương tác `E` nằm ngay trước tâm từng tranh. Nội dung mỗi mục được giữ ở dạng ngắn để đọc trong lớp. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật section tương ứng cùng mapping tranh nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
 
 ## Kiểm thử
 
@@ -63,7 +63,7 @@ node test/static-check.mjs
 node test/smoke-test.mjs
 ```
 
-Smoke test mô phỏng cả tuyến: vào game, mở/đóng hồ sơ, đọc đủ ba mục mỗi chương, kiểm tra ảnh và lightbox, cổng tuần tự, ending, nút thoát và quay lại màn hình đầu.
+Smoke test mô phỏng cả tuyến: vào game, mở đúng hồ sơ của tranh phụ và tranh chính, kiểm tra đóng exhibit không làm nhảy nội dung hay mở cổng sớm, kiểm tra ảnh và lightbox, cổng tuần tự, ending, nút thoát và quay lại màn hình đầu.
 
 Game không cần backend, database, API hay biến môi trường. `vercel.json` phục vụ `dist/index.html` ở route `/` và giữ asset rewrites cho Vercel.
 

@@ -32,7 +32,6 @@
   const viewerPage = document.getElementById("viewer-page");
   const viewerPageTotal = document.getElementById("viewer-page-total");
   const viewerProgressBar = document.getElementById("viewer-progress-bar");
-  const viewerExhibitStrip = document.getElementById("viewer-exhibit-strip");
   const viewerSectionLabel = document.getElementById("viewer-section-label");
   const viewerSectionTitle = document.getElementById("viewer-section-title");
   const viewerLead = document.getElementById("viewer-lead");
@@ -60,29 +59,29 @@
   const rooms = [
     {
       id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10,
-      color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ch01-state-institutions.webp",
+      color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ch01-engels.webp",
       artworks: [
-        { image: "./assets/ch01-state-institutions.webp", wall: "left", zOffset: 0, height: 3.55, maxWidth: 5.45 },
-        { image: "./assets/ch01-engels.webp", wall: "right", zOffset: -5.4, height: 3.2, maxWidth: 3.35 },
-        { image: "./assets/ch01-lenin.webp", wall: "right", zOffset: 5.4, height: 3.2, maxWidth: 3.35 }
+        { image: "./assets/ch01-engels.webp", wall: "left", zOffset: 0, height: 3.55, maxWidth: 3.15 },
+        { image: "./assets/ch01-lenin.webp", wall: "right", zOffset: -5.4, height: 3.2, maxWidth: 3.05 },
+        { image: "./assets/ch01-state-institutions.webp", wall: "right", zOffset: 5.4, height: 2.65, maxWidth: 4.85 }
       ]
     },
     {
       id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", label: "THE SPLIT", centerZ: -24, zBack: -14, zFront: -34,
-      color: "#d6a75e", accent: "#f0d394", artwork: "class", artworkImage: "./assets/ch02-bourgeois-transition.webp",
+      color: "#d6a75e", accent: "#f0d394", artwork: "class", artworkImage: "./assets/ch02-state-functions.webp",
       artworks: [
-        { image: "./assets/ch02-bourgeois-transition.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 5.3 },
-        { image: "./assets/ch02-state-functions.webp", wall: "right", zOffset: -5.4, height: 1.7, maxWidth: 5.3 },
-        { image: "./assets/ch02-state-form.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.25 }
+        { image: "./assets/ch02-state-functions.webp", wall: "left", zOffset: 0, height: 1.7, maxWidth: 5.3 },
+        { image: "./assets/ch02-state-form.webp", wall: "right", zOffset: -5.4, height: 2.55, maxWidth: 4.25 },
+        { image: "./assets/ch02-bourgeois-transition.webp", wall: "right", zOffset: 5.4, height: 2.8, maxWidth: 4.35 }
       ]
     },
     {
       id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58,
-      color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-vietnam-socialism.webp",
+      color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-marx.webp",
       artworks: [
-        { image: "./assets/ch03-vietnam-socialism.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 5.4 },
-        { image: "./assets/ch03-marx.webp", wall: "right", zOffset: -5.4, height: 3.25, maxWidth: 3.3 },
-        { image: "./assets/ch03-vietnam-state.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.35 }
+        { image: "./assets/ch03-marx.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 3.15 },
+        { image: "./assets/ch03-vietnam-socialism.webp", wall: "right", zOffset: -5.4, height: 2.8, maxWidth: 4.65 },
+        { image: "./assets/ch03-vietnam-state.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.4 }
       ]
     },
     {
@@ -114,8 +113,9 @@
       chapterId: room.id,
       sectionIndex: 0,
       artworkIndex: 0,
+      isPrimary: true,
       artworkImage: room.artworks[0].image,
-      title: `Hồ sơ ${room.name.toLowerCase()}`,
+      title: `Tranh 01 — ${room.name.toLowerCase()}`,
       type: `ARCHIVE / ${room.index}`,
       number: `${room.index} / 04`,
       artworkNumber: "01 / 03"
@@ -129,8 +129,9 @@
       chapterId: room.id,
       sectionIndex: offset + 1,
       artworkIndex: offset + 1,
+      isPrimary: false,
       artworkImage: artwork.image,
-      title: `Hồ sơ ${room.name.toLowerCase()} — tranh ${offset + 2}`,
+      title: `Tranh ${String(offset + 2).padStart(2, "0")} — ${room.name.toLowerCase()}`,
       type: `ARCHIVE / ${room.index} / ${String(offset + 2).padStart(2, "0")}`,
       number: `${room.index} / 04`,
       artworkNumber: `${String(offset + 2).padStart(2, "0")} / 03`
@@ -158,6 +159,7 @@
     viewerOpen: false,
     viewerChapter: null,
     viewerPage: 0,
+    viewerArtworkIndex: 0,
     viewerImage: 0,
     uiAccumulator: 0
   };
@@ -291,7 +293,7 @@
         ? item.final ? "E — KẾT THÚC TRIỂN LÃM" : `E — MỞ CỔNG SANG ${item.target}`
         : `CỔNG KHÓA — HOÀN TẤT ${item.requiredEvidence.toUpperCase()}`;
       else {
-        const panelRead = state.evidence.has(item.chapterId) || state.viewedPages.has(`${item.chapterId}:${item.sectionIndex}`);
+        const panelRead = state.viewedPages.has(`${item.chapterId}:${item.sectionIndex}`);
         promptText.textContent = panelRead ? `E — XEM LẠI TRANH ${item.artworkNumber}` : `E — XEM TRANH ${item.artworkNumber}`;
       }
     }
@@ -323,6 +325,7 @@
     state.viewerOpen = false;
     state.viewerChapter = null;
     state.viewerPage = 0;
+    state.viewerArtworkIndex = 0;
     state.viewerImage = 0;
     state.uiAccumulator = 0;
     runtimeError?.classList.add("hidden");
@@ -380,9 +383,6 @@
   function activeSection() { return activeChapter()?.sections[state.viewerPage] ?? null; }
   function imageKey() { return `${state.viewerChapter}:${state.viewerPage}:${state.viewerImage}`; }
   function pageKey() { return `${state.viewerChapter}:${state.viewerPage}`; }
-  function chapterRead(chapter) {
-    return Boolean(chapter?.sections?.length) && chapter.sections.every((_, index) => state.viewedPages.has(`${chapter.id}:${index}`));
-  }
 
   function setViewerButtonLabel(label) {
     const buttonLabel = viewerNext.querySelector("span");
@@ -426,40 +426,17 @@
     viewerCaption.textContent = image.caption;
   }
 
-  function goToViewerPage(index) {
-    const chapter = activeChapter();
-    if (!chapter) return;
-    state.viewerPage = clamp(index, 0, chapter.sections.length - 1);
-    state.viewerImage = 0;
-    renderViewer();
-  }
-
-  function renderViewerExhibitStrip(chapter) {
-    if (!viewerExhibitStrip) return;
-    viewerExhibitStrip.innerHTML = "";
-    chapter.sections.forEach((section, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      const isActive = index === state.viewerPage;
-      const isRead = state.viewedPages.has(`${chapter.id}:${index}`);
-      button.className = `viewer-exhibit-tab${isActive ? " is-active" : ""}${isRead ? " is-read" : ""}`;
-      button.textContent = `${String(index + 1).padStart(2, "0")}  ${section.title}`;
-      button.addEventListener("click", () => goToViewerPage(index));
-      viewerExhibitStrip.append(button);
-    });
-  }
-
   function renderViewer() {
     const chapter = activeChapter();
     if (!chapter) return;
     const sections = chapter.sections;
-    state.viewerPage = clamp(state.viewerPage, 0, sections.length - 1);
+    state.viewerArtworkIndex = clamp(state.viewerArtworkIndex, 0, sections.length - 1);
+    state.viewerPage = state.viewerArtworkIndex;
     const section = activeSection();
     if (!section) return;
 
     state.viewedPages.add(pageKey());
-    renderViewerExhibitStrip(chapter);
-    viewerKicker.textContent = `ARCHIVE ${chapter.code} / ${chapter.label}`;
+    viewerKicker.textContent = `ARCHIVE ${chapter.code} / TRANH ${String(state.viewerArtworkIndex + 1).padStart(2, "0")} / ${chapter.label}`;
     viewerTitle.textContent = chapter.title;
     viewerPage.textContent = String(state.viewerPage + 1).padStart(2, "0");
     viewerPageTotal.textContent = String(sections.length).padStart(2, "0");
@@ -476,19 +453,11 @@
     state.viewerImage = clamp(state.viewerImage, 0, Math.max(0, section.images.length - 1));
     renderViewerImage(section);
 
-    const lastPage = state.viewerPage === sections.length - 1;
-    if (lastPage) {
-      const complete = chapterRead(chapter);
-      setViewerButtonLabel(complete || state.evidence.has(chapter.id) ? "ĐÓNG HỒ SƠ" : "XEM MỤC CHƯA ĐỌC");
-      viewerNote.textContent = complete || state.evidence.has(chapter.id)
-        ? "Hồ sơ đã được ghi nhận. Bạn có thể đóng hoặc xem lại các mục."
-        : "Một hoặc nhiều mục còn chưa đọc. Chọn mục chưa sáng ở thanh trên để hoàn tất phòng.";
-    } else {
-      setViewerButtonLabel("MỤC TIẾP THEO");
-      viewerNote.textContent = section.images.length
-        ? "Đọc mục này và nhấn vào ảnh để xem lớn; dùng mũi tên để đổi ảnh."
-        : "Đọc kỹ mục này rồi chuyển sang mục tiếp theo.";
-    }
+    const isPrimary = state.viewerArtworkIndex === 0;
+    setViewerButtonLabel(isPrimary ? "GHI NHẬN & ĐÓNG" : "ĐÓNG TRANH");
+    viewerNote.textContent = isPrimary
+      ? "Đây là tranh chính của phòng. Đọc hồ sơ này rồi ghi nhận để mở cổng tiếp theo."
+      : "Hồ sơ bổ sung của riêng bức tranh này. Đóng lại để tiếp tục tham quan phòng.";
     updateUi();
   }
 
@@ -503,7 +472,8 @@
     dialogue.classList.add("hidden");
     state.viewerOpen = true;
     state.viewerChapter = chapterId;
-    state.viewerPage = clamp(Number.isInteger(sectionIndex) ? sectionIndex : 0, 0, chapter.sections.length - 1);
+    state.viewerArtworkIndex = clamp(Number.isInteger(sectionIndex) ? sectionIndex : 0, 0, chapter.sections.length - 1);
+    state.viewerPage = state.viewerArtworkIndex;
     state.viewerImage = 0;
     document.exitPointerLock?.();
     contentViewer.classList.remove("hidden");
@@ -515,6 +485,7 @@
     state.viewerOpen = false;
     state.viewerChapter = null;
     state.viewerPage = 0;
+    state.viewerArtworkIndex = 0;
     state.viewerImage = 0;
     contentViewer.classList.add("hidden");
     closeLightbox();
@@ -523,7 +494,7 @@
 
   function completeChapter(chapterId) {
     const chapter = contentById.get(chapterId);
-    if (!chapter || !chapterRead(chapter)) return false;
+    if (!chapter || !state.viewedPages.has(`${chapterId}:0`)) return false;
     state.evidence.add(chapterId);
     updateGateMeshes();
     updateUi();
@@ -533,16 +504,7 @@
   function nextViewerPage() {
     const chapter = activeChapter();
     if (!chapter) return;
-    if (state.viewerPage < chapter.sections.length - 1) {
-      goToViewerPage(state.viewerPage + 1);
-      return;
-    }
-    const nextUnread = chapter.sections.findIndex((_, index) => !state.viewedPages.has(`${chapter.id}:${index}`));
-    if (nextUnread >= 0) {
-      goToViewerPage(nextUnread);
-      return;
-    }
-    if (!state.evidence.has(chapter.id)) completeChapter(chapter.id);
+    if (state.viewerArtworkIndex === 0 && !state.evidence.has(chapter.id)) completeChapter(chapter.id);
     closeContentViewer();
   }
 
@@ -752,6 +714,35 @@
     }
   }
 
+  function addRoomDecor(room) {
+    const length = room.zBack - room.zFront;
+    const carpetLength = Math.max(6, length - 1.4);
+    const carpetMaterial = new THREE.MeshLambertMaterial({ color: 0x65232d });
+    const carpetTrimMaterial = new THREE.MeshLambertMaterial({ color: 0x9a754e });
+    const roomTrimMaterial = new THREE.MeshLambertMaterial({ color: Number.parseInt(room.accent.slice(1), 16) });
+
+    const carpet = addBox([2.8, .055, carpetLength], [0, .145, room.centerZ], carpetMaterial);
+    carpet.name = `carpet-${room.id}`;
+    [-1.29, 1.29].forEach((x) => {
+      const edge = addBox([.055, .07, carpetLength], [x, .185, room.centerZ], carpetTrimMaterial);
+      edge.name = `carpet-edge-${room.id}`;
+    });
+    [room.zFront + .72, room.zBack - .72].forEach((z) => {
+      const end = addBox([2.8, .07, .055], [0, .185, z], carpetTrimMaterial);
+      end.name = `carpet-end-${room.id}`;
+    });
+
+    room.artworks.forEach((artwork, index) => {
+      const rightWall = artwork.wall === "right";
+      const plaque = addBox(
+        [.08, .10, .82],
+        [rightWall ? 6.35 : -6.35, .19, room.centerZ + (artwork.zOffset || 0)],
+        roomTrimMaterial
+      );
+      plaque.name = `plaque-${room.id}-${index + 1}`;
+    });
+  }
+
   function addRoom(room) {
     const floorMaterial = new THREE.MeshLambertMaterial({ color: 0x665954 });
     const wallMaterial = new THREE.MeshLambertMaterial({ color: 0x514845 });
@@ -767,6 +758,7 @@
     addBox([.06, .08, length - .6], [0, .13, room.centerZ], new THREE.MeshLambertMaterial({ color: 0x806e61 }));
     addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
     addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
+    addRoomDecor(room);
     room.artworks.forEach((artwork, index) => addPainting(room, artwork, index));
   }
 

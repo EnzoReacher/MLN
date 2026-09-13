@@ -44,7 +44,7 @@ const ids = [
   "game-canvas", "title-screen", "game-ui", "dialogue", "ending-screen", "quit-screen", "interaction-prompt", "prompt-text",
   "zone-name", "zone-index", "status-text", "evidence-count", "objective-text", "dialogue-title", "dialogue-body",
   "dialogue-type", "dialogue-number", "dialogue-close", "content-viewer", "viewer-kicker", "viewer-title",
-  "viewer-page", "viewer-page-total", "viewer-progress-bar", "viewer-exhibit-strip", "viewer-section-label", "viewer-section-title", "viewer-lead",
+  "viewer-page", "viewer-page-total", "viewer-progress-bar", "viewer-section-label", "viewer-section-title", "viewer-lead",
   "viewer-paragraphs", "viewer-image-placeholder", "viewer-image", "viewer-caption", "viewer-image-count", "viewer-prev-image",
   "viewer-next-image", "viewer-note", "viewer-next", "viewer-close", "image-lightbox", "lightbox-image", "lightbox-caption",
   "lightbox-close", "start-button", "restart-button", "quit-button", "return-title-button", "ending-exit-button", "theory-button",
@@ -98,10 +98,12 @@ const exhibits = game.interactables.filter((entry) => entry.kind === "exhibit");
 assert(exhibits.length === 12, "The gallery should expose twelve painting interactions");
 for (const room of game.rooms) {
   const roomExhibits = exhibits.filter((entry) => entry.chapterId === room.id);
+  const chapter = game.contentById.get(room.id);
   assert(roomExhibits.length === 3, `${room.id} does not expose three painting interactions`);
   room.artworks.forEach((artwork, index) => {
     const exhibit = roomExhibits.find((entry) => entry.artworkIndex === index);
     assert(exhibit?.sectionIndex === index, `${room.id} painting ${index + 1} is not linked to its content panel`);
+    assert(chapter.sections[index].images.some((image) => image.src === artwork.image), `${room.id} painting ${index + 1} is not paired with its content image`);
     assert(exhibit.x === (artwork.wall === "right" ? 5.15 : -5.15), `${room.id} painting ${index + 1} interaction is not aligned with its wall`);
     assert(exhibit.z === room.centerZ + (artwork.zOffset || 0), `${room.id} painting ${index + 1} interaction is not aligned with its center`);
   });
@@ -129,7 +131,7 @@ function openChapter(id) {
   assert(!game.state.dialogueOpen, `${id} incorrectly opened dialogue instead of the content viewer`);
   assert(elements["viewer-page"].textContent === "01", `${id} did not start on page 01`);
   assert(elements["viewer-page-total"].textContent === "03", `${id} did not expose its total page count`);
-  assert(elements["viewer-exhibit-strip"].children.length === 3, `${id} did not render the three-exhibit navigation strip`);
+  assert(elements["viewer-kicker"].textContent.includes("TRANH 01"), `${id} did not identify the selected painting`);
   assert(elements["viewer-paragraphs"].children.length > 0, `${id} did not render paragraph content`);
 }
 
@@ -151,20 +153,24 @@ elements["viewer-image"].click();
 assert(!elements["image-lightbox"].classList.contains("hidden"), "Image click did not open detail view");
 emitKey("escape");
 assert(elements["image-lightbox"].classList.contains("hidden"), "Escape did not close image detail view");
-elements["viewer-exhibit-strip"].children[1].click();
-assert(game.state.viewerPage === 1, "The exhibit strip did not open the second content panel");
-elements["viewer-exhibit-strip"].children[0].click();
-assert(game.state.viewerPage === 0, "The exhibit strip did not return to the first content panel");
+elements["viewer-close"].click();
+
+const secondaryBaseExhibit = item("base-artwork-2");
+game.state.player = { x: secondaryBaseExhibit.x, z: secondaryBaseExhibit.z };
+game.interact();
+assert(game.state.viewerOpen && game.state.viewerPage === 1, "E on a secondary painting did not open its linked content panel");
+assert(elements["viewer-kicker"].textContent.includes("TRANH 02"), "Secondary painting opened the wrong exhibit label");
+assert(!game.state.evidence.has("base"), "Opening a secondary painting completed the room too early");
+elements["viewer-next"].click();
+assert(!game.state.viewerOpen && !game.state.evidence.has("base"), "Closing a secondary painting changed the room progression");
+openChapter("base");
 
 function finishOpenChapter(id) {
   assert(game.state.viewerChapter === id, `Wrong active chapter: expected ${id}`);
-  elements["viewer-next"].click();
-  assert(game.state.viewerPage === 1, `${id} did not advance to page 02`);
-  elements["viewer-next"].click();
-  assert(game.state.viewerPage === 2, `${id} did not advance to page 03`);
+  assert(game.state.viewerArtworkIndex === 0, `${id} progression did not use the primary painting`);
   elements["viewer-next"].click();
   assert(!game.state.viewerOpen, `${id} did not close after chapter completion`);
-  assert(game.state.evidence.has(id), `${id} was not recorded after the final content panel`);
+  assert(game.state.evidence.has(id), `${id} was not recorded after closing the primary painting`);
 }
 
 function passGate(id, nextRoomId) {
@@ -178,11 +184,6 @@ function passGate(id, nextRoomId) {
 }
 
 finishOpenChapter("base");
-const secondaryBaseExhibit = item("base-artwork-2");
-game.state.player = { x: secondaryBaseExhibit.x, z: secondaryBaseExhibit.z };
-game.interact();
-assert(game.state.viewerOpen && game.state.viewerPage === 1, "E on a secondary painting did not open its linked content panel");
-elements["viewer-close"].click();
 passGate("gate-class", "class");
 assert(!game.canMove(0, gate("gate-state").z), "Chapter 03 gate was passable before chapter 02");
 
@@ -193,8 +194,7 @@ game.state.player = { x: thirdClassExhibit.x, z: thirdClassExhibit.z };
 game.interact();
 assert(game.state.viewerOpen && game.state.viewerPage === 2, "E on the third painting did not open its linked content panel");
 elements["viewer-next"].click();
-assert(game.state.viewerOpen && game.state.viewerPage === 1 && !game.state.evidence.has("class"), "NEXT did not route to the unread exhibit panel before completion");
-elements["viewer-close"].click();
+assert(!game.state.viewerOpen && !game.state.evidence.has("class"), "Closing the third painting incorrectly completed the chapter");
 openChapter("class");
 finishOpenChapter("class");
 passGate("gate-state", "state");
@@ -212,7 +212,7 @@ game.interact();
 assert(!game.state.running, "Final gate did not end the exhibition");
 assert(!elements["ending-screen"].classList.contains("hidden"), "Ending screen did not appear");
 assert(elements["ending-evidence"].textContent === "4/4", "Ending chapter count is wrong");
-assert(elements["ending-pages"].textContent === "12", "Ending page count is wrong");
+assert(elements["ending-pages"].textContent === String(game.state.viewedPages.size), "Ending page count is wrong");
 assert(elements["ending-images"].textContent === "1", "Ending image count is wrong");
 elements["ending-exit-button"].click();
 assert(!elements["quit-screen"].classList.contains("hidden"), "Ending exit did not open thank-you screen");

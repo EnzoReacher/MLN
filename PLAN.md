@@ -6,19 +6,19 @@ Game 3D WebGL chạy bằng Three.js bản cố định được đóng gói loc
 
 Luồng trải nghiệm đã chốt:
 
-`vào sảnh → tới hiện vật → nhấn E → đọc/xem từng mục → hoàn tất chương → mở cổng kế tiếp → cánh cửa cuối`
+`vào sảnh → tới đúng tranh → nhấn E → đọc/xem exhibit đó → ghi nhận tranh chính → mở cổng kế tiếp → cánh cửa cuối`
 
 Nền tảng này phù hợp deadline 3–4 ngày: không cần Unity, backend, database, asset nặng hay cài đặt phía người chơi; deploy thẳng lên Vercel.
 
 ## Nền móng hiện tại
 
 - Màn hình mở đầu, HUD, minimap và hướng dẫn điều khiển.
-- Không gian gallery 3D có sàn, tường, ánh sáng, ba tranh liên kết mỗi phòng và bốn phòng nối tiếp; tranh phụ có điểm `E` riêng nhưng người chơi không bị bắt phải đi bộ tới đủ 12 vị trí.
+- Không gian gallery 3D có sàn, tường, ánh sáng, ba tranh liên kết mỗi phòng, thảm đỏ trung tâm và bốn phòng nối tiếp; cả 12 tranh đều có điểm `E` riêng.
 - Di chuyển bằng `WASD`/phím mũi tên, nhìn bằng chuột; cổng có va chạm logic và chỉ mở đúng thứ tự.
 - Bốn chương theo mạch giáo trình: điều kiện vật chất → giai cấp → Nhà nước → mâu thuẫn/cách mạng xã hội.
 - Cổng 02, 03, 04 và cổng kết thúc hoạt động theo thứ tự; không thể đi tắt qua chương sau.
 - Hiện vật trong phòng là ba điểm tương tác trực quan, không vẽ hộp lý thuyết cố định.
-- `E` trên tranh mở đúng mục nội dung tương ứng; thanh ba mục và `NEXT` cho phép đọc trọn phòng từ một vị trí, không có lựa chọn A/B làm gián đoạn việc đọc.
+- `E` trên tranh chỉ mở đúng mục nội dung tương ứng; nút đóng xử lý exhibit hiện tại. Tranh chính là mốc bắt buộc, hai tranh phụ là nội dung tùy chọn, không có lựa chọn A/B làm gián đoạn việc đọc.
 - Viewer hỗ trợ đoạn dẫn, nhiều đoạn văn, nhiều ảnh cho mỗi mục, chú thích, chuyển ảnh và xem ảnh phóng to.
 - Ảnh thiếu hoặc đường dẫn sai có fallback rõ ràng, không để ảnh vỡ phá giao diện.
 - Toàn bộ nội dung tách khỏi engine trong `dist/content.js`; nhóm có thể thay nội dung và thêm ảnh sau này.
@@ -46,7 +46,8 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 - [x] Chia nội dung thành ba mục đọc trong mỗi phòng, mỗi mục có một ý rõ ràng.
 - [x] Nén 18 ảnh tư liệu thành WebP, viết `alt`/caption và gắn vào đúng section.
 - [x] Dùng một ảnh đại diện phù hợp làm tranh chính và hai ảnh phụ cho từng phòng.
-- [x] Gắn từng tranh vào đúng mục nội dung; `E` căn theo tâm từng tranh, thanh ba mục/`NEXT` cho phép đọc không cần đi bộ đủ 12 lần; viewer có khung trình chiếu và lightbox để xem trọn ảnh.
+- [x] Gắn từng tranh vào đúng mục nội dung; `E` căn theo tâm từng tranh, mỗi exhibit mở độc lập; viewer có khung trình chiếu và lightbox để xem trọn ảnh.
+- [x] Thêm thảm đỏ trung tâm, viền đồng và bảng nhãn thấp cạnh tranh bằng hình học tĩnh nhẹ, không dùng spotlight hoặc shadow map.
 - [x] Rút gọn mỗi mục còn tối đa hai đoạn, phù hợp đọc khi thuyết trình.
 - [ ] Nhóm kiểm tra lần cuối nguồn/chú thích ảnh theo yêu cầu của giảng viên.
 - [ ] Nhóm đọc thử toàn bộ nội dung trên đúng màn hình trình chiếu.

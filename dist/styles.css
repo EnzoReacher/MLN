@@ -116,11 +116,6 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
 .viewer-progress b { color: var(--faint); font-weight: 400; }
 .viewer-progress i { display: block; flex: 1; height: 4px; margin-left: 12px; background: rgba(244, 236, 223, .13); }
 .viewer-progress em { display: block; height: 100%; background: var(--red); transition: width .25s; }
-.viewer-exhibit-strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; min-width: 0; margin: 0 0 26px; }
-.viewer-exhibit-tab { min-width: 0; overflow: hidden; padding: 11px 13px; border: 1px solid rgba(244, 236, 223, .18); background: rgba(20, 18, 19, .18); color: var(--muted); cursor: pointer; font: 12px/1.35 var(--mono); text-align: left; text-overflow: ellipsis; white-space: nowrap; transition: border-color .2s, background .2s, color .2s; }
-.viewer-exhibit-tab:hover { border-color: rgba(214, 174, 108, .62); color: var(--paper); }
-.viewer-exhibit-tab.is-active { border-color: var(--gold); background: rgba(214, 174, 108, .12); color: var(--paper); }
-.viewer-exhibit-tab.is-read:not(.is-active) { border-color: rgba(189, 92, 93, .42); color: #e7c8aa; }
 .viewer-layout { display: grid; grid-template-columns: minmax(0, .84fr) minmax(0, 1.16fr); gap: clamp(24px, 4vw, 52px); min-width: 0; align-items: start; }
 .viewer-copy { min-width: 0; }
 .viewer-copy h3 { margin: 9px 0 15px; color: var(--paper); font-size: clamp(29px, 3.2vw, 44px); line-height: 1.06; letter-spacing: -.04em; font-weight: 600; }
@@ -227,7 +222,6 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
   .viewer-image-stage { height: min(50vh, 390px); min-height: 260px; padding: 12px; }
   .viewer-image-placeholder { min-height: 220px; padding: 20px; }
   .viewer-image-placeholder strong { font-size: 17px; }
-  .viewer-exhibit-strip { grid-template-columns: 1fr; }
   .viewer-footer .primary-button { font-size: 12px; }
   .dialogue-card h2 { font-size: 34px; }
   .dialogue-card > p { font-size: 17px; }
