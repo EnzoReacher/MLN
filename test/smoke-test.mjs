@@ -85,6 +85,8 @@ assert(game.state.player.x === 0 && game.state.player.z === 7, "Game did not sta
 assert(elements["title-screen"].classList.contains("hidden"), "Title screen did not hide");
 assert(!elements["game-ui"].classList.contains("hidden"), "Game HUD did not appear");
 assert(game.content.length === 4 && game.content.every((chapter) => chapter.sections.length === 3), "Content contract did not load four three-panel chapters");
+assert(game.content.every((chapter) => chapter.sections.every((section) => section.paragraphs.length <= 2)), "Gallery copy is longer than the compact two-paragraph format");
+assert(Math.max(...game.content.flatMap((chapter) => chapter.sections.flatMap((section) => section.paragraphs.map((paragraph) => paragraph.length)))) <= 300, "A gallery paragraph is too long to read comfortably");
 assert(game.rooms.length === 4 && game.gates.length === 4, "3D gallery did not expose four rooms and four gates");
 game.drawWorld();
 

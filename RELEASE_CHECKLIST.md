@@ -20,6 +20,8 @@
 - [x] Không còn hộp lý thuyết tĩnh trong room.
 - [x] Màn ending hiển thị số chương, panel và ảnh đã xem.
 - [x] Renderer có cấu hình hiệu năng an toàn cho laptop/máy chiếu: pixel ratio giới hạn, không shadow map động, vật liệu nhẹ.
+- [x] Spotlight định hướng và vùng bóng tiếp xúc tĩnh tạo chiều sâu mà không bật shadow-map động.
+- [x] Tranh tường giữ đúng tỉ lệ ảnh; viewer có khung ảnh lớn, `contain` và lightbox.
 
 ## Nội dung đã tích hợp
 
@@ -27,6 +29,7 @@
 - [x] Đặt 18 ảnh tư liệu đã nén vào `dist/assets/`.
 - [x] Điền `src`, `alt`, `caption` cho từng ảnh trong đúng section.
 - [x] Gắn ảnh đại diện vào tranh lớn của cả bốn phòng.
+- [x] Rút gọn nội dung: mỗi section tối đa hai đoạn, không đoạn nào vượt quá giới hạn đọc trong triển lãm.
 - [ ] Kiểm tra nguồn/chú thích ảnh theo yêu cầu cuối của giảng viên.
 - [ ] Đọc thử toàn bộ viewer ở kích thước màn hình trình chiếu.
 

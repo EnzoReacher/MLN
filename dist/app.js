@@ -106,6 +106,7 @@
   let worldGroup = null;
   let clock = null;
   let textureLoader = null;
+  let lightPoolTexture = null;
   let gateMeshes = new Map();
 
   function normaliseImage(image) {
@@ -573,12 +574,34 @@
     const frameMaterial = new THREE.MeshLambertMaterial({ color: Number.parseInt(room.accent.slice(1), 16) });
     const frame = addBox([.28, 4.25, 6.9], [-6.82, 3.0, room.centerZ], frameMaterial, { castShadow: true });
     frame.name = `frame-${room.id}`;
+    const artworkBacking = new THREE.Mesh(
+      new THREE.PlaneGeometry(6.45, 3.8),
+      new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide })
+    );
+    artworkBacking.position.set(-6.655, 3.0, room.centerZ);
+    artworkBacking.rotation.y = Math.PI / 2;
+    worldGroup.add(artworkBacking);
     const artworkMaterial = new THREE.MeshBasicMaterial({ map: makeArtworkTexture(room), side: THREE.DoubleSide });
     const artwork = new THREE.Mesh(new THREE.PlaneGeometry(6.45, 3.8), artworkMaterial);
     artwork.position.set(-6.64, 3.0, room.centerZ);
     artwork.rotation.y = Math.PI / 2;
     artwork.castShadow = false;
     worldGroup.add(artwork);
+    const fitArtworkToFrame = (texture) => {
+      const width = Number(texture?.image?.width) || 900;
+      const height = Number(texture?.image?.height) || 560;
+      const aspect = width / Math.max(1, height);
+      const frameWidth = 6.45;
+      const frameHeight = 3.8;
+      let artworkWidth = frameWidth;
+      let artworkHeight = artworkWidth / aspect;
+      if (artworkHeight > frameHeight) {
+        artworkHeight = frameHeight;
+        artworkWidth = artworkHeight * aspect;
+      }
+      artwork.geometry.dispose();
+      artwork.geometry = new THREE.PlaneGeometry(artworkWidth, artworkHeight);
+    };
     if (room.artworkImage && textureLoader) {
       textureLoader.load(room.artworkImage, (texture) => {
         if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
@@ -587,12 +610,46 @@
         texture.anisotropy = 1;
         artworkMaterial.map = texture;
         artworkMaterial.needsUpdate = true;
+        fitArtworkToFrame(texture);
       }, undefined, (error) => console.warn(`THE STATE artwork fallback: ${room.id}`, error));
     }
     addBox([4.2, .18, .12], [-6.58, .76, room.centerZ], frameMaterial);
-    const spot = new THREE.PointLight(Number.parseInt(room.color.slice(1), 16), 1.8, 11, 2);
-    spot.position.set(-4.6, 4.9, room.centerZ + 1.4);
-    worldGroup.add(spot);
+    const spotlight = new THREE.SpotLight(Number.parseInt(room.accent.slice(1), 16), 2.7, 14, Math.PI / 7, .62, 1.4);
+    spotlight.position.set(-4.3, 5.15, room.centerZ + 1.6);
+    spotlight.target.position.set(-6.45, 2.75, room.centerZ);
+    spotlight.castShadow = false;
+    worldGroup.add(spotlight, spotlight.target);
+    addLightPool(room, -4.35, room.centerZ + 1.5, 4.8, 2.15);
+  }
+
+  function makeLightPoolTexture() {
+    if (lightPoolTexture || !THREE) return lightPoolTexture;
+    const glowCanvas = document.createElement("canvas");
+    glowCanvas.width = 128;
+    glowCanvas.height = 64;
+    const glow = glowCanvas.getContext("2d");
+    const gradient = glow.createRadialGradient(64, 32, 2, 64, 32, 64);
+    gradient.addColorStop(0, "rgba(255,236,189,.32)");
+    gradient.addColorStop(.42, "rgba(224,180,109,.16)");
+    gradient.addColorStop(1, "rgba(224,180,109,0)");
+    glow.fillStyle = gradient;
+    glow.fillRect(0, 0, 128, 64);
+    lightPoolTexture = new THREE.CanvasTexture(glowCanvas);
+    lightPoolTexture.generateMipmaps = false;
+    lightPoolTexture.minFilter = THREE.LinearFilter;
+    lightPoolTexture.magFilter = THREE.LinearFilter;
+    return lightPoolTexture;
+  }
+
+  function addLightPool(room, x, z, width, depth) {
+    const pool = new THREE.Mesh(
+      new THREE.PlaneGeometry(width, depth),
+      new THREE.MeshBasicMaterial({ map: makeLightPoolTexture(), transparent: true, depthWrite: false, opacity: .82 })
+    );
+    pool.name = `spotlight-pool-${room.id}`;
+    pool.rotation.x = -Math.PI / 2;
+    pool.position.set(x, .14, z);
+    worldGroup.add(pool);
   }
 
   function addRoom(room) {
@@ -611,7 +668,7 @@
     addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
     addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
     addPainting(room);
-    const roomLight = new THREE.PointLight(Number.parseInt(room.accent.slice(1), 16), .85, 18, 2);
+    const roomLight = new THREE.PointLight(Number.parseInt(room.accent.slice(1), 16), .58, 19, 2);
     roomLight.position.set(1.4, 4.9, room.centerZ - 1.5);
     worldGroup.add(roomLight);
   }
