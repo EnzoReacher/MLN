@@ -52,7 +52,7 @@ Mỗi chương có các mục dạng:
 }
 ```
 
-18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Bốn ảnh đại diện còn được dùng làm tranh lớn trong không gian 3D; ảnh được fit theo tỉ lệ gốc, không kéo méo, còn viewer có khung trình chiếu và lightbox để xem trọn ảnh. Nội dung mỗi mục được giữ ở dạng ngắn để đọc trong lớp. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật cả section tương ứng lẫn `artworkImage` nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
+18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Mỗi phòng có ba tranh tường: một tranh chính để mở hồ sơ bằng `E` và hai tranh phụ để làm không gian có chiều sâu hơn. Mọi tranh đều được fit theo tỉ lệ gốc, không kéo méo hoặc bị thu nhỏ vào một khung sai tỉ lệ; viewer có khung trình chiếu và lightbox để xem trọn ảnh. Điểm tương tác `E` nằm ngay trước tâm tranh chính của từng phòng. Nội dung mỗi mục được giữ ở dạng ngắn để đọc trong lớp. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật section tương ứng cùng mapping tranh nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
 
 ## Kiểm thử
 

@@ -57,10 +57,42 @@
   const GALLERY = { halfWidth: 7, roomHeight: 5.5, minZ: -88, maxZ: 9 };
 
   const rooms = [
-    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10, color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ch01-state-institutions.webp" },
-    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", label: "THE SPLIT", centerZ: -24, zBack: -14, zFront: -34, color: "#d6a75e", accent: "#f0d394", artwork: "class", artworkImage: "./assets/ch02-bourgeois-transition.webp" },
-    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58, color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-vietnam-socialism.webp" },
-    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", label: "THE FAULTLINE", centerZ: -72, zBack: -62, zFront: -82, color: "#c95e62", accent: "#f1b07d", artwork: "revolt", artworkImage: "./assets/ch04-revolution-origin.webp" }
+    {
+      id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10,
+      color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ch01-state-institutions.webp",
+      artworks: [
+        { image: "./assets/ch01-state-institutions.webp", wall: "left", zOffset: 0, height: 3.55, maxWidth: 5.45 },
+        { image: "./assets/ch01-engels.webp", wall: "right", zOffset: -5.4, height: 3.2, maxWidth: 3.35 },
+        { image: "./assets/ch01-lenin.webp", wall: "right", zOffset: 5.4, height: 3.2, maxWidth: 3.35 }
+      ]
+    },
+    {
+      id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", label: "THE SPLIT", centerZ: -24, zBack: -14, zFront: -34,
+      color: "#d6a75e", accent: "#f0d394", artwork: "class", artworkImage: "./assets/ch02-bourgeois-transition.webp",
+      artworks: [
+        { image: "./assets/ch02-bourgeois-transition.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 5.3 },
+        { image: "./assets/ch02-state-functions.webp", wall: "right", zOffset: -5.4, height: 1.7, maxWidth: 5.3 },
+        { image: "./assets/ch02-state-form.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.25 }
+      ]
+    },
+    {
+      id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58,
+      color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-vietnam-socialism.webp",
+      artworks: [
+        { image: "./assets/ch03-vietnam-socialism.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 5.4 },
+        { image: "./assets/ch03-marx.webp", wall: "right", zOffset: -5.4, height: 3.25, maxWidth: 3.3 },
+        { image: "./assets/ch03-vietnam-state.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.35 }
+      ]
+    },
+    {
+      id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", label: "THE FAULTLINE", centerZ: -72, zBack: -62, zFront: -82,
+      color: "#c95e62", accent: "#f1b07d", artwork: "revolt", artworkImage: "./assets/ch04-revolution-origin.webp",
+      artworks: [
+        { image: "./assets/ch04-revolution-origin.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 5.25 },
+        { image: "./assets/ch04-revolution-force.webp", wall: "right", zOffset: -5.4, height: 2.55, maxWidth: 4.25 },
+        { image: "./assets/ch04-revolution-method.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.25 }
+      ]
+    }
   ];
 
   const gates = [
@@ -72,7 +104,17 @@
 
   const interactables = [
     { id: "curator", x: -4.3, z: 6.6, radius: 1.8, kind: "curator", title: "Người lưu trữ", type: "WELCOME", number: "00 / 04", body: "Đây là một tuyến triển lãm có thứ tự. Đi tới từng bức tranh, nhấn E để đọc hồ sơ và xem ảnh. Khi hoàn tất một chương, cổng tiếp theo sẽ mở." },
-    ...rooms.map((room) => ({ id: room.id, x: -5.9, z: room.centerZ, radius: 3.8, kind: "exhibit", chapterId: room.id, title: `Hồ sơ ${room.name.toLowerCase()}`, type: `ARCHIVE / ${room.index}`, number: `${room.index} / 04` })),
+    ...rooms.map((room) => ({
+      id: room.id,
+      x: room.artworks[0].wall === "right" ? 5.15 : -5.15,
+      z: room.centerZ + room.artworks[0].zOffset,
+      radius: 1.9,
+      kind: "exhibit",
+      chapterId: room.id,
+      title: `Hồ sơ ${room.name.toLowerCase()}`,
+      type: `ARCHIVE / ${room.index}`,
+      number: `${room.index} / 04`
+    })),
     ...gates
   ];
 
@@ -571,40 +613,81 @@
     return mesh;
   }
 
-  function addPainting(room) {
+  const ARTWORK_ASPECTS = Object.freeze({
+    "./assets/ch01-engels.webp": 384 / 522,
+    "./assets/ch01-lenin.webp": 660 / 892,
+    "./assets/ch01-state-institutions.webp": 888 / 578,
+    "./assets/ch02-state-functions.webp": 1280 / 244,
+    "./assets/ch02-state-form.webp": 1166 / 792,
+    "./assets/ch02-bourgeois-transition.webp": 1140 / 814,
+    "./assets/ch03-marx.webp": 482 / 622,
+    "./assets/ch03-vietnam-socialism.webp": 926 / 570,
+    "./assets/ch03-vietnam-state.webp": 904 / 508,
+    "./assets/ch04-revolution-origin.webp": 1228 / 832,
+    "./assets/ch04-revolution-force.webp": 888 / 596,
+    "./assets/ch04-revolution-method.webp": 1158 / 718
+  });
+
+  function paintingDimensions(spec, aspect = ARTWORK_ASPECTS[spec.image] || 1.6) {
+    const maxHeight = spec.height || 3.2;
+    const maxWidth = spec.maxWidth || 4.8;
+    let width = Math.min(maxWidth, maxHeight * aspect);
+    let height = width / aspect;
+    if (height > maxHeight) {
+      height = maxHeight;
+      width = height * aspect;
+    }
+    return { width, height };
+  }
+
+  function addPainting(room, spec, index) {
+    const dimensions = paintingDimensions(spec);
+    const rightWall = spec.wall === "right";
+    const frameX = rightWall ? 6.82 : -6.82;
+    const surfaceX = rightWall ? 6.64 : -6.64;
+    const backingX = rightWall ? 6.655 : -6.655;
+    const rotation = rightWall ? -Math.PI / 2 : Math.PI / 2;
+    const artworkY = spec.y || 3.15;
+    const artworkZ = room.centerZ + (spec.zOffset || 0);
     const frameMaterial = new THREE.MeshLambertMaterial({ color: Number.parseInt(room.accent.slice(1), 16) });
-    const frame = addBox([.28, 4.25, 6.9], [-6.82, 3.0, room.centerZ], frameMaterial, { castShadow: true });
-    frame.name = `frame-${room.id}`;
+    const frame = addBox([.28, dimensions.height + .44, dimensions.width + .44], [frameX, artworkY, artworkZ], frameMaterial);
+    frame.name = `frame-${room.id}-${index + 1}`;
     const artworkBacking = new THREE.Mesh(
-      new THREE.PlaneGeometry(6.45, 3.8),
+      new THREE.PlaneGeometry(dimensions.width, dimensions.height),
       new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide })
     );
-    artworkBacking.position.set(-6.655, 3.0, room.centerZ);
-    artworkBacking.rotation.y = Math.PI / 2;
+    artworkBacking.position.set(backingX, artworkY, artworkZ);
+    artworkBacking.rotation.y = rotation;
     worldGroup.add(artworkBacking);
     const artworkMaterial = new THREE.MeshBasicMaterial({ map: makeArtworkTexture(room), side: THREE.DoubleSide });
-    const artwork = new THREE.Mesh(new THREE.PlaneGeometry(6.45, 3.8), artworkMaterial);
-    artwork.position.set(-6.64, 3.0, room.centerZ);
-    artwork.rotation.y = Math.PI / 2;
+    const artwork = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), artworkMaterial);
+    artwork.name = `artwork-${room.id}-${index + 1}`;
+    artwork.position.set(surfaceX, artworkY, artworkZ);
+    artwork.rotation.y = rotation;
     artwork.castShadow = false;
     worldGroup.add(artwork);
+    const ledge = addBox(
+      [.22, .18, dimensions.width * .72],
+      [rightWall ? 6.58 : -6.58, artworkY - dimensions.height / 2 - .30, artworkZ],
+      frameMaterial
+    );
+
     const fitArtworkToFrame = (texture) => {
       const width = Number(texture?.image?.width) || 900;
       const height = Number(texture?.image?.height) || 560;
-      const aspect = width / Math.max(1, height);
-      const frameWidth = 6.45;
-      const frameHeight = 3.8;
-      let artworkWidth = frameWidth;
-      let artworkHeight = artworkWidth / aspect;
-      if (artworkHeight > frameHeight) {
-        artworkHeight = frameHeight;
-        artworkWidth = artworkHeight * aspect;
-      }
+      const nextDimensions = paintingDimensions(spec, width / Math.max(1, height));
+      frame.geometry.dispose();
+      frame.geometry = new THREE.BoxGeometry(.28, nextDimensions.height + .44, nextDimensions.width + .44);
+      artworkBacking.geometry.dispose();
+      artworkBacking.geometry = new THREE.PlaneGeometry(nextDimensions.width, nextDimensions.height);
       artwork.geometry.dispose();
-      artwork.geometry = new THREE.PlaneGeometry(artworkWidth, artworkHeight);
+      artwork.geometry = new THREE.PlaneGeometry(nextDimensions.width, nextDimensions.height);
+      ledge.geometry.dispose();
+      ledge.geometry = new THREE.BoxGeometry(.22, .18, nextDimensions.width * .72);
+      ledge.position.y = artworkY - nextDimensions.height / 2 - .30;
     };
-    if (room.artworkImage && textureLoader) {
-      textureLoader.load(room.artworkImage, (texture) => {
+    if (spec.image && textureLoader) {
+      textureLoader.load(spec.image, (texture) => {
         if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
         texture.generateMipmaps = false;
         texture.minFilter = THREE.LinearFilter;
@@ -612,15 +695,8 @@
         artworkMaterial.map = texture;
         artworkMaterial.needsUpdate = true;
         fitArtworkToFrame(texture);
-      }, undefined, (error) => console.warn(`THE STATE artwork fallback: ${room.id}`, error));
+      }, undefined, (error) => console.warn(`THE STATE artwork fallback: ${room.id}-${index + 1}`, error));
     }
-    addBox([4.2, .18, .12], [-6.58, .76, room.centerZ], frameMaterial);
-    const spotlight = new THREE.SpotLight(Number.parseInt(room.accent.slice(1), 16), 2.7, 14, Math.PI / 7, .62, 1.4);
-    spotlight.position.set(-4.3, 5.15, room.centerZ + 1.6);
-    spotlight.target.position.set(-6.45, 2.75, room.centerZ);
-    spotlight.castShadow = false;
-    worldGroup.add(spotlight, spotlight.target);
-    addLightPool(room, -4.35, room.centerZ + 1.5, 4.8, 2.15);
   }
 
   function makeLightPoolTexture() {
@@ -661,12 +737,12 @@
     return contactShadowTexture;
   }
 
-  function addLightPool(room, x, z, width, depth) {
+  function addLightPool(room, x, z, width, depth, slot = "main") {
     const contactShadow = new THREE.Mesh(
       new THREE.PlaneGeometry(width * .62, depth * .64),
       new THREE.MeshBasicMaterial({ map: makeContactShadowTexture(), transparent: true, depthWrite: false, opacity: .72 })
     );
-    contactShadow.name = `contact-shadow-${room.id}`;
+    contactShadow.name = `contact-shadow-${room.id}-${slot}`;
     contactShadow.rotation.x = -Math.PI / 2;
     contactShadow.position.set(x - .3, .13, z + .28);
     worldGroup.add(contactShadow);
@@ -674,7 +750,7 @@
       new THREE.PlaneGeometry(width, depth),
       new THREE.MeshBasicMaterial({ map: makeLightPoolTexture(), transparent: true, depthWrite: false, opacity: .82 })
     );
-    pool.name = `spotlight-pool-${room.id}`;
+    pool.name = `spotlight-pool-${room.id}-${slot}`;
     pool.rotation.x = -Math.PI / 2;
     pool.position.set(x, .14, z);
     worldGroup.add(pool);
@@ -695,7 +771,22 @@
     addBox([.06, .08, length - .6], [0, .13, room.centerZ], new THREE.MeshLambertMaterial({ color: 0x806e61 }));
     addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
     addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
-    addPainting(room);
+    room.artworks.forEach((artwork, index) => addPainting(room, artwork, index));
+    const primaryArtwork = room.artworks[0];
+    const primaryRightWall = primaryArtwork.wall === "right";
+    const primaryZ = room.centerZ + (primaryArtwork.zOffset || 0);
+    const spotlight = new THREE.SpotLight(Number.parseInt(room.accent.slice(1), 16), 2.7, 14, Math.PI / 7, .62, 1.4);
+    spotlight.position.set(primaryRightWall ? 4.3 : -4.3, 5.15, primaryZ + 1.6);
+    spotlight.target.position.set(primaryRightWall ? 6.45 : -6.45, 2.75, primaryZ);
+    spotlight.castShadow = false;
+    worldGroup.add(spotlight, spotlight.target);
+    room.artworks.forEach((artwork, index) => {
+      const size = paintingDimensions(artwork);
+      const rightWall = artwork.wall === "right";
+      const poolX = rightWall ? 4.35 : -4.35;
+      const poolZ = room.centerZ + (artwork.zOffset || 0) + 1.5;
+      addLightPool(room, poolX, poolZ, Math.min(4.8, Math.max(2.5, size.width * .82)), index === 0 ? 2.15 : 1.5, index + 1);
+    });
     const roomLight = new THREE.PointLight(Number.parseInt(room.accent.slice(1), 16), .58, 19, 2);
     roomLight.position.set(1.4, 4.9, room.centerZ - 1.5);
     worldGroup.add(roomLight);

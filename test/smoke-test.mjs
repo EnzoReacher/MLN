@@ -88,6 +88,12 @@ assert(game.content.length === 4 && game.content.every((chapter) => chapter.sect
 assert(game.content.every((chapter) => chapter.sections.every((section) => section.paragraphs.length <= 2)), "Gallery copy is longer than the compact two-paragraph format");
 assert(Math.max(...game.content.flatMap((chapter) => chapter.sections.flatMap((section) => section.paragraphs.map((paragraph) => paragraph.length)))) <= 300, "A gallery paragraph is too long to read comfortably");
 assert(game.rooms.length === 4 && game.gates.length === 4, "3D gallery did not expose four rooms and four gates");
+assert(game.rooms.every((room) => room.artworks?.length === 3), "Each gallery room should have three wall artworks");
+for (const room of game.rooms) {
+  const primary = item(room.id);
+  assert(primary.x === (room.artworks[0].wall === "right" ? 5.15 : -5.15), `${room.id} exhibit interaction is not aligned with its wall`);
+  assert(primary.z === room.centerZ + room.artworks[0].zOffset, `${room.id} exhibit interaction is not aligned with its artwork center`);
+}
 game.drawWorld();
 
 game.state.player = { x: item("curator").x, z: item("curator").z };

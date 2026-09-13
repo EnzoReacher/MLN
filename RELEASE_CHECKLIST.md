@@ -7,7 +7,7 @@
 - [x] Màn hình mở đầu và hướng dẫn `WASD` / chuột / `E` / `ESC`.
 - [x] Nhân vật, camera theo nhân vật và tường va chạm.
 - [x] Bốn phòng triển lãm có màu nhận diện riêng.
-- [x] Bốn hiện vật trực quan; nội dung không nằm sẵn trong các hộp tĩnh.
+- [x] Mỗi phòng có một tranh chính để tương tác và hai tranh phụ để lấp không gian; nội dung không nằm sẵn trong các hộp tĩnh.
 - [x] `E` mở hồ sơ chương, không tạo lựa chọn A/B.
 - [x] Viewer có nhiều panel, đoạn văn, chú thích ảnh, chuyển ảnh và lightbox.
 - [x] Ảnh thiếu có fallback rõ ràng, không hiện broken image.
@@ -21,14 +21,14 @@
 - [x] Màn ending hiển thị số chương, panel và ảnh đã xem.
 - [x] Renderer có cấu hình hiệu năng an toàn cho laptop/máy chiếu: pixel ratio giới hạn, không shadow map động, vật liệu nhẹ.
 - [x] Spotlight định hướng và vùng bóng tiếp xúc tĩnh tạo chiều sâu mà không bật shadow-map động.
-- [x] Tranh tường giữ đúng tỉ lệ ảnh; viewer có khung ảnh lớn, `contain` và lightbox.
+- [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm tranh; viewer có khung ảnh lớn, `contain` và lightbox.
 
 ## Nội dung đã tích hợp
 
 - [x] Đối chiếu bốn chương trong `dist/content.js` với tài liệu Chương 7 đã cung cấp.
 - [x] Đặt 18 ảnh tư liệu đã nén vào `dist/assets/`.
 - [x] Điền `src`, `alt`, `caption` cho từng ảnh trong đúng section.
-- [x] Gắn ảnh đại diện vào tranh lớn của cả bốn phòng.
+- [x] Gắn một ảnh chính và hai ảnh phụ vào không gian của cả bốn phòng.
 - [x] Rút gọn nội dung: mỗi section tối đa hai đoạn, không đoạn nào vượt quá giới hạn đọc trong triển lãm.
 - [ ] Kiểm tra nguồn/chú thích ảnh theo yêu cầu cuối của giảng viên.
 - [ ] Đọc thử toàn bộ viewer ở kích thước màn hình trình chiếu.
