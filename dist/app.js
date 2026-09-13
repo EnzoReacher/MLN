@@ -107,6 +107,7 @@
   let clock = null;
   let textureLoader = null;
   let lightPoolTexture = null;
+  let contactShadowTexture = null;
   let gateMeshes = new Map();
 
   function normaliseImage(image) {
@@ -641,7 +642,34 @@
     return lightPoolTexture;
   }
 
+  function makeContactShadowTexture() {
+    if (contactShadowTexture || !THREE) return contactShadowTexture;
+    const shadowCanvas = document.createElement("canvas");
+    shadowCanvas.width = 128;
+    shadowCanvas.height = 64;
+    const shadow = shadowCanvas.getContext("2d");
+    const gradient = shadow.createRadialGradient(64, 32, 3, 64, 32, 64);
+    gradient.addColorStop(0, "rgba(10,8,10,.32)");
+    gradient.addColorStop(.48, "rgba(10,8,10,.14)");
+    gradient.addColorStop(1, "rgba(10,8,10,0)");
+    shadow.fillStyle = gradient;
+    shadow.fillRect(0, 0, 128, 64);
+    contactShadowTexture = new THREE.CanvasTexture(shadowCanvas);
+    contactShadowTexture.generateMipmaps = false;
+    contactShadowTexture.minFilter = THREE.LinearFilter;
+    contactShadowTexture.magFilter = THREE.LinearFilter;
+    return contactShadowTexture;
+  }
+
   function addLightPool(room, x, z, width, depth) {
+    const contactShadow = new THREE.Mesh(
+      new THREE.PlaneGeometry(width * .62, depth * .64),
+      new THREE.MeshBasicMaterial({ map: makeContactShadowTexture(), transparent: true, depthWrite: false, opacity: .72 })
+    );
+    contactShadow.name = `contact-shadow-${room.id}`;
+    contactShadow.rotation.x = -Math.PI / 2;
+    contactShadow.position.set(x - .3, .13, z + .28);
+    worldGroup.add(contactShadow);
     const pool = new THREE.Mesh(
       new THREE.PlaneGeometry(width, depth),
       new THREE.MeshBasicMaterial({ map: makeLightPoolTexture(), transparent: true, depthWrite: false, opacity: .82 })

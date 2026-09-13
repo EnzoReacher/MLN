@@ -44,7 +44,7 @@ for (const marker of [
 
 assert(app.includes("...rooms.map((room) => ({") && app.includes('kind: "exhibit"'), "Expected four generated evidence exhibits");
 assert(app.includes("artworkImage") && app.includes("new THREE.TextureLoader") && app.includes("artworkMaterial.map = texture"), "Supplied images are not wired into the 3D gallery paintings");
-assert(app.includes("new THREE.SpotLight") && app.includes("spotlight.castShadow = false") && app.includes("fitArtworkToFrame"), "Performance-safe spotlight and full-artwork fitting are missing");
+assert(app.includes("new THREE.SpotLight") && app.includes("spotlight.castShadow = false") && app.includes("contact-shadow") && app.includes("fitArtworkToFrame"), "Performance-safe spotlight and full-artwork fitting are missing");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
 assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
 assert(app.includes("antialias: false") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial"), "Performance-safe renderer configuration is missing");
