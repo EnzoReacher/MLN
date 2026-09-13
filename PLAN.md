@@ -24,7 +24,7 @@ Nền tảng này phù hợp deadline 3–4 ngày: không cần Unity, backend, 
 - Toàn bộ nội dung tách khỏi engine trong `dist/content.js`; nhóm có thể thay nội dung và thêm ảnh sau này.
 - Màn ending thống kê số chương, số panel đã xem và số ảnh đã mở; nút thoát hiện màn cảm ơn thật.
 - Renderer ưu tiên độ mượt: tắt shadow map động, giới hạn pixel ratio, dùng vật liệu Lambert/Basic cho hình học và tranh tĩnh, texture không tạo mipmap không cần thiết, HUD không cập nhật DOM ở mọi frame.
-- Bản trình bày dùng spotlight định hướng và các vùng bóng/ánh sáng tiếp xúc tĩnh để tạo chiều sâu; không bật shadow-map động nên vẫn giữ ưu tiên FPS.
+- Bản trình bày dùng ánh sáng nền và ánh sáng định hướng đồng đều; không bật spotlight cục bộ, vùng sáng giả hoặc shadow-map động nên vẫn giữ ưu tiên FPS.
 
 ## Hợp đồng nội dung
 

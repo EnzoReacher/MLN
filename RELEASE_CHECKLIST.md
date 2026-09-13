@@ -20,7 +20,7 @@
 - [x] Không còn hộp lý thuyết tĩnh trong room.
 - [x] Màn ending hiển thị số chương, panel và ảnh đã xem.
 - [x] Renderer có cấu hình hiệu năng an toàn cho laptop/máy chiếu: pixel ratio giới hạn, không shadow map động, vật liệu nhẹ.
-- [x] Spotlight định hướng và vùng bóng tiếp xúc tĩnh tạo chiều sâu mà không bật shadow-map động.
+- [x] Không dùng spotlight cục bộ, vùng sáng giả hoặc shadow-map động; gallery dùng ánh sáng nền/định hướng đồng đều để giữ FPS ổn định.
 - [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm tranh; viewer có khung ảnh lớn, `contain` và lightbox.
 
 ## Nội dung đã tích hợp

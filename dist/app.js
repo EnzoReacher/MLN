@@ -148,8 +148,6 @@
   let worldGroup = null;
   let clock = null;
   let textureLoader = null;
-  let lightPoolTexture = null;
-  let contactShadowTexture = null;
   let gateMeshes = new Map();
 
   function normaliseImage(image) {
@@ -699,63 +697,6 @@
     }
   }
 
-  function makeLightPoolTexture() {
-    if (lightPoolTexture || !THREE) return lightPoolTexture;
-    const glowCanvas = document.createElement("canvas");
-    glowCanvas.width = 128;
-    glowCanvas.height = 64;
-    const glow = glowCanvas.getContext("2d");
-    const gradient = glow.createRadialGradient(64, 32, 2, 64, 32, 64);
-    gradient.addColorStop(0, "rgba(255,236,189,.32)");
-    gradient.addColorStop(.42, "rgba(224,180,109,.16)");
-    gradient.addColorStop(1, "rgba(224,180,109,0)");
-    glow.fillStyle = gradient;
-    glow.fillRect(0, 0, 128, 64);
-    lightPoolTexture = new THREE.CanvasTexture(glowCanvas);
-    lightPoolTexture.generateMipmaps = false;
-    lightPoolTexture.minFilter = THREE.LinearFilter;
-    lightPoolTexture.magFilter = THREE.LinearFilter;
-    return lightPoolTexture;
-  }
-
-  function makeContactShadowTexture() {
-    if (contactShadowTexture || !THREE) return contactShadowTexture;
-    const shadowCanvas = document.createElement("canvas");
-    shadowCanvas.width = 128;
-    shadowCanvas.height = 64;
-    const shadow = shadowCanvas.getContext("2d");
-    const gradient = shadow.createRadialGradient(64, 32, 3, 64, 32, 64);
-    gradient.addColorStop(0, "rgba(10,8,10,.32)");
-    gradient.addColorStop(.48, "rgba(10,8,10,.14)");
-    gradient.addColorStop(1, "rgba(10,8,10,0)");
-    shadow.fillStyle = gradient;
-    shadow.fillRect(0, 0, 128, 64);
-    contactShadowTexture = new THREE.CanvasTexture(shadowCanvas);
-    contactShadowTexture.generateMipmaps = false;
-    contactShadowTexture.minFilter = THREE.LinearFilter;
-    contactShadowTexture.magFilter = THREE.LinearFilter;
-    return contactShadowTexture;
-  }
-
-  function addLightPool(room, x, z, width, depth, slot = "main") {
-    const contactShadow = new THREE.Mesh(
-      new THREE.PlaneGeometry(width * .62, depth * .64),
-      new THREE.MeshBasicMaterial({ map: makeContactShadowTexture(), transparent: true, depthWrite: false, opacity: .72 })
-    );
-    contactShadow.name = `contact-shadow-${room.id}-${slot}`;
-    contactShadow.rotation.x = -Math.PI / 2;
-    contactShadow.position.set(x - .3, .13, z + .28);
-    worldGroup.add(contactShadow);
-    const pool = new THREE.Mesh(
-      new THREE.PlaneGeometry(width, depth),
-      new THREE.MeshBasicMaterial({ map: makeLightPoolTexture(), transparent: true, depthWrite: false, opacity: .82 })
-    );
-    pool.name = `spotlight-pool-${room.id}-${slot}`;
-    pool.rotation.x = -Math.PI / 2;
-    pool.position.set(x, .14, z);
-    worldGroup.add(pool);
-  }
-
   function addRoom(room) {
     const floorMaterial = new THREE.MeshLambertMaterial({ color: 0x665954 });
     const wallMaterial = new THREE.MeshLambertMaterial({ color: 0x514845 });
@@ -772,24 +713,6 @@
     addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
     addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
     room.artworks.forEach((artwork, index) => addPainting(room, artwork, index));
-    const primaryArtwork = room.artworks[0];
-    const primaryRightWall = primaryArtwork.wall === "right";
-    const primaryZ = room.centerZ + (primaryArtwork.zOffset || 0);
-    const spotlight = new THREE.SpotLight(Number.parseInt(room.accent.slice(1), 16), 2.7, 14, Math.PI / 7, .62, 1.4);
-    spotlight.position.set(primaryRightWall ? 4.3 : -4.3, 5.15, primaryZ + 1.6);
-    spotlight.target.position.set(primaryRightWall ? 6.45 : -6.45, 2.75, primaryZ);
-    spotlight.castShadow = false;
-    worldGroup.add(spotlight, spotlight.target);
-    room.artworks.forEach((artwork, index) => {
-      const size = paintingDimensions(artwork);
-      const rightWall = artwork.wall === "right";
-      const poolX = rightWall ? 4.35 : -4.35;
-      const poolZ = room.centerZ + (artwork.zOffset || 0) + 1.5;
-      addLightPool(room, poolX, poolZ, Math.min(4.8, Math.max(2.5, size.width * .82)), index === 0 ? 2.15 : 1.5, index + 1);
-    });
-    const roomLight = new THREE.PointLight(Number.parseInt(room.accent.slice(1), 16), .58, 19, 2);
-    roomLight.position.set(1.4, 4.9, room.centerZ - 1.5);
-    worldGroup.add(roomLight);
   }
 
   function addGate(gate) {
