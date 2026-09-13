@@ -32,19 +32,21 @@ Mỗi chương trong `dist/content.js` có `id`, `code`, `label`, `title` và m�
 Ảnh dùng dạng:
 
 ```js
-{ src: "./assets/ch01-factory.jpg", alt: "Mô tả ngắn", caption: "Chú thích hiển thị dưới ảnh" }
+{ src: "./assets/ch01-state-institutions.webp", alt: "Mô tả ngắn", caption: "Chú thích hiển thị dưới ảnh" }
 ```
 
-Khi nhóm gửi nội dung và ảnh chính thức, chỉ cần thay dữ liệu trong file này và chép ảnh vào `dist/assets/`. Không sửa `app.js` cho việc đó.
+Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn chương. Không sửa `app.js` để thay chữ hoặc ảnh; chỉ cập nhật dữ liệu trong `content.js` và mapping ảnh trong `dist/assets/`.
 
 ## Việc còn lại
 
-### 1. Nhận nội dung và ảnh chính thức
+### 1. Đối chiếu nội dung và nguồn ảnh
 
-- Đối chiếu từng chương với giáo trình và phần thuyết trình.
-- Chia nội dung thành các mục ngắn, mỗi mục có một ý rõ ràng.
-- Gửi ảnh kèm tên file, chú thích và nguồn nếu cần ghi trong triển lãm.
-- Thay phần draft trong `content.js`, rồi chạy lại toàn bộ test.
+- [x] Đối chiếu bốn chương với tài liệu Chương 7 đã cung cấp.
+- [x] Chia nội dung thành ba mục đọc trong mỗi phòng, mỗi mục có một ý rõ ràng.
+- [x] Nén 18 ảnh tư liệu thành WebP, viết `alt`/caption và gắn vào đúng section.
+- [x] Dùng một ảnh đại diện phù hợp làm tranh lớn cho từng phòng.
+- [ ] Nhóm kiểm tra lần cuối nguồn/chú thích ảnh theo yêu cầu của giảng viên.
+- [ ] Nhóm đọc thử toàn bộ nội dung trên đúng màn hình trình chiếu.
 
 ### 2. Rehearsal trên máy trình chiếu
 
@@ -55,10 +57,10 @@ Khi nhóm gửi nội dung và ảnh chính thức, chỉ cần thay dữ liệu
 
 ### 3. Deploy
 
-- Commit các file `dist`, `test`, tài liệu và `vercel.json`.
-- Push GitHub `EnzoReacher/MLN`, branch `main`.
-- Redeploy Vercel và mở route `/`.
-- Chơi trọn một vòng production, kiểm tra console và các đường dẫn ảnh.
+- [x] Commit các file `dist`, `test`, tài liệu và `vercel.json`.
+- [x] Push GitHub `EnzoReacher/MLN`, branch `main`.
+- [x] Redeploy Vercel và mở route `/`.
+- [ ] Chơi trọn một vòng production trên máy thuyết trình, kiểm tra console và các đường dẫn ảnh.
 
 ## Cách trình bày trên lớp
 

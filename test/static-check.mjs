@@ -16,6 +16,14 @@ for (const asset of ["dist/styles.css", "dist/content.js", "dist/app.js", "dist/
   assert(fs.existsSync(path.join(root, asset)), `Missing referenced asset: ${asset}`);
 }
 
+const chapterImages = [
+  "ch01-engels.webp", "ch01-lenin.webp", "ch01-state-institutions.webp",
+  "ch02-state-functions.webp", "ch02-state-form.webp", "ch02-slave-state.webp", "ch02-feudal-state.webp", "ch02-bourgeois-transition.webp",
+  "ch03-marx.webp", "ch03-soviet-state.webp", "ch03-ho-chi-minh.webp", "ch03-vietnam-socialism.webp", "ch03-vietnam-state.webp", "ch03-public-power.webp",
+  "ch04-revolution-origin.webp", "ch04-mass-action.webp", "ch04-revolution-force.webp", "ch04-revolution-method.webp"
+];
+for (const image of chapterImages) assert(fs.existsSync(path.join(root, "dist/assets", image)), `Missing chapter image: ${image}`);
+
 assert(html.includes('id="game-canvas"') && html.includes('src="./vendor/three.min.js"') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
 assert(html.includes('id="content-viewer"') && html.includes('id="viewer-image"') && html.includes('id="viewer-next"'), "Content viewer shell is incomplete");
 assert(html.includes('id="runtime-error"') && html.includes('id="runtime-reload-button"') && app.includes("function reportRuntimeError"), "3D runtime recovery shell is incomplete");
@@ -35,11 +43,13 @@ for (const marker of [
 ]) assert(html.includes(marker) || app.includes(marker) || content.includes(marker), `Missing game/content marker: ${marker}`);
 
 assert(app.includes("...rooms.map((room) => ({") && app.includes('kind: "exhibit"'), "Expected four generated evidence exhibits");
+assert(app.includes("artworkImage") && app.includes("new THREE.TextureLoader") && app.includes("artworkMaterial.map = texture"), "Supplied images are not wired into the 3D gallery paintings");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
 assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
 assert(app.includes("antialias: false") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial"), "Performance-safe renderer configuration is missing");
 assert(app.includes("section.images") && app.includes("viewerImage.onerror") && app.includes("function cycleImage"), "Image/content data flow is missing");
-assert(content.includes("sections:") && content.includes("images: []"), "Content contract is missing sections/images arrays");
+assert(content.includes("sections:") && content.includes("images:") && content.includes("ch04-revolution-method.webp"), "Chapter 7 content/image contract is incomplete");
+assert(chapterImages.every((image) => content.includes(`./assets/${image}`)), "Not every supplied chapter image is connected to content");
 
 assert(!html.includes("☭") && !app.includes("☭") && !html.includes("mark.svg") && !app.includes("mark.svg"), "Old hammer-and-sickle rendering is still referenced");
 assert(!html.includes("lens-button") && !app.includes("lensActive") && !app.includes("drawRelationField"), "Removed lens mechanic is still referenced");

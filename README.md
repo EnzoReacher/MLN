@@ -34,9 +34,9 @@ Mở <http://localhost:4173>.
 
 Các cổng được khóa theo đúng thứ tự: hoàn tất 01 mới sang 02, hoàn tất 02 mới sang 03, hoàn tất 03 mới sang 04. Cánh cửa cuối chỉ hoạt động sau khi cả bốn hồ sơ đã được ghi nhận.
 
-## Nơi điền nội dung và ảnh chính thức
+## Nội dung và ảnh đã tích hợp
 
-Toàn bộ nội dung nằm trong [`dist/content.js`](dist/content.js). Engine chỉ đọc cấu trúc dữ liệu này, nên nhóm có thể thay chữ và thêm ảnh mà không phải sửa logic game.
+Nội dung bốn phòng hiện đã được biên tập từ tài liệu **Nhà nước và Cách mạng xã hội** mà nhóm cung cấp. Mạch chơi đi từ nguồn gốc và bản chất của Nhà nước, qua chức năng/hình thức, Nhà nước xã hội chủ nghĩa, rồi đến cách mạng xã hội. Toàn bộ dữ liệu nằm trong [`dist/content.js`](dist/content.js); engine chỉ đọc cấu trúc này nên nhóm vẫn có thể chỉnh câu chữ mà không phải sửa logic game.
 
 Mỗi chương có các mục dạng:
 
@@ -47,12 +47,12 @@ Mỗi chương có các mục dạng:
   lead: "Đoạn dẫn ngắn",
   paragraphs: ["Đoạn nội dung thứ nhất", "Đoạn nội dung thứ hai"],
   images: [
-    { src: "./assets/ch01-factory.jpg", alt: "Mô tả ảnh", caption: "Chú thích ảnh" }
+    { src: "./assets/ch01-state-institutions.webp", alt: "Mô tả ảnh", caption: "Chú thích ảnh" }
   ]
 }
 ```
 
-Đặt ảnh trong `dist/assets/`. Nếu ảnh chưa được thêm hoặc đường dẫn sai, game hiện khung chờ rõ ràng thay vì ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết quy ước đặt tên.
+18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Bốn ảnh đại diện còn được dùng làm tranh lớn trong không gian 3D. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật cả section tương ứng lẫn `artworkImage` nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
 
 ## Kiểm thử
 

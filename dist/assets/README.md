@@ -1,13 +1,24 @@
-# Chapter images
+# Chapter 7 images
 
-Put the final chapter images in this folder, then reference them from
+The current WebP files are compressed copies of the reference images supplied
+with the Chapter 7 PDF. They are assigned to rooms by the content data in
 `dist/content.js`:
 
 ```js
 images: [
-  { src: "./assets/ch01-factory.jpg", alt: "...", caption: "..." }
+  { src: "./assets/ch01-state-institutions.webp", alt: "...", caption: "..." }
 ]
 ```
 
 The viewer supports multiple images per content section and keeps the image
-caption separate from the chapter text.
+caption separate from the chapter text. The first landscape image assigned to
+each room is also loaded into the large 3D wall painting. If a future image is
+added, keep it compressed and update both the relevant section and, if needed,
+the room's `artworkImage` in `dist/app.js`.
+
+Current room mapping:
+
+- Room 01: Engels, Lenin, State institutions — origin, nature and characteristics.
+- Room 02: State functions, forms, slavery, feudalism and bourgeois transition.
+- Room 03: Marx, Soviet State, Ho Chi Minh and Vietnam — socialist State.
+- Room 04: revolution origin, mass action, revolutionary forces and methods.

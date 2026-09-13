@@ -57,10 +57,10 @@
   const GALLERY = { halfWidth: 7, roomHeight: 5.5, minZ: -88, maxZ: 9 };
 
   const rooms = [
-    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10, color: "#c67b53", accent: "#e1b46d", artwork: "production" },
-    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", label: "THE SPLIT", centerZ: -24, zBack: -14, zFront: -34, color: "#d6a75e", accent: "#f0d394", artwork: "class" },
-    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58, color: "#b9c0b3", accent: "#e6d9bd", artwork: "state" },
-    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", label: "THE FAULTLINE", centerZ: -72, zBack: -62, zFront: -82, color: "#c95e62", accent: "#f1b07d", artwork: "revolt" }
+    { id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10, color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ch01-state-institutions.webp" },
+    { id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", label: "THE SPLIT", centerZ: -24, zBack: -14, zFront: -34, color: "#d6a75e", accent: "#f0d394", artwork: "class", artworkImage: "./assets/ch02-bourgeois-transition.webp" },
+    { id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58, color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-vietnam-socialism.webp" },
+    { id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", label: "THE FAULTLINE", centerZ: -72, zBack: -62, zFront: -82, color: "#c95e62", accent: "#f1b07d", artwork: "revolt", artworkImage: "./assets/ch04-revolution-origin.webp" }
   ];
 
   const gates = [
@@ -105,6 +105,7 @@
   let camera = null;
   let worldGroup = null;
   let clock = null;
+  let textureLoader = null;
   let gateMeshes = new Map();
 
   function normaliseImage(image) {
@@ -578,6 +579,16 @@
     artwork.rotation.y = Math.PI / 2;
     artwork.castShadow = false;
     worldGroup.add(artwork);
+    if (room.artworkImage && textureLoader) {
+      textureLoader.load(room.artworkImage, (texture) => {
+        if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+        texture.generateMipmaps = false;
+        texture.minFilter = THREE.LinearFilter;
+        texture.anisotropy = 1;
+        artworkMaterial.map = texture;
+        artworkMaterial.needsUpdate = true;
+      }, undefined, (error) => console.warn(`THE STATE artwork fallback: ${room.id}`, error));
+    }
     addBox([4.2, .18, .12], [-6.58, .76, room.centerZ], frameMaterial);
     const spot = new THREE.PointLight(Number.parseInt(room.color.slice(1), 16), 1.8, 11, 2);
     spot.position.set(-4.6, 4.9, room.centerZ + 1.4);
@@ -648,6 +659,7 @@
       clock = new THREE.Clock();
       worldGroup = new THREE.Group();
       scene.add(worldGroup);
+      textureLoader = new THREE.TextureLoader();
       scene.add(new THREE.HemisphereLight(0xf5e6d0, 0x332c2b, 1.4));
       const keyLight = new THREE.DirectionalLight(0xffe8c3, 1.0);
       keyLight.position.set(-5, 10, 8);

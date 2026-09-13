@@ -113,17 +113,13 @@ function openChapter(id) {
 }
 
 openChapter("base");
-assert(elements["viewer-image-count"].textContent === "0 / 0", "Empty image slot did not degrade cleanly");
-assert(!elements["viewer-image-placeholder"].classList.contains("hidden"), "Empty image slot was hidden");
+assert(elements["viewer-image-count"].textContent === "1 / 1", "Supplied chapter image metadata did not render");
+assert(!elements["viewer-image"].classList.contains("hidden"), "Supplied chapter image was not shown");
 emitKey("e");
 assert(game.state.viewerOpen, "E unexpectedly closed the content viewer");
 elements["viewer-close"].click();
 assert(!game.state.viewerOpen && !game.state.evidence.has("base"), "Closing an unfinished chapter incorrectly completed it");
 
-game.contentById.get("base").sections[0].images.push({ src: "./assets/ch01-factory.jpg", alt: "Nhà máy tư liệu", caption: "Ảnh tư liệu chương 01." });
-openChapter("base");
-assert(elements["viewer-image-count"].textContent === "1 / 1", "Image metadata did not render");
-assert(!elements["viewer-image"].classList.contains("hidden"), "Configured image was not shown");
 elements["viewer-image"].onerror();
 assert(!elements["viewer-image-placeholder"].classList.contains("hidden"), "Missing image did not fall back to the image slot");
 elements["viewer-close"].click();

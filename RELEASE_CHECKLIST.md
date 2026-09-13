@@ -21,13 +21,13 @@
 - [x] Màn ending hiển thị số chương, panel và ảnh đã xem.
 - [x] Renderer có cấu hình hiệu năng an toàn cho laptop/máy chiếu: pixel ratio giới hạn, không shadow map động, vật liệu nhẹ.
 
-## Nội dung cần thay trước khi trình chiếu
+## Nội dung đã tích hợp
 
-- [ ] Đối chiếu draft trong `dist/content.js` với giáo trình và slide chính thức.
-- [ ] Thay chữ draft bằng nội dung cuối của nhóm.
-- [ ] Đặt ảnh cuối vào `dist/assets/`.
-- [ ] Điền `src`, `alt`, `caption` cho từng ảnh trong đúng section.
-- [ ] Kiểm tra nguồn/chú thích ảnh nếu bài yêu cầu.
+- [x] Đối chiếu bốn chương trong `dist/content.js` với tài liệu Chương 7 đã cung cấp.
+- [x] Đặt 18 ảnh tư liệu đã nén vào `dist/assets/`.
+- [x] Điền `src`, `alt`, `caption` cho từng ảnh trong đúng section.
+- [x] Gắn ảnh đại diện vào tranh lớn của cả bốn phòng.
+- [ ] Kiểm tra nguồn/chú thích ảnh theo yêu cầu cuối của giảng viên.
 - [ ] Đọc thử toàn bộ viewer ở kích thước màn hình trình chiếu.
 
 ## Automated checks
@@ -68,8 +68,8 @@ Các test xác nhận:
 
 ## Deployment
 
-- [ ] Commit và push source lên GitHub `EnzoReacher/MLN`, branch `main`.
-- [ ] Redeploy Vercel.
-- [ ] Mở URL production ở route `/`, không dùng `/dist`.
+- [x] Commit và push source lên GitHub `EnzoReacher/MLN`, branch `main`.
+- [x] Redeploy Vercel.
+- [x] Mở URL production ở route `/`, không dùng `/dist`.
 - [ ] Kiểm tra console browser không có lỗi.
 - [ ] Chơi trọn một vòng production trước khi trình chiếu.
