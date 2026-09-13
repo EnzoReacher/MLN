@@ -6,17 +6,17 @@ with the Chapter 7 PDF. They are assigned to rooms by the content data in
 
 ```js
 images: [
-  { src: "./assets/ch01-state-institutions.webp", alt: "...", caption: "..." }
+  { src: "./assets/ch01-engels.webp", alt: "...", caption: "..." }
 ]
 ```
 
 The viewer supports multiple images per content section and keeps the image
 caption separate from the chapter text. Images are displayed with `contain` in
 a large presentation frame and can be opened in the lightbox at full size.
-The first image assigned to each room is also loaded into the large 3D wall
+The image assigned to each section is also loaded into the matching 3D wall
 painting and fitted to its original aspect ratio. If a future image is added,
-keep it compressed and update both the relevant section and, if needed, the
-room's `artworkImage` in `dist/app.js`.
+keep it compressed and update both the relevant section and its matching
+`room.artworks[index]` entry in `dist/app.js`.
 
 Current room mapping:
 
