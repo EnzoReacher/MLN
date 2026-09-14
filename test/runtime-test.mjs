@@ -15,7 +15,7 @@ if (sandbox.THREE.REVISION !== "159") {
 
 for (const feature of [
   "Scene", "PerspectiveCamera", "WebGLRenderer", "Clock", "Group", "Color", "Fog",
-  "Mesh", "BoxGeometry", "PlaneGeometry", "CylinderGeometry", "ConeGeometry", "SphereGeometry", "CanvasTexture", "MeshStandardMaterial",
+  "Mesh", "BoxGeometry", "PlaneGeometry", "CylinderGeometry", "SphereGeometry", "CanvasTexture", "MeshStandardMaterial",
   "PointLight", "SpotLight", "HemisphereLight", "DirectionalLight", "DoubleSide", "SRGBColorSpace"
 ]) {
   if (!(feature in sandbox.THREE)) throw new Error(`Vendored Three.js is missing ${feature}`);

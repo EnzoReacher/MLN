@@ -48,7 +48,7 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 - [x] Dùng một ảnh đại diện phù hợp làm tranh chính và hai ảnh phụ cho từng phòng.
 - [x] Gắn từng tranh vào đúng mục nội dung; `E` căn theo tâm từng tranh, mỗi exhibit mở độc lập; viewer có khung trình chiếu và lightbox để xem trọn ảnh.
 - [x] Thêm thảm đỏ trung tâm, viền đồng và bảng nhãn thấp cạnh tranh bằng hình học tĩnh nhẹ, không dùng spotlight hoặc shadow map.
-- [x] Thêm hai chậu cây low-poly và hai NPC ambient mỗi phòng; một NPC chỉ tranh, một NPC đi qua lại theo tuyến ngắn, không chiếm `E`, không pathfinding/physics.
+- [x] Thêm hai chậu cây low-poly mỗi phòng với kích thước vừa tầm, chậu terracotta và lá bản rộng; dùng hình học tĩnh nhẹ, không thêm NPC, spotlight hoặc shadow map.
 - [x] Rút gọn mỗi mục còn tối đa hai đoạn, phù hợp đọc khi thuyết trình.
 - [ ] Nhóm kiểm tra lần cuối nguồn/chú thích ảnh theo yêu cầu của giảng viên.
 - [ ] Nhóm đọc thử toàn bộ nội dung trên đúng màn hình trình chiếu.

@@ -95,27 +95,11 @@
     }
   ];
 
-  const ROOM_LIFE = {
-    base: {
-      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
-      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: .2 },
-      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .48, phase: .1 }
-    },
-    class: {
-      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
-      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: 1.1 },
-      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .52, phase: 1.7 }
-    },
-    state: {
-      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
-      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: 2.2 },
-      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .45, phase: 2.5 }
-    },
-    revolt: {
-      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
-      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: 3.1 },
-      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .50, phase: 3.4 }
-    }
+  const ROOM_PLANTS = {
+    base: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
+    class: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
+    state: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
+    revolt: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }]
   };
 
   const gates = [
@@ -194,7 +178,6 @@
   let clock = null;
   let textureLoader = null;
   let gateMeshes = new Map();
-  const animatedNpcs = [];
 
   function normaliseImage(image) {
     if (typeof image === "string") return { src: image, alt: "Ảnh tư liệu", caption: "" };
@@ -773,110 +756,47 @@
     group.position.set(spec.side * 5.25, .11, room.centerZ + spec.zOffset);
 
     const potMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0x8e5141 : 0x74463e });
+    const potRimMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0xb06a50 : 0x995945 });
     const soilMaterial = new THREE.MeshLambertMaterial({ color: 0x292322 });
-    const foliageMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0x527663 : 0x456954 });
+    const foliageMaterials = [
+      new THREE.MeshLambertMaterial({ color: index % 2 ? 0x5a7d66 : 0x486e5a }),
+      new THREE.MeshLambertMaterial({ color: index % 2 ? 0x719377 : 0x5e8168 })
+    ];
     const stemMaterial = new THREE.MeshLambertMaterial({ color: 0x3f5b46 });
 
-    const pot = new THREE.Mesh(new THREE.CylinderGeometry(.30, .25, .42, 8), potMaterial);
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(.28, .23, .36, 8), potMaterial);
     pot.position.y = .21;
     group.add(pot);
-    const soil = new THREE.Mesh(new THREE.CylinderGeometry(.235, .235, .025, 8), soilMaterial);
-    soil.position.y = .43;
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(.33, .33, .08, 8), potRimMaterial);
+    rim.position.y = .41;
+    group.add(rim);
+    const soil = new THREE.Mesh(new THREE.CylinderGeometry(.255, .255, .025, 8), soilMaterial);
+    soil.position.y = .465;
     group.add(soil);
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(.045, .065, .48, 6), stemMaterial);
-    stem.position.y = .68;
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(.045, .06, .42, 6), stemMaterial);
+    stem.position.y = .69;
     group.add(stem);
 
     const leaves = [
-      { x: 0, y: 1.02, z: 0, rotation: 0 },
-      { x: .22, y: .94, z: .02, rotation: -.38 },
-      { x: -.20, y: .92, z: -.04, rotation: .42 }
+      { x: 0, y: 1.04, z: 0, rotation: 0, scale: [.72, 1.28, .22] },
+      { x: .22, y: .93, z: .01, rotation: -.52, scale: [.66, 1.12, .20] },
+      { x: -.22, y: .92, z: -.03, rotation: .52, scale: [.66, 1.12, .20] },
+      { x: 0, y: .91, z: .14, rotation: 0, tilt: .42, scale: [.58, .98, .18] }
     ];
-    leaves.forEach((leaf) => {
-      const mesh = new THREE.Mesh(new THREE.ConeGeometry(.31, .72, 7), foliageMaterial);
+    leaves.forEach((leaf, leafIndex) => {
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(.26, 8, 5), foliageMaterials[leafIndex % foliageMaterials.length]);
       mesh.position.set(leaf.x, leaf.y, leaf.z);
+      mesh.scale.set(leaf.scale[0], leaf.scale[1], leaf.scale[2]);
       mesh.rotation.z = leaf.rotation;
+      mesh.rotation.x = leaf.tilt || 0;
       group.add(mesh);
     });
     worldGroup.add(group);
   }
 
-  function npcPart(group, geometry, material, position, rotation = {}) {
-    const mesh = new THREE.Mesh(geometry, material);
-    mesh.position.set(position.x, position.y, position.z);
-    mesh.rotation.set(rotation.x || 0, rotation.y || 0, rotation.z || 0);
-    group.add(mesh);
-    return mesh;
-  }
-
-  function addNpc(room, spec) {
-    const palette = {
-      base: { coat: 0x3e5754, trim: 0xc38a5d },
-      class: { coat: 0x574b45, trim: 0xd4a05f },
-      state: { coat: 0x465b58, trim: 0xd8c093 },
-      revolt: { coat: 0x5b3d40, trim: 0xe09a6e }
-    }[room.id] ?? { coat: 0x4d4a48, trim: 0xc8a16e };
-    const mode = spec.mode || "point";
-    const group = new THREE.Group();
-    group.name = `npc-${room.id}-${spec.role || mode}`;
-    group.position.set(spec.x, .11, room.centerZ + (spec.zOffset || 0));
-
-    const coatMaterial = new THREE.MeshLambertMaterial({ color: palette.coat });
-    const trimMaterial = new THREE.MeshLambertMaterial({ color: palette.trim });
-    const skinMaterial = new THREE.MeshLambertMaterial({ color: 0xc28b72 });
-    const hairMaterial = new THREE.MeshLambertMaterial({ color: 0x2c2929 });
-
-    const leftLeg = npcPart(group, new THREE.BoxGeometry(.16, .66, .16), coatMaterial, { x: -.11, y: .44, z: 0 });
-    const rightLeg = npcPart(group, new THREE.BoxGeometry(.16, .66, .16), coatMaterial, { x: .11, y: .44, z: 0 });
-    npcPart(group, new THREE.BoxGeometry(.46, .82, .30), coatMaterial, { x: 0, y: 1.08, z: 0 });
-    const leftArm = npcPart(group, new THREE.BoxGeometry(.14, .66, .14), coatMaterial, { x: -.32, y: 1.12, z: 0 }, { z: mode === "point" ? .20 : -.14 });
-    const rightArm = npcPart(group, new THREE.BoxGeometry(.14, .66, .14), coatMaterial, { x: .32, y: 1.12, z: 0 }, { z: mode === "point" ? (spec.pointDirection === "left" ? -1.00 : 1.00) : .14 });
-    npcPart(group, new THREE.BoxGeometry(.11, .12, .035), trimMaterial, { x: 0, y: 1.14, z: -.17 });
-    const head = npcPart(group, new THREE.SphereGeometry(.21, 8, 6), skinMaterial, { x: 0, y: 1.75, z: 0 });
-    npcPart(group, new THREE.SphereGeometry(.22, 8, 5), hairMaterial, { x: 0, y: 1.88, z: 0 });
-
-    worldGroup.add(group);
-    animatedNpcs.push({
-      group,
-      mode,
-      baseY: .11,
-      baseZ: room.centerZ + (spec.zOffset || 0),
-      amplitude: spec.amplitude || 0,
-      speed: spec.speed || .5,
-      phase: spec.phase || 0,
-      head,
-      leftArm,
-      rightArm,
-      leftLeg,
-      rightLeg
-    });
-  }
-
-  function addRoomLife(room) {
-    const life = ROOM_LIFE[room.id];
-    if (!life) return;
-    life.plants.forEach((plant, index) => addPlant(room, plant, index));
-    addNpc(room, { ...life.point, mode: "point", role: "observer" });
-    addNpc(room, { ...life.walk, mode: "walk", role: "visitor" });
-  }
-
-  function updateAnimatedNpcs(time) {
-    animatedNpcs.forEach((npc) => {
-      const cycle = Math.sin(time * npc.speed + npc.phase);
-      if (npc.mode === "walk") {
-        const stride = Math.cos(time * npc.speed * 2 + npc.phase) * .34;
-        npc.group.position.z = npc.baseZ + cycle * npc.amplitude;
-        npc.group.position.y = npc.baseY + Math.abs(Math.sin(time * npc.speed * 2 + npc.phase)) * .018;
-        npc.group.rotation.y = cycle >= 0 ? Math.PI : 0;
-        npc.leftLeg.rotation.x = stride;
-        npc.rightLeg.rotation.x = -stride;
-        npc.leftArm.rotation.x = -stride * .72;
-        npc.rightArm.rotation.x = stride * .72;
-      } else {
-        npc.group.position.y = npc.baseY + Math.sin(time * .7 + npc.phase) * .004;
-        npc.head.rotation.y = Math.sin(time * .55 + npc.phase) * .16;
-      }
-    });
+  function addRoomPlants(room) {
+    const plants = ROOM_PLANTS[room.id] ?? [];
+    plants.forEach((plant, index) => addPlant(room, plant, index));
   }
 
   function addRoom(room) {
@@ -895,7 +815,7 @@
     addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
     addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
     addRoomDecor(room);
-    addRoomLife(room);
+    addRoomPlants(room);
     room.artworks.forEach((artwork, index) => addPainting(room, artwork, index));
   }
 
@@ -982,7 +902,6 @@
     const dt = Math.min((timestamp - state.lastTime) / 1000, .05);
     state.lastTime = timestamp;
     state.time += dt;
-    updateAnimatedNpcs(state.time);
     if (!state.dialogueOpen && !state.viewerOpen) {
       let forward = 0;
       let strafe = 0;
@@ -1126,8 +1045,7 @@
   window.__THE_STATE__ = {
     state,
     rooms,
-    roomLife: ROOM_LIFE,
-    animatedNpcs,
+    roomPlants: ROOM_PLANTS,
     gates,
     interactables,
     content,
