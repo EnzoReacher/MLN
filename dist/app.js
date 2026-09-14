@@ -753,42 +753,68 @@
   function addPlant(room, spec, index) {
     const group = new THREE.Group();
     group.name = `plant-${room.id}-${index + 1}`;
-    group.position.set(spec.side * 5.25, .11, room.centerZ + spec.zOffset);
+    group.position.set(spec.side * 5.25, 0, room.centerZ + spec.zOffset);
 
-    const potMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0x8e5141 : 0x74463e });
-    const potRimMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0xb06a50 : 0x995945 });
-    const soilMaterial = new THREE.MeshLambertMaterial({ color: 0x292322 });
+    const potMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0x8b5144 : 0x6f413d });
+    const potRimMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0xb87558 : 0x9f604d });
+    const plinthMaterial = new THREE.MeshLambertMaterial({ color: 0x403a38 });
+    const soilMaterial = new THREE.MeshLambertMaterial({ color: 0x25201f });
+    const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x5a4032 });
     const foliageMaterials = [
-      new THREE.MeshLambertMaterial({ color: index % 2 ? 0x5a7d66 : 0x486e5a }),
-      new THREE.MeshLambertMaterial({ color: index % 2 ? 0x719377 : 0x5e8168 })
+      new THREE.MeshLambertMaterial({ color: index % 2 ? 0x466b55 : 0x385b49 }),
+      new THREE.MeshLambertMaterial({ color: index % 2 ? 0x62816a : 0x53745e }),
+      new THREE.MeshLambertMaterial({ color: index % 2 ? 0x789276 : 0x6a876f })
     ];
-    const stemMaterial = new THREE.MeshLambertMaterial({ color: 0x3f5b46 });
 
-    const pot = new THREE.Mesh(new THREE.CylinderGeometry(.28, .23, .36, 8), potMaterial);
-    pot.position.y = .21;
+    const plinth = new THREE.Mesh(new THREE.CylinderGeometry(.72, .78, .12, 10), plinthMaterial);
+    plinth.name = `plant-plinth-${room.id}-${index + 1}`;
+    plinth.position.y = .17;
+    group.add(plinth);
+    const plinthCap = new THREE.Mesh(new THREE.CylinderGeometry(.61, .61, .08, 10), potRimMaterial);
+    plinthCap.position.y = .27;
+    group.add(plinthCap);
+
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(.54, .42, .62, 10), potMaterial);
+    pot.name = `plant-pot-${room.id}-${index + 1}`;
+    pot.position.y = .68;
     group.add(pot);
-    const rim = new THREE.Mesh(new THREE.CylinderGeometry(.33, .33, .08, 8), potRimMaterial);
-    rim.position.y = .41;
+    const rim = new THREE.Mesh(new THREE.CylinderGeometry(.61, .61, .11, 10), potRimMaterial);
+    rim.position.y = 1.045;
     group.add(rim);
-    const soil = new THREE.Mesh(new THREE.CylinderGeometry(.255, .255, .025, 8), soilMaterial);
-    soil.position.y = .465;
+    const soil = new THREE.Mesh(new THREE.CylinderGeometry(.49, .49, .035, 10), soilMaterial);
+    soil.position.y = 1.115;
     group.add(soil);
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(.045, .06, .42, 6), stemMaterial);
-    stem.position.y = .69;
-    group.add(stem);
 
-    const leaves = [
-      { x: 0, y: 1.04, z: 0, rotation: 0, scale: [.72, 1.28, .22] },
-      { x: .22, y: .93, z: .01, rotation: -.52, scale: [.66, 1.12, .20] },
-      { x: -.22, y: .92, z: -.03, rotation: .52, scale: [.66, 1.12, .20] },
-      { x: 0, y: .91, z: .14, rotation: 0, tilt: .42, scale: [.58, .98, .18] }
+    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(.12, .18, 1.34, 7), trunkMaterial);
+    trunk.position.y = 1.79;
+    group.add(trunk);
+    const branches = [
+      { x: -.27, y: 2.27, z: 0, length: .82, rotationZ: -.56, rotationX: 0 },
+      { x: .27, y: 2.30, z: .02, length: .88, rotationZ: .54, rotationX: 0 },
+      { x: 0, y: 2.45, z: .20, length: .68, rotationZ: 0, rotationX: -.52 }
     ];
-    leaves.forEach((leaf, leafIndex) => {
-      const mesh = new THREE.Mesh(new THREE.SphereGeometry(.26, 8, 5), foliageMaterials[leafIndex % foliageMaterials.length]);
+    branches.forEach((branch) => {
+      const mesh = new THREE.Mesh(new THREE.CylinderGeometry(.055, .095, branch.length, 6), trunkMaterial);
+      mesh.position.set(branch.x, branch.y, branch.z);
+      mesh.rotation.z = branch.rotationZ;
+      mesh.rotation.x = branch.rotationX;
+      group.add(mesh);
+    });
+
+    const canopy = [
+      { x: 0, y: 2.72, z: 0, scale: [1.08, .76, .90], rotation: 0 },
+      { x: -.48, y: 2.70, z: .02, scale: [.86, .68, .72], rotation: -.16 },
+      { x: .50, y: 2.74, z: -.02, scale: [.88, .70, .74], rotation: .14 },
+      { x: 0, y: 3.12, z: .03, scale: [.82, .70, .72], rotation: 0 },
+      { x: -.28, y: 2.96, z: -.30, scale: [.70, .58, .62], rotation: -.18 },
+      { x: .30, y: 2.98, z: -.28, scale: [.72, .60, .64], rotation: .18 }
+    ];
+    canopy.forEach((leaf, leafIndex) => {
+      const mesh = new THREE.Mesh(new THREE.SphereGeometry(.48, 8, 6), foliageMaterials[leafIndex % foliageMaterials.length]);
+      mesh.name = `plant-canopy-${room.id}-${index + 1}-${leafIndex + 1}`;
       mesh.position.set(leaf.x, leaf.y, leaf.z);
       mesh.scale.set(leaf.scale[0], leaf.scale[1], leaf.scale[2]);
       mesh.rotation.z = leaf.rotation;
-      mesh.rotation.x = leaf.tilt || 0;
       group.add(mesh);
     });
     worldGroup.add(group);

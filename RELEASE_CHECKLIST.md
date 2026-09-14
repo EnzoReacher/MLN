@@ -23,7 +23,7 @@
 - [x] Không dùng spotlight cục bộ, vùng sáng giả hoặc shadow-map động; gallery dùng ánh sáng nền/định hướng đồng đều để giữ FPS ổn định.
 - [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm từng tranh; viewer có khung ảnh lớn, `contain` và lightbox.
 - [x] Mỗi phòng có thảm đỏ trung tâm, viền đồng mảnh và bảng nhãn thấp cạnh tranh; decor dùng hình học tĩnh, không spotlight.
-- [x] Mỗi phòng có hai chậu cây low-poly kích thước vừa phải, đặt đối xứng ở hai góc và không chặn đường/phím `E`.
+- [x] Mỗi phòng có hai cây cảnh low-poly kiểu sảnh bảo tàng, có bệ trụ/chậu lớn/thân phân nhánh/tán lá nhiều lớp; đặt đối xứng ở hai góc và không chặn đường/phím `E`.
 
 ## Nội dung đã tích hợp
 
@@ -56,7 +56,7 @@ Các test xác nhận:
 - Hồ sơ mở bằng `E`, có panel, đoạn văn, image slot và lightbox.
 - Không có lựa chọn A/B, lens cũ, icon Unicode hoặc asset búa–liềm.
 - Có thể đóng exhibit phụ mà chương chưa bị ghi nhận; đóng exhibit chính bằng nút ghi nhận mới mở cổng.
-- Cây cảnh tĩnh dùng hình học Lambert nhẹ; không thêm NPC, spotlight hoặc shadow map động.
+- Cây cảnh tĩnh dùng hình học Lambert nhẹ với bệ, chậu, thân, cành và tán lá low-poly; không thêm NPC, spotlight hoặc shadow map động.
 - Mỗi lần `E` chỉ mở đúng một painting; chỉ exhibit chính mở cổng kế tiếp.
 - Ending, nút thoát, màn cảm ơn và quay lại màn hình đầu hoạt động.
 - Vercel rewrite giữ `/` về `dist/index.html`.

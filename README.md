@@ -54,7 +54,7 @@ Mỗi chương có các mục dạng:
 
 18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Mỗi phòng có ba tranh tường liên kết với ba mục nội dung: `E` ở tranh 01 mở mục 01, `E` ở tranh 02 mở mục 02, và `E` ở tranh 03 mở mục 03. Viewer không còn thanh điều hướng phòng nên không thể vô tình bật cả ba nội dung cùng lúc; nút đóng chỉ xử lý exhibit đang mở. Tranh chính được ghi nhận để mở cổng, còn tranh phụ bổ sung bối cảnh. Mọi tranh đều được fit theo tỉ lệ gốc, không kéo méo hoặc bị thu nhỏ vào một khung sai tỉ lệ; viewer có khung trình chiếu và lightbox để xem trọn ảnh. Mỗi phòng có thêm một thảm đỏ trung tâm với viền đồng mảnh và bảng nhãn thấp cạnh tranh, dùng hình học tĩnh nhẹ để giữ FPS ổn định. Điểm tương tác `E` nằm ngay trước tâm từng tranh. Nội dung mỗi mục được giữ ở dạng ngắn để đọc trong lớp. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật section tương ứng cùng mapping tranh nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
 
-Không gian cũng có hai chậu cây low-poly trong mỗi phòng, với chậu terracotta, viền chậu và cụm lá bản rộng được bố trí cân đối ở hai góc. Cây chỉ là decor tĩnh, không chiếm phím `E`, không chặn đường và không dùng spotlight hay shadow động.
+Không gian cũng có hai cây cảnh low-poly kiểu sảnh bảo tàng trong mỗi phòng: bệ trụ thấp, chậu terracotta lớn, thân cây phân nhánh và tán lá nhiều lớp được đặt cân đối ở hai góc. Cây đủ nổi bật để làm không gian có chiều sâu nhưng vẫn nằm ngoài đường đi, không chiếm phím `E`, không dùng spotlight hay shadow động và chỉ tạo bằng hình học nhẹ.
 
 ## Kiểm thử
 
