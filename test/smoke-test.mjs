@@ -52,10 +52,12 @@ const ids = [
 ];
 const elements = Object.fromEntries(ids.map((id) => [id, new Element(id)]));
 elements["mini-player"] = new Element("mini-player");
+elements["viewer-layout"] = new Element("viewer-layout");
+elements["viewer-visual"] = new Element("viewer-visual");
 
 const document = {
   getElementById: (id) => elements[id] ?? null,
-  querySelector: (selector) => selector === ".mini-player" ? elements["mini-player"] : null,
+  querySelector: (selector) => selector === ".mini-player" ? elements["mini-player"] : selector === ".viewer-layout" ? elements["viewer-layout"] : selector === ".viewer-visual" ? elements["viewer-visual"] : null,
   createElement: () => new Element()
 };
 const windowListeners = {};
@@ -90,6 +92,7 @@ assert(Math.max(...game.content.flatMap((chapter) => chapter.sections.flatMap((s
 assert(game.rooms.length === 4 && game.gates.length === 4, "3D gallery did not expose four rooms and four gates");
 assert(game.rooms.every((room) => room.artworks?.length === 3), "Each gallery room should have three wall artworks");
 assert(Object.keys(game.roomPlants).length === 4 && Object.values(game.roomPlants).every((plants) => plants.length === 2 && plants.every((plant) => Math.abs(plant.side) === 1 && Math.abs(plant.zOffset) >= 8)), "Each room should have two far-corner plant specs");
+assert(Object.keys(game.roomHonors).length === 4 && Object.values(game.roomHonors).every((honor) => honor.image && honor.name && honor.role), "Each room should have one central historical figure display");
 assert(game.content.find((chapter) => chapter.id === "class")?.sections[2]?.images.length === 1, "Historical state-types exhibit should use one representative image");
 for (const room of game.rooms) {
   const primary = item(room.id);
@@ -190,6 +193,10 @@ passGate("gate-class", "class");
 assert(!game.canMove(0, gate("gate-state").z), "Chapter 03 gate was passable before chapter 02");
 
 openChapter("class");
+assert(elements["viewer-layout"].classList.contains("content-only"), "The wide Room 02 image did not switch the viewer to content-only mode");
+assert(elements["viewer-visual"].classList.contains("hidden"), "The wide Room 02 image was still displayed after pressing E");
+assert(elements["viewer-image"].classList.contains("hidden"), "The content-only exhibit still exposed its image element");
+assert(elements["viewer-paragraphs"].children.length > 0, "The content-only exhibit lost its readable text");
 elements["viewer-close"].click();
 const thirdClassExhibit = item("class-artwork-3");
 game.state.player = { x: thirdClassExhibit.x, z: thirdClassExhibit.z };

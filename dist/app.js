@@ -39,6 +39,8 @@
   const viewerImagePlaceholder = document.getElementById("viewer-image-placeholder");
   const viewerImage = document.getElementById("viewer-image");
   const viewerImageStage = document.querySelector(".viewer-image-stage");
+  const viewerLayout = document.querySelector(".viewer-layout");
+  const viewerVisual = document.querySelector(".viewer-visual");
   const viewerCaption = document.getElementById("viewer-caption");
   const viewerImageCount = document.getElementById("viewer-image-count");
   const viewerPrevImage = document.getElementById("viewer-prev-image");
@@ -103,6 +105,13 @@
     state: [{ side: -1, zOffset: 8.25 }, { side: 1, zOffset: -8.25 }],
     revolt: [{ side: -1, zOffset: 8.25 }, { side: 1, zOffset: -8.25 }]
   };
+
+  const ROOM_HONORS = Object.freeze({
+    base: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "NGUỒN GỐC XÃ HỘI" },
+    class: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "GIAI CẤP & SỞ HỮU" },
+    state: { image: "./assets/ch03-ho-chi-minh.webp", name: "Hồ Chí Minh", role: "NHÀ NƯỚC CỦA DÂN" },
+    revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CÁCH MẠNG XÃ HỘI" }
+  });
 
   const gates = [
     { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
@@ -201,7 +210,8 @@
       title: typeof section?.title === "string" && section.title.trim() ? section.title.trim() : "Nội dung chương",
       lead: typeof section?.lead === "string" ? section.lead.trim() : "",
       paragraphs: paragraphs.length ? paragraphs : ["Nội dung chi tiết của mục này đang được chuẩn bị."],
-      images
+      images,
+      contentOnly: section?.contentOnly === true
     };
   }
 
@@ -415,7 +425,8 @@
   function renderViewerImage(section) {
     const images = section?.images ?? [];
     const image = images[state.viewerImage] ?? null;
-    viewerImageControls?.classList.toggle("hidden", images.length < 2);
+    const contentOnly = Boolean(section?.contentOnly);
+    viewerImageControls?.classList.toggle("hidden", contentOnly || images.length < 2);
     viewerImageCount.textContent = images.length ? `${state.viewerImage + 1} / ${images.length}` : "0 / 0";
     viewerPrevImage.disabled = images.length < 2;
     viewerNextImage.disabled = images.length < 2;
@@ -425,6 +436,13 @@
     resetViewerImageFrame();
     viewerImage.onerror = null;
     viewerImage.onload = null;
+
+    if (contentOnly) {
+      viewerImage.src = "";
+      viewerImage.classList.add("hidden");
+      viewerImagePlaceholder.classList.add("hidden");
+      return;
+    }
 
     if (!image) {
       viewerImagePlaceholder.innerHTML = "<span>IMAGE SLOT</span><strong>Ảnh tư liệu sẽ được đặt tại đây</strong><small>Khung này đã sẵn sàng nhận ảnh của chương.</small>";
@@ -471,6 +489,9 @@
     viewerSectionLabel.textContent = section.label;
     viewerSectionTitle.textContent = section.title;
     viewerLead.textContent = section.lead;
+    const contentOnly = Boolean(section.contentOnly);
+    viewerLayout?.classList.toggle("content-only", contentOnly);
+    viewerVisual?.classList.toggle("hidden", contentOnly);
     viewerParagraphs.innerHTML = "";
     section.paragraphs.forEach((paragraph) => {
       const node = document.createElement("p");
@@ -665,6 +686,7 @@
     "./assets/ch02-bourgeois-transition.webp": 1140 / 814,
     "./assets/ch03-marx.webp": 482 / 622,
     "./assets/ch03-soviet-state.webp": 1040 / 818,
+    "./assets/ch03-ho-chi-minh.webp": 884 / 738,
     "./assets/ch03-vietnam-socialism.webp": 926 / 570,
     "./assets/ch03-vietnam-state.webp": 904 / 508,
     "./assets/ch04-revolution-origin.webp": 938 / 632,
@@ -741,6 +763,88 @@
         fitArtworkToFrame(texture);
       }, undefined, (error) => console.warn(`THE STATE artwork fallback: ${room.id}-${index + 1}`, error));
     }
+  }
+
+  function makeHonorPlaqueTexture(honor) {
+    const plaqueCanvas = document.createElement("canvas");
+    plaqueCanvas.width = 640;
+    plaqueCanvas.height = 128;
+    const plaque = plaqueCanvas.getContext("2d");
+    plaque.fillStyle = "#2f292a";
+    plaque.fillRect(0, 0, plaqueCanvas.width, plaqueCanvas.height);
+    plaque.strokeStyle = "#d6ae6c";
+    plaque.lineWidth = 3;
+    plaque.strokeRect(8, 8, plaqueCanvas.width - 16, plaqueCanvas.height - 16);
+    plaque.fillStyle = "#f4ecdf";
+    plaque.font = "600 25px 'DM Sans', sans-serif";
+    plaque.fillText(honor.name.toUpperCase(), 30, 53);
+    plaque.fillStyle = "#d6ae6c";
+    plaque.font = "500 17px 'DM Mono', monospace";
+    plaque.fillText(honor.role, 30, 91);
+    const texture = new THREE.CanvasTexture(plaqueCanvas);
+    if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+    texture.generateMipmaps = false;
+    texture.minFilter = THREE.LinearFilter;
+    texture.anisotropy = 1;
+    return texture;
+  }
+
+  function addHonorPortrait(room) {
+    const honor = ROOM_HONORS[room.id];
+    if (!honor) return;
+    const group = new THREE.Group();
+    group.name = `honor-display-${room.id}`;
+    group.position.set(0, 0, room.centerZ + .65);
+
+    const frameMaterial = new THREE.MeshLambertMaterial({ color: Number.parseInt(room.accent.slice(1), 16) });
+    const pedestalMaterial = new THREE.MeshLambertMaterial({ color: 0x403a38 });
+    const darkMaterial = new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide });
+    const portraitMaterial = new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide });
+    const dimensions = paintingDimensions({ image: honor.image, height: 2.2, maxWidth: 2.15 });
+    const portraitY = 1.10 + dimensions.height / 2;
+    const plaqueWidth = Math.min(2.7, dimensions.width + .70);
+
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.95, .24, 1.16), pedestalMaterial);
+    plinth.position.set(0, .12, 0);
+    group.add(plinth);
+    const pedestal = new THREE.Mesh(new THREE.BoxGeometry(1.42, .72, .88), pedestalMaterial);
+    pedestal.position.set(0, .60, 0);
+    group.add(pedestal);
+    const pedestalCap = new THREE.Mesh(new THREE.BoxGeometry(1.62, .10, 1.00), frameMaterial);
+    pedestalCap.position.set(0, .99, 0);
+    group.add(pedestalCap);
+
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + .34, dimensions.height + .34, .16), frameMaterial);
+    frame.position.set(0, portraitY, -.10);
+    group.add(frame);
+    const backing = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), darkMaterial);
+    backing.position.set(0, portraitY, -.20);
+    group.add(backing);
+    const portrait = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), portraitMaterial);
+    portrait.name = `honor-portrait-${room.id}`;
+    portrait.position.set(0, portraitY, .01);
+    group.add(portrait);
+
+    const plaqueBase = new THREE.Mesh(new THREE.BoxGeometry(plaqueWidth, .24, .07), frameMaterial);
+    plaqueBase.position.set(0, 1.16, .25);
+    group.add(plaqueBase);
+    const plaqueMaterial = new THREE.MeshBasicMaterial({ map: makeHonorPlaqueTexture(honor), side: THREE.DoubleSide });
+    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(plaqueWidth - .08, .20), plaqueMaterial);
+    plaque.name = `honor-plaque-${room.id}`;
+    plaque.position.set(0, 1.16, .292);
+    group.add(plaque);
+
+    if (textureLoader) {
+      textureLoader.load(honor.image, (texture) => {
+        if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
+        texture.generateMipmaps = false;
+        texture.minFilter = THREE.LinearFilter;
+        texture.anisotropy = 1;
+        portraitMaterial.map = texture;
+        portraitMaterial.needsUpdate = true;
+      }, undefined, (error) => console.warn(`THE STATE honor portrait fallback: ${room.id}`, error));
+    }
+    worldGroup.add(group);
   }
 
   function addRoomDecor(room) {
@@ -863,6 +967,7 @@
     addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
     addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
     addRoomDecor(room);
+    addHonorPortrait(room);
     addRoomPlants(room);
     room.artworks.forEach((artwork, index) => addPainting(room, artwork, index));
   }
@@ -1094,6 +1199,7 @@
     state,
     rooms,
     roomPlants: ROOM_PLANTS,
+    roomHonors: ROOM_HONORS,
     gates,
     interactables,
     content,

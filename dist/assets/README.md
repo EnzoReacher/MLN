@@ -19,6 +19,13 @@ painting and fitted to its original aspect ratio. If a future image is added,
 keep it compressed and update both the relevant section and its matching
 `room.artworks[index]` entry in `dist/app.js`.
 
+The wide `ch02-state-functions.webp` exhibit is retained on the Room 02 wall,
+but its section uses `contentOnly: true`, so pressing `E` opens the readable
+text without duplicating the long image in the viewer. Four central honor
+displays use the supplied portraits of Engels, Marx, Hồ Chí Minh, and Lenin;
+they are static, non-interactive room decor placed away from the wall exhibits
+and the player path.
+
 Six replacement images have been refreshed from the supplied files:
 `ch02-state-form.webp`, `ch02-slave-state.webp`, `ch03-soviet-state.webp`,
 `ch04-mass-action.webp`, `ch04-revolution-origin.webp`, and

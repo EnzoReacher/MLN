@@ -10,6 +10,7 @@
 - [x] Mỗi phòng có ba tranh liên kết với ba mục nội dung; `E` ở từng tranh chỉ mở exhibit tương ứng, không bật nội dung của hai tranh còn lại.
 - [x] `E` mở hồ sơ chương, không tạo lựa chọn A/B.
 - [x] Viewer có nhiều panel, đoạn văn, chú thích ảnh, chuyển ảnh; khung tự khớp tỉ lệ ảnh và lightbox phủ toàn viewport.
+- [x] Hồ sơ ảnh ngang dài của Chương 02 dùng chế độ text-only khi nhấn `E`, không lặp lại ảnh trong modal.
 - [x] Ảnh thiếu có fallback rõ ràng, không hiện broken image.
 - [x] Bốn chương theo mạch điều kiện vật chất → giai cấp → Nhà nước → mâu thuẫn/cách mạng xã hội.
 - [x] Cổng 02/03/04 khóa cho tới khi tranh chính của chương trước được đọc và ghi nhận; tranh phụ là nội dung mở rộng.
@@ -24,6 +25,7 @@
 - [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm từng tranh; viewer tự đổi tỉ lệ khung để ảnh ngang/dọc lấp đầy vùng xem mà không méo/crop, kèm lightbox toàn viewport.
 - [x] Mỗi phòng có thảm đỏ trung tâm, viền đồng mảnh và bảng nhãn thấp cạnh tranh; decor dùng hình học tĩnh, không spotlight.
 - [x] Mỗi phòng có hai cây cảnh low-poly kiểu sảnh bảo tàng, có bệ trụ/chậu lớn/thân phân nhánh/tán lá nhiều lớp; đặt ở góc xa, không che tranh và không chặn đường/phím `E`.
+- [x] Mỗi phòng có một honor display ở trục giữa với chân dung Engels, Marx, Hồ Chí Minh hoặc Lenin; có bệ/bảng tên gọn, không thêm tương tác và không chắn điểm `E`.
 
 ## Nội dung đã tích hợp
 
@@ -54,9 +56,11 @@ Các test xác nhận:
 - Có đúng bốn exhibit và bốn gate.
 - Va chạm tường/cổng hoạt động; cổng sau không thể đi qua sớm.
 - Hồ sơ mở bằng `E`, có panel, đoạn văn, image slot và lightbox.
+- Hồ sơ wide-image mở bằng `E` chỉ hiển thị nội dung chữ trong bố cục rộng, không lặp ảnh.
 - Không có lựa chọn A/B, lens cũ, icon Unicode hoặc asset búa–liềm.
 - Có thể đóng exhibit phụ mà chương chưa bị ghi nhận; đóng exhibit chính bằng nút ghi nhận mới mở cổng.
 - Cây cảnh tĩnh dùng hình học Lambert nhẹ với bệ, chậu, thân, cành và tán lá low-poly; không thêm NPC, spotlight hoặc shadow map động.
+- Honor display trung tâm dùng bốn ảnh nhân vật lịch sử, hình học tĩnh và bảng tên canvas nhẹ; không thêm NPC, spotlight hoặc shadow map động.
 - Mỗi lần `E` chỉ mở đúng một painting; chỉ exhibit chính mở cổng kế tiếp.
 - Ending, nút thoát, màn cảm ơn và quay lại màn hình đầu hoạt động.
 - Vercel rewrite giữ `/` về `dist/index.html`.

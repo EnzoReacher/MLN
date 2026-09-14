@@ -60,6 +60,7 @@ window.THE_STATE_CONTENT = [
         label: "01 / CHỨC NĂNG",
         title: "Thống trị chính trị và tổ chức đời sống chung",
         lead: "Chức năng Nhà nước luôn có hai mặt: bảo vệ trật tự quyền lực và xử lý những nhu cầu chung.",
+        contentOnly: true,
         paragraphs: [
           "Chức năng giai cấp bảo vệ địa vị của giai cấp cầm quyền. Chức năng xã hội tổ chức đời sống chung trong những điều kiện lịch sử cụ thể.",
           "Đối nội là duy trì trật tự kinh tế, chính trị và xã hội; đối ngoại là bảo vệ lợi ích, lãnh thổ và vị thế của Nhà nước."

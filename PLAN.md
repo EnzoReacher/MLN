@@ -19,12 +19,13 @@ Nền tảng này phù hợp deadline 3–4 ngày: không cần Unity, backend, 
 - Cổng 02, 03, 04 và cổng kết thúc hoạt động theo thứ tự; không thể đi tắt qua chương sau.
 - Hiện vật trong phòng là ba điểm tương tác trực quan, không vẽ hộp lý thuyết cố định.
 - `E` trên tranh chỉ mở đúng mục nội dung tương ứng; nút đóng xử lý exhibit hiện tại. Tranh chính là mốc bắt buộc, hai tranh phụ là nội dung tùy chọn, không có lựa chọn A/B làm gián đoạn việc đọc.
-- Viewer hỗ trợ đoạn dẫn, nhiều đoạn văn, nhiều ảnh cho mỗi mục, chú thích, chuyển ảnh; khung ảnh tự khớp theo tỉ lệ ảnh và lightbox phủ toàn viewport để xem ảnh phóng to.
+- Viewer hỗ trợ đoạn dẫn, nhiều đoạn văn, nhiều ảnh cho mỗi mục, chú thích, chuyển ảnh; khung ảnh tự khớp theo tỉ lệ ảnh và lightbox phủ toàn viewport để xem ảnh phóng to. Mục có ảnh ngang dài có thể bật `contentOnly` để `E` chỉ mở phần chữ.
 - Ảnh thiếu hoặc đường dẫn sai có fallback rõ ràng, không để ảnh vỡ phá giao diện.
 - Toàn bộ nội dung tách khỏi engine trong `dist/content.js`; nhóm có thể thay nội dung và thêm ảnh sau này.
 - Màn ending thống kê số chương, số panel đã xem và số ảnh đã mở; nút thoát hiện màn cảm ơn thật.
 - Renderer ưu tiên độ mượt: tắt shadow map động, giới hạn pixel ratio, dùng vật liệu Lambert/Basic cho hình học và tranh tĩnh, texture không tạo mipmap không cần thiết, HUD không cập nhật DOM ở mọi frame.
 - Bản trình bày dùng ánh sáng nền và ánh sáng định hướng đồng đều; không bật spotlight cục bộ, vùng sáng giả hoặc shadow-map động nên vẫn giữ ưu tiên FPS.
+- Mỗi phòng có một honor display ở trục giữa, dùng ảnh chân dung tư liệu của một nhân vật lịch sử và bảng tên tối giản; đây là decor tĩnh, không thêm điểm tương tác hoặc cản đường.
 
 ## Hợp đồng nội dung
 
@@ -48,6 +49,8 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 - [x] Dùng một ảnh đại diện phù hợp làm tranh chính và hai ảnh phụ cho từng phòng.
 - [x] Gắn từng tranh vào đúng mục nội dung; `E` căn theo tâm từng tranh, mỗi exhibit mở độc lập; viewer tự khớp khung theo tỉ lệ từng ảnh và lightbox phủ toàn viewport để xem trọn ảnh.
 - [x] Thêm thảm đỏ trung tâm, viền đồng và bảng nhãn thấp cạnh tranh bằng hình học tĩnh nhẹ, không dùng spotlight hoặc shadow map.
+- [x] Thêm một honor display trung tâm cho mỗi phòng với ảnh Engels, Marx, Hồ Chí Minh và Lenin; bệ không che tranh, không chặn lối đi.
+- [x] Đặt `contentOnly: true` cho hồ sơ ảnh ngang dài của Chương 02 để khi nhấn `E` chỉ hiện nội dung chữ.
 - [x] Thêm hai cây cảnh low-poly kiểu sảnh bảo tàng mỗi phòng: bệ trụ, chậu terracotta lớn, thân phân nhánh và tán lá nhiều lớp; đặt ở góc xa để không che tranh, giữ ngoài lối đi, dùng hình học tĩnh nhẹ, không thêm NPC, spotlight hoặc shadow map.
 - [x] Rút gọn mỗi mục còn tối đa hai đoạn, phù hợp đọc khi thuyết trình.
 - [ ] Nhóm kiểm tra lần cuối nguồn/chú thích ảnh theo yêu cầu của giảng viên.
