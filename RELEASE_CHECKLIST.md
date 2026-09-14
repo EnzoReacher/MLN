@@ -9,7 +9,7 @@
 - [x] Bốn phòng triển lãm có màu nhận diện riêng.
 - [x] Mỗi phòng có ba tranh liên kết với ba mục nội dung; `E` ở từng tranh chỉ mở exhibit tương ứng, không bật nội dung của hai tranh còn lại.
 - [x] `E` mở hồ sơ chương, không tạo lựa chọn A/B.
-- [x] Viewer có nhiều panel, đoạn văn, chú thích ảnh, chuyển ảnh và lightbox.
+- [x] Viewer có nhiều panel, đoạn văn, chú thích ảnh, chuyển ảnh; khung tự khớp tỉ lệ ảnh và lightbox phủ toàn viewport.
 - [x] Ảnh thiếu có fallback rõ ràng, không hiện broken image.
 - [x] Bốn chương theo mạch điều kiện vật chất → giai cấp → Nhà nước → mâu thuẫn/cách mạng xã hội.
 - [x] Cổng 02/03/04 khóa cho tới khi tranh chính của chương trước được đọc và ghi nhận; tranh phụ là nội dung mở rộng.
@@ -21,7 +21,7 @@
 - [x] Màn ending hiển thị số chương, panel và ảnh đã xem.
 - [x] Renderer có cấu hình hiệu năng an toàn cho laptop/máy chiếu: pixel ratio giới hạn, không shadow map động, vật liệu nhẹ.
 - [x] Không dùng spotlight cục bộ, vùng sáng giả hoặc shadow-map động; gallery dùng ánh sáng nền/định hướng đồng đều để giữ FPS ổn định.
-- [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm từng tranh; viewer có khung ảnh lớn, `contain` và lightbox.
+- [x] Tranh tường giữ đúng tỉ lệ ảnh, tự đổi kích thước khung theo ảnh; điểm `E` căn theo tâm từng tranh; viewer tự đổi tỉ lệ khung để ảnh ngang/dọc lấp đầy vùng xem mà không méo/crop, kèm lightbox toàn viewport.
 - [x] Mỗi phòng có thảm đỏ trung tâm, viền đồng mảnh và bảng nhãn thấp cạnh tranh; decor dùng hình học tĩnh, không spotlight.
 - [x] Mỗi phòng có hai cây cảnh low-poly kiểu sảnh bảo tàng, có bệ trụ/chậu lớn/thân phân nhánh/tán lá nhiều lớp; đặt ở góc xa, không che tranh và không chặn đường/phím `E`.
 

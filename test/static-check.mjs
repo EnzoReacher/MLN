@@ -49,6 +49,7 @@ assert(app.includes("const ROOM_PLANTS") && app.includes("function addPlant") &&
 assert(app.includes("artworkImage") && app.includes("new THREE.TextureLoader") && app.includes("artworkMaterial.map = texture"), "Supplied images are not wired into the 3D gallery paintings");
 assert(!app.includes("new THREE.SpotLight") && !app.includes("spotlight-pool") && !app.includes("contact-shadow") && app.includes("fitArtworkToFrame"), "Spotlight effect is still wired into the 3D gallery or artwork fitting is missing");
 assert(app.includes("viewerImageControls?.classList.toggle(\"hidden\", images.length < 2)"), "Single-image exhibits should not show inactive image arrows");
+assert(app.includes("syncViewerImageFrame") && app.includes("--viewer-image-ratio"), "Viewer image frame does not adapt to the loaded image ratio");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
 assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
 assert(app.includes("antialias: false") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial"), "Performance-safe renderer configuration is missing");
@@ -61,7 +62,7 @@ assert(!html.includes("lens-button") && !app.includes("lensActive") && !app.incl
 assert(!html.includes("choice-button") && !app.includes("choice-button") && !app.includes("function choose"), "Choice mechanic is still wired into the game");
 assert(!app.includes("drawRoomScene") && !app.includes("drawRoomArtifact"), "Room content is still being drawn as static decorative panels");
 
-assert(css.includes("#game-canvas") && css.includes(".content-viewer") && css.includes(".viewer-card") && css.includes(".viewer-layout") && css.includes("minmax(0, 1.16fr)") && css.includes("overflow-x: hidden") && css.includes(".viewer-image-stage") && css.includes(".image-lightbox") && css.includes("@media (max-width: 800px)"), "Game viewer/responsive rules missing");
+assert(css.includes("#game-canvas") && css.includes(".content-viewer") && css.includes(".viewer-card") && css.includes(".viewer-layout") && css.includes("minmax(0, 1.28fr)") && css.includes("overflow-x: hidden") && css.includes(".viewer-image-stage") && css.includes("aspect-ratio: var(--viewer-image-ratio") && css.includes("width: 100%; height: 100%;") && css.includes(".image-lightbox") && css.includes("@media (max-width: 800px)"), "Game viewer/responsive rules missing");
 assert(css.split("{").length === css.split("}").length, "CSS braces are unbalanced");
 assert(vercel.rewrites?.[0]?.destination === "/dist/index.html", "Vercel root rewrite is not explicit");
 assert(vercel.rewrites?.[1]?.destination === "/dist/$1", "Vercel asset rewrite is not configured");

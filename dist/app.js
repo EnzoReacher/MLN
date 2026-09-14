@@ -38,6 +38,7 @@
   const viewerParagraphs = document.getElementById("viewer-paragraphs");
   const viewerImagePlaceholder = document.getElementById("viewer-image-placeholder");
   const viewerImage = document.getElementById("viewer-image");
+  const viewerImageStage = document.querySelector(".viewer-image-stage");
   const viewerCaption = document.getElementById("viewer-caption");
   const viewerImageCount = document.getElementById("viewer-image-count");
   const viewerPrevImage = document.getElementById("viewer-prev-image");
@@ -392,6 +393,19 @@
   function imageKey() { return `${state.viewerChapter}:${state.viewerPage}:${state.viewerImage}`; }
   function pageKey() { return `${state.viewerChapter}:${state.viewerPage}`; }
 
+  function syncViewerImageFrame() {
+    const width = Number(viewerImage?.naturalWidth);
+    const height = Number(viewerImage?.naturalHeight);
+    if (!viewerImageStage || !(width > 0) || !(height > 0)) return;
+    viewerImageStage.style.setProperty("--viewer-image-ratio", `${width} / ${height}`);
+    viewerImageStage.dataset.orientation = width >= height ? "landscape" : "portrait";
+  }
+
+  function resetViewerImageFrame() {
+    viewerImageStage?.style.removeProperty("--viewer-image-ratio");
+    if (viewerImageStage) delete viewerImageStage.dataset.orientation;
+  }
+
   function setViewerButtonLabel(label) {
     const buttonLabel = viewerNext.querySelector("span");
     if (buttonLabel) buttonLabel.textContent = label;
@@ -408,6 +422,7 @@
     viewerCaption.textContent = "";
     viewerImage.classList.add("hidden");
     viewerImagePlaceholder.classList.remove("hidden");
+    resetViewerImageFrame();
     viewerImage.onerror = null;
     viewerImage.onload = null;
 
@@ -421,17 +436,20 @@
     viewerImage.onerror = () => {
       viewerImage.classList.add("hidden");
       viewerImagePlaceholder.classList.remove("hidden");
+      resetViewerImageFrame();
       viewerImagePlaceholder.innerHTML = "<span>IMAGE SLOT</span><strong>Chưa tải được ảnh này</strong><small>Kiểm tra lại đường dẫn trong content.js khi nhóm thêm ảnh.</small>";
       viewerCaption.textContent = image.caption;
     };
     viewerImage.onload = () => {
       viewerImagePlaceholder.classList.add("hidden");
       viewerImage.classList.remove("hidden");
+      syncViewerImageFrame();
       state.imagesViewed.add(imageKey());
     };
     viewerImage.src = image.src;
     viewerImage.classList.remove("hidden");
     viewerImagePlaceholder.classList.add("hidden");
+    syncViewerImageFrame();
     viewerCaption.textContent = image.caption;
   }
 
