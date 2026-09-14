@@ -667,8 +667,8 @@
     "./assets/ch03-soviet-state.webp": 1040 / 818,
     "./assets/ch03-vietnam-socialism.webp": 926 / 570,
     "./assets/ch03-vietnam-state.webp": 904 / 508,
-    "./assets/ch04-revolution-origin.webp": 1228 / 832,
-    "./assets/ch04-revolution-force.webp": 888 / 596,
+    "./assets/ch04-revolution-origin.webp": 938 / 632,
+    "./assets/ch04-revolution-force.webp": 1086 / 738,
     "./assets/ch04-revolution-method.webp": 1158 / 718
   });
 
