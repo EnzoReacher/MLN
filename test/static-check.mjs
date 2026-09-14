@@ -55,7 +55,7 @@ assert(app.includes("syncViewerImageFrame") && app.includes("--viewer-image-rati
 assert(app.includes("contentOnly") && app.includes("viewerLayout?.classList.toggle(\"content-only\"") && app.includes("viewerVisual?.classList.toggle(\"hidden\", contentOnly)"), "Long-image exhibits should support a text-only E viewer");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
 assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
-assert(app.includes("antialias: false") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial"), "Performance-safe renderer configuration is missing");
+assert(app.includes("antialias: true") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial") && app.includes("portraitMaterial") && app.includes("color: 0xffffff"), "Performance-safe renderer and readable portrait configuration is missing");
 assert(app.includes("section.images") && app.includes("viewerImage.onerror") && app.includes("function cycleImage") && app.includes("viewerArtworkIndex") && app.includes("GHI NHẬN & ĐÓNG"), "Image/content data flow is missing");
 assert(content.includes("sections:") && content.includes("images:") && content.includes("ch04-revolution-method.webp"), "Chapter 7 content/image contract is incomplete");
 assert(activeChapterImages.every((image) => content.includes(`./assets/${image}`)), "Not every active chapter image is connected to content");

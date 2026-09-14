@@ -70,4 +70,4 @@ Smoke test mô phỏng cả tuyến: vào game, mở đúng hồ sơ của tranh
 
 Game không cần backend, database, API hay biến môi trường. `vercel.json` phục vụ `dist/index.html` ở route `/` và giữ asset rewrites cho Vercel.
 
-Renderer được tối ưu cho máy trình chiếu/laptop phổ thông: không dùng shadow map động hay spotlight cục bộ, chỉ dùng ánh sáng nền/định hướng đồng đều, giới hạn pixel ratio, dùng vật liệu nhẹ hơn cho hình học tĩnh và giảm tần suất cập nhật HUD mà không ảnh hưởng điều khiển. Viewer cũng khóa tràn ngang để hồ sơ và ảnh luôn nằm trong khung.
+Renderer được tối ưu cho máy trình chiếu/laptop phổ thông: không dùng shadow map động hay spotlight cục bộ, chỉ dùng ánh sáng nền/định hướng đồng đều, dùng khử răng cưa phần cứng nhẹ, giới hạn pixel ratio, dùng vật liệu nhẹ hơn cho hình học tĩnh và giảm tần suất cập nhật HUD mà không ảnh hưởng điều khiển. Chân dung trung tâm dùng texture không bị nhân màu tối để giữ độ rõ. Viewer cũng khóa tràn ngang để hồ sơ và ảnh luôn nằm trong khung.

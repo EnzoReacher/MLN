@@ -799,7 +799,7 @@
     const frameMaterial = new THREE.MeshLambertMaterial({ color: Number.parseInt(room.accent.slice(1), 16) });
     const pedestalMaterial = new THREE.MeshLambertMaterial({ color: 0x403a38 });
     const darkMaterial = new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide });
-    const portraitMaterial = new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide });
+    const portraitMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, toneMapped: false });
     const dimensions = paintingDimensions({ image: honor.image, height: 2.2, maxWidth: 2.15 });
     const portraitY = 1.10 + dimensions.height / 2;
     const plaqueWidth = Math.min(2.7, dimensions.width + .70);
@@ -839,6 +839,7 @@
         if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
         texture.generateMipmaps = false;
         texture.minFilter = THREE.LinearFilter;
+        texture.magFilter = THREE.LinearFilter;
         texture.anisotropy = 1;
         portraitMaterial.map = texture;
         portraitMaterial.needsUpdate = true;
@@ -1002,7 +1003,7 @@
     }
     try {
       const size = viewport();
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: "high-performance", preserveDrawingBuffer: false });
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance", preserveDrawingBuffer: false });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, PERFORMANCE.maxPixelRatio));
       renderer.setSize(size.width, size.height, false);
       if ("outputColorSpace" in renderer && THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
