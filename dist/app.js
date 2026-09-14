@@ -95,6 +95,29 @@
     }
   ];
 
+  const ROOM_LIFE = {
+    base: {
+      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
+      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: .2 },
+      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .48, phase: .1 }
+    },
+    class: {
+      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
+      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: 1.1 },
+      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .52, phase: 1.7 }
+    },
+    state: {
+      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
+      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: 2.2 },
+      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .45, phase: 2.5 }
+    },
+    revolt: {
+      plants: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
+      point: { x: -3.1, zOffset: 1.5, pointDirection: "left", phase: 3.1 },
+      walk: { x: 2.8, zOffset: 0, amplitude: 3.5, speed: .50, phase: 3.4 }
+    }
+  };
+
   const gates = [
     { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
     { id: "gate-state", x: 0, z: -36, radius: 2.5, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
@@ -171,6 +194,7 @@
   let clock = null;
   let textureLoader = null;
   let gateMeshes = new Map();
+  const animatedNpcs = [];
 
   function normaliseImage(image) {
     if (typeof image === "string") return { src: image, alt: "Ảnh tư liệu", caption: "" };
@@ -743,6 +767,118 @@
     });
   }
 
+  function addPlant(room, spec, index) {
+    const group = new THREE.Group();
+    group.name = `plant-${room.id}-${index + 1}`;
+    group.position.set(spec.side * 5.25, .11, room.centerZ + spec.zOffset);
+
+    const potMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0x8e5141 : 0x74463e });
+    const soilMaterial = new THREE.MeshLambertMaterial({ color: 0x292322 });
+    const foliageMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0x527663 : 0x456954 });
+    const stemMaterial = new THREE.MeshLambertMaterial({ color: 0x3f5b46 });
+
+    const pot = new THREE.Mesh(new THREE.CylinderGeometry(.30, .25, .42, 8), potMaterial);
+    pot.position.y = .21;
+    group.add(pot);
+    const soil = new THREE.Mesh(new THREE.CylinderGeometry(.235, .235, .025, 8), soilMaterial);
+    soil.position.y = .43;
+    group.add(soil);
+    const stem = new THREE.Mesh(new THREE.CylinderGeometry(.045, .065, .48, 6), stemMaterial);
+    stem.position.y = .68;
+    group.add(stem);
+
+    const leaves = [
+      { x: 0, y: 1.02, z: 0, rotation: 0 },
+      { x: .22, y: .94, z: .02, rotation: -.38 },
+      { x: -.20, y: .92, z: -.04, rotation: .42 }
+    ];
+    leaves.forEach((leaf) => {
+      const mesh = new THREE.Mesh(new THREE.ConeGeometry(.31, .72, 7), foliageMaterial);
+      mesh.position.set(leaf.x, leaf.y, leaf.z);
+      mesh.rotation.z = leaf.rotation;
+      group.add(mesh);
+    });
+    worldGroup.add(group);
+  }
+
+  function npcPart(group, geometry, material, position, rotation = {}) {
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.position.set(position.x, position.y, position.z);
+    mesh.rotation.set(rotation.x || 0, rotation.y || 0, rotation.z || 0);
+    group.add(mesh);
+    return mesh;
+  }
+
+  function addNpc(room, spec) {
+    const palette = {
+      base: { coat: 0x3e5754, trim: 0xc38a5d },
+      class: { coat: 0x574b45, trim: 0xd4a05f },
+      state: { coat: 0x465b58, trim: 0xd8c093 },
+      revolt: { coat: 0x5b3d40, trim: 0xe09a6e }
+    }[room.id] ?? { coat: 0x4d4a48, trim: 0xc8a16e };
+    const mode = spec.mode || "point";
+    const group = new THREE.Group();
+    group.name = `npc-${room.id}-${spec.role || mode}`;
+    group.position.set(spec.x, .11, room.centerZ + (spec.zOffset || 0));
+
+    const coatMaterial = new THREE.MeshLambertMaterial({ color: palette.coat });
+    const trimMaterial = new THREE.MeshLambertMaterial({ color: palette.trim });
+    const skinMaterial = new THREE.MeshLambertMaterial({ color: 0xc28b72 });
+    const hairMaterial = new THREE.MeshLambertMaterial({ color: 0x2c2929 });
+
+    const leftLeg = npcPart(group, new THREE.BoxGeometry(.16, .66, .16), coatMaterial, { x: -.11, y: .44, z: 0 });
+    const rightLeg = npcPart(group, new THREE.BoxGeometry(.16, .66, .16), coatMaterial, { x: .11, y: .44, z: 0 });
+    npcPart(group, new THREE.BoxGeometry(.46, .82, .30), coatMaterial, { x: 0, y: 1.08, z: 0 });
+    const leftArm = npcPart(group, new THREE.BoxGeometry(.14, .66, .14), coatMaterial, { x: -.32, y: 1.12, z: 0 }, { z: mode === "point" ? .20 : -.14 });
+    const rightArm = npcPart(group, new THREE.BoxGeometry(.14, .66, .14), coatMaterial, { x: .32, y: 1.12, z: 0 }, { z: mode === "point" ? (spec.pointDirection === "left" ? -1.00 : 1.00) : .14 });
+    npcPart(group, new THREE.BoxGeometry(.11, .12, .035), trimMaterial, { x: 0, y: 1.14, z: -.17 });
+    const head = npcPart(group, new THREE.SphereGeometry(.21, 8, 6), skinMaterial, { x: 0, y: 1.75, z: 0 });
+    npcPart(group, new THREE.SphereGeometry(.22, 8, 5), hairMaterial, { x: 0, y: 1.88, z: 0 });
+
+    worldGroup.add(group);
+    animatedNpcs.push({
+      group,
+      mode,
+      baseY: .11,
+      baseZ: room.centerZ + (spec.zOffset || 0),
+      amplitude: spec.amplitude || 0,
+      speed: spec.speed || .5,
+      phase: spec.phase || 0,
+      head,
+      leftArm,
+      rightArm,
+      leftLeg,
+      rightLeg
+    });
+  }
+
+  function addRoomLife(room) {
+    const life = ROOM_LIFE[room.id];
+    if (!life) return;
+    life.plants.forEach((plant, index) => addPlant(room, plant, index));
+    addNpc(room, { ...life.point, mode: "point", role: "observer" });
+    addNpc(room, { ...life.walk, mode: "walk", role: "visitor" });
+  }
+
+  function updateAnimatedNpcs(time) {
+    animatedNpcs.forEach((npc) => {
+      const cycle = Math.sin(time * npc.speed + npc.phase);
+      if (npc.mode === "walk") {
+        const stride = Math.cos(time * npc.speed * 2 + npc.phase) * .34;
+        npc.group.position.z = npc.baseZ + cycle * npc.amplitude;
+        npc.group.position.y = npc.baseY + Math.abs(Math.sin(time * npc.speed * 2 + npc.phase)) * .018;
+        npc.group.rotation.y = cycle >= 0 ? Math.PI : 0;
+        npc.leftLeg.rotation.x = stride;
+        npc.rightLeg.rotation.x = -stride;
+        npc.leftArm.rotation.x = -stride * .72;
+        npc.rightArm.rotation.x = stride * .72;
+      } else {
+        npc.group.position.y = npc.baseY + Math.sin(time * .7 + npc.phase) * .004;
+        npc.head.rotation.y = Math.sin(time * .55 + npc.phase) * .16;
+      }
+    });
+  }
+
   function addRoom(room) {
     const floorMaterial = new THREE.MeshLambertMaterial({ color: 0x665954 });
     const wallMaterial = new THREE.MeshLambertMaterial({ color: 0x514845 });
@@ -759,6 +895,7 @@
     addBox([.12, .12, length - .6], [-6.82, .18, room.centerZ], trimMaterial);
     addBox([.12, .12, length - .6], [6.82, .18, room.centerZ], trimMaterial);
     addRoomDecor(room);
+    addRoomLife(room);
     room.artworks.forEach((artwork, index) => addPainting(room, artwork, index));
   }
 
@@ -845,6 +982,7 @@
     const dt = Math.min((timestamp - state.lastTime) / 1000, .05);
     state.lastTime = timestamp;
     state.time += dt;
+    updateAnimatedNpcs(state.time);
     if (!state.dialogueOpen && !state.viewerOpen) {
       let forward = 0;
       let strafe = 0;
@@ -988,6 +1126,8 @@
   window.__THE_STATE__ = {
     state,
     rooms,
+    roomLife: ROOM_LIFE,
+    animatedNpcs,
     gates,
     interactables,
     content,

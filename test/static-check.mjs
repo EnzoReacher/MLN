@@ -44,6 +44,7 @@ for (const marker of [
 
 assert(app.includes("...rooms.map((room) => ({") && app.includes('kind: "exhibit"'), "Expected four generated evidence exhibits");
 assert(app.includes("room.artworks.forEach") && app.includes("room.artworks[0].wall") && app.includes("artworkIndex") && app.includes("sectionIndex") && app.includes("radius: 1.9") && app.includes("addRoomDecor") && app.includes("carpet-"), "Room artwork layout, E alignment, or gallery decor is missing");
+assert(app.includes("const ROOM_LIFE") && app.includes("function addPlant") && app.includes("function addNpc") && app.includes("function updateAnimatedNpcs") && app.includes("ConeGeometry") && app.includes("SphereGeometry"), "Ambient plants and NPC animation are missing");
 assert(app.includes("artworkImage") && app.includes("new THREE.TextureLoader") && app.includes("artworkMaterial.map = texture"), "Supplied images are not wired into the 3D gallery paintings");
 assert(!app.includes("new THREE.SpotLight") && !app.includes("spotlight-pool") && !app.includes("contact-shadow") && app.includes("fitArtworkToFrame"), "Spotlight effect is still wired into the 3D gallery or artwork fitting is missing");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
