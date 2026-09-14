@@ -96,10 +96,10 @@
   ];
 
   const ROOM_PLANTS = {
-    base: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
-    class: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
-    state: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }],
-    revolt: [{ side: -1, zOffset: 7.3 }, { side: 1, zOffset: -7.3 }]
+    base: [{ side: -1, zOffset: 8.25 }, { side: 1, zOffset: -8.25 }],
+    class: [{ side: -1, zOffset: 8.25 }, { side: 1, zOffset: -8.25 }],
+    state: [{ side: -1, zOffset: 8.25 }, { side: 1, zOffset: -8.25 }],
+    revolt: [{ side: -1, zOffset: 8.25 }, { side: 1, zOffset: -8.25 }]
   };
 
   const gates = [
@@ -753,7 +753,7 @@
   function addPlant(room, spec, index) {
     const group = new THREE.Group();
     group.name = `plant-${room.id}-${index + 1}`;
-    group.position.set(spec.side * 5.25, 0, room.centerZ + spec.zOffset);
+    group.position.set(spec.side * 5.85, 0, room.centerZ + spec.zOffset);
 
     const potMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0x8b5144 : 0x6f413d });
     const potRimMaterial = new THREE.MeshLambertMaterial({ color: index % 2 ? 0xb87558 : 0x9f604d });
