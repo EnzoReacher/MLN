@@ -89,9 +89,7 @@ window.THE_STATE_CONTENT = [
           "Quân chủ, cộng hòa, tập quyền hay phân quyền là những hình thức có thể thay đổi. Muốn hiểu bản chất, phải nhìn cả quan hệ kinh tế và giai cấp phía sau hình thức đó."
         ],
         images: [
-          { src: "./assets/ch02-slave-state.webp", alt: "Tranh minh họa xã hội chiếm hữu nô lệ", caption: "Kiểu Nhà nước chiếm hữu nô lệ." },
-          { src: "./assets/ch02-feudal-state.webp", alt: "Không gian quyền lực phong kiến", caption: "Trật tự phong kiến và quyền lực địa chủ." },
-          { src: "./assets/ch02-bourgeois-transition.webp", alt: "Biến động chính trị trong giai đoạn chuyển tiếp", caption: "Sự chuyển tiếp của các quan hệ chính trị - xã hội." }
+          { src: "./assets/ch02-slave-state.webp", alt: "Tranh minh họa xã hội chiếm hữu nô lệ", caption: "Ảnh đại diện cho phần đối chiếu các kiểu Nhà nước trong lịch sử." }
         ]
       }
     ]

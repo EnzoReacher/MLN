@@ -42,6 +42,7 @@
   const viewerImageCount = document.getElementById("viewer-image-count");
   const viewerPrevImage = document.getElementById("viewer-prev-image");
   const viewerNextImage = document.getElementById("viewer-next-image");
+  const viewerImageControls = document.querySelector(".image-controls");
   const viewerNote = document.getElementById("viewer-note");
   const viewerNext = document.getElementById("viewer-next");
   const viewerClose = document.getElementById("viewer-close");
@@ -72,7 +73,7 @@
       artworks: [
         { image: "./assets/ch02-state-functions.webp", wall: "left", zOffset: 0, height: 1.7, maxWidth: 5.3 },
         { image: "./assets/ch02-state-form.webp", wall: "right", zOffset: -5.4, height: 2.55, maxWidth: 4.25 },
-        { image: "./assets/ch02-bourgeois-transition.webp", wall: "right", zOffset: 5.4, height: 2.8, maxWidth: 4.35 }
+        { image: "./assets/ch02-slave-state.webp", wall: "right", zOffset: 5.4, height: 2.8, maxWidth: 4.35 }
       ]
     },
     {
@@ -400,6 +401,7 @@
   function renderViewerImage(section) {
     const images = section?.images ?? [];
     const image = images[state.viewerImage] ?? null;
+    viewerImageControls?.classList.toggle("hidden", images.length < 2);
     viewerImageCount.textContent = images.length ? `${state.viewerImage + 1} / ${images.length}` : "0 / 0";
     viewerPrevImage.disabled = images.length < 2;
     viewerNextImage.disabled = images.length < 2;
@@ -640,9 +642,11 @@
     "./assets/ch01-lenin.webp": 660 / 892,
     "./assets/ch01-state-institutions.webp": 888 / 578,
     "./assets/ch02-state-functions.webp": 1280 / 244,
-    "./assets/ch02-state-form.webp": 1166 / 792,
+    "./assets/ch02-state-form.webp": 1272 / 850,
+    "./assets/ch02-slave-state.webp": 1024 / 680,
     "./assets/ch02-bourgeois-transition.webp": 1140 / 814,
     "./assets/ch03-marx.webp": 482 / 622,
+    "./assets/ch03-soviet-state.webp": 1040 / 818,
     "./assets/ch03-vietnam-socialism.webp": 926 / 570,
     "./assets/ch03-vietnam-state.webp": 904 / 508,
     "./assets/ch04-revolution-origin.webp": 1228 / 832,

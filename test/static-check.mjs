@@ -22,6 +22,7 @@ const chapterImages = [
   "ch03-marx.webp", "ch03-soviet-state.webp", "ch03-ho-chi-minh.webp", "ch03-vietnam-socialism.webp", "ch03-vietnam-state.webp", "ch03-public-power.webp",
   "ch04-revolution-origin.webp", "ch04-mass-action.webp", "ch04-revolution-force.webp", "ch04-revolution-method.webp"
 ];
+const activeChapterImages = chapterImages.filter((image) => !["ch02-feudal-state.webp", "ch02-bourgeois-transition.webp"].includes(image));
 for (const image of chapterImages) assert(fs.existsSync(path.join(root, "dist/assets", image)), `Missing chapter image: ${image}`);
 
 assert(html.includes('id="game-canvas"') && html.includes('src="./vendor/three.min.js"') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
@@ -47,12 +48,13 @@ assert(app.includes("room.artworks.forEach") && app.includes("room.artworks[0].w
 assert(app.includes("const ROOM_PLANTS") && app.includes("function addPlant") && app.includes("function addRoomPlants") && app.includes("CylinderGeometry") && app.includes("SphereGeometry") && !app.includes("function addNpc") && !app.includes("updateAnimatedNpcs"), "Plant-only room decor is missing or NPC logic remains");
 assert(app.includes("artworkImage") && app.includes("new THREE.TextureLoader") && app.includes("artworkMaterial.map = texture"), "Supplied images are not wired into the 3D gallery paintings");
 assert(!app.includes("new THREE.SpotLight") && !app.includes("spotlight-pool") && !app.includes("contact-shadow") && app.includes("fitArtworkToFrame"), "Spotlight effect is still wired into the 3D gallery or artwork fitting is missing");
+assert(app.includes("viewerImageControls?.classList.toggle(\"hidden\", images.length < 2)"), "Single-image exhibits should not show inactive image arrows");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
 assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
 assert(app.includes("antialias: false") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial"), "Performance-safe renderer configuration is missing");
 assert(app.includes("section.images") && app.includes("viewerImage.onerror") && app.includes("function cycleImage") && app.includes("viewerArtworkIndex") && app.includes("GHI NHẬN & ĐÓNG"), "Image/content data flow is missing");
 assert(content.includes("sections:") && content.includes("images:") && content.includes("ch04-revolution-method.webp"), "Chapter 7 content/image contract is incomplete");
-assert(chapterImages.every((image) => content.includes(`./assets/${image}`)), "Not every supplied chapter image is connected to content");
+assert(activeChapterImages.every((image) => content.includes(`./assets/${image}`)), "Not every active chapter image is connected to content");
 
 assert(!html.includes("☭") && !app.includes("☭") && !html.includes("mark.svg") && !app.includes("mark.svg"), "Old hammer-and-sickle rendering is still referenced");
 assert(!html.includes("lens-button") && !app.includes("lensActive") && !app.includes("drawRelationField"), "Removed lens mechanic is still referenced");

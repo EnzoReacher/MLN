@@ -90,6 +90,7 @@ assert(Math.max(...game.content.flatMap((chapter) => chapter.sections.flatMap((s
 assert(game.rooms.length === 4 && game.gates.length === 4, "3D gallery did not expose four rooms and four gates");
 assert(game.rooms.every((room) => room.artworks?.length === 3), "Each gallery room should have three wall artworks");
 assert(Object.keys(game.roomPlants).length === 4 && Object.values(game.roomPlants).every((plants) => plants.length === 2 && plants.every((plant) => Math.abs(plant.side) === 1 && Math.abs(plant.zOffset) >= 8)), "Each room should have two far-corner plant specs");
+assert(game.content.find((chapter) => chapter.id === "class")?.sections[2]?.images.length === 1, "Historical state-types exhibit should use one representative image");
 for (const room of game.rooms) {
   const primary = item(room.id);
   assert(primary.x === (room.artworks[0].wall === "right" ? 5.15 : -5.15), `${room.id} exhibit interaction is not aligned with its wall`);
