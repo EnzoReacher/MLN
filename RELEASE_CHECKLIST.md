@@ -26,6 +26,7 @@
 - [x] Mỗi phòng có thảm đỏ trung tâm, viền đồng mảnh và bảng nhãn thấp cạnh tranh; decor dùng hình học tĩnh, không spotlight.
 - [x] Mỗi phòng có hai cây cảnh low-poly kiểu sảnh bảo tàng, có bệ trụ/chậu lớn/thân phân nhánh/tán lá nhiều lớp; đặt ở góc xa, không che tranh và không chặn đường/phím `E`.
 - [x] Mỗi phòng có một honor display ở trục giữa với chân dung Engels, Marx, Hồ Chí Minh hoặc Lenin; có bệ/bảng tên gọn, không thêm tương tác và không chắn điểm `E`.
+- [x] Bốn honor display có lớp kính trong suốt, vệt phản quang và chốt góc; Hồ Chí Minh dùng portrait đen trắng bên micro với khung/bệ vàng lớn hơn.
 - [x] URL `?test=1` có badge kiểm thử, bỏ qua progression và hỗ trợ noclip có thể bật/tắt bằng `N`; không mở network port hay quyền hệ thống.
 
 ## Nội dung đã tích hợp

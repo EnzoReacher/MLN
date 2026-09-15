@@ -114,7 +114,7 @@
   const ROOM_HONORS = Object.freeze({
     base: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "NGUỒN GỐC XÃ HỘI" },
     class: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "GIAI CẤP & SỞ HỮU" },
-    state: { image: "./assets/ch03-ho-chi-minh.webp", name: "Hồ Chí Minh", role: "NHÀ NƯỚC CỦA DÂN" },
+    state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "BIỂU TƯỢNG LỊCH SỬ VIỆT NAM", special: true },
     revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CÁCH MẠNG XÃ HỘI" }
   });
 
@@ -714,6 +714,7 @@
     "./assets/ch03-marx.webp": 482 / 622,
     "./assets/ch03-soviet-state.webp": 1040 / 818,
     "./assets/ch03-ho-chi-minh.webp": 884 / 738,
+    "./assets/ch03-ho-chi-minh-hero.webp": 449 / 683,
     "./assets/ch03-vietnam-socialism.webp": 926 / 570,
     "./assets/ch03-vietnam-state.webp": 904 / 508,
     "./assets/ch04-revolution-origin.webp": 938 / 632,
@@ -819,29 +820,43 @@
   function addHonorPortrait(room) {
     const honor = ROOM_HONORS[room.id];
     if (!honor) return;
+    const special = honor.special === true;
     const group = new THREE.Group();
     group.name = `honor-display-${room.id}`;
     group.position.set(0, 0, room.centerZ + .65);
 
-    const frameMaterial = new THREE.MeshLambertMaterial({ color: Number.parseInt(room.accent.slice(1), 16) });
-    const pedestalMaterial = new THREE.MeshLambertMaterial({ color: 0x403a38 });
+    const frameMaterial = new THREE.MeshLambertMaterial({ color: special ? 0xc79b50 : Number.parseInt(room.accent.slice(1), 16) });
+    const frameHighlightMaterial = new THREE.MeshLambertMaterial({ color: special ? 0xf0d18b : Number.parseInt(room.accent.slice(1), 16) });
+    const pedestalMaterial = new THREE.MeshLambertMaterial({ color: special ? 0x4b3c35 : 0x403a38 });
     const darkMaterial = new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide });
     const portraitMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, toneMapped: false });
-    const dimensions = paintingDimensions({ image: honor.image, height: 2.2, maxWidth: 2.15 });
-    const portraitY = 1.10 + dimensions.height / 2;
-    const plaqueWidth = Math.min(2.7, dimensions.width + .70);
+    const glassMaterial = new THREE.MeshBasicMaterial({ color: special ? 0xf2f8ff : 0xdbeaf2, transparent: true, opacity: special ? .16 : .11, side: THREE.DoubleSide, depthWrite: false });
+    const glareMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: special ? .16 : .09, side: THREE.DoubleSide, depthWrite: false });
+    const studMaterial = new THREE.MeshBasicMaterial({ color: special ? 0xffe4a4 : 0xd6ae6c, toneMapped: false });
+    const dimensions = paintingDimensions({ image: honor.image, height: special ? 3.10 : 2.55, maxWidth: special ? 2.70 : 2.35 });
+    const portraitBaseY = special ? 1.28 : 1.10;
+    const portraitY = portraitBaseY + dimensions.height / 2;
+    const plaqueY = special ? 1.38 : 1.16;
+    const plaqueWidth = Math.min(special ? 3.25 : 2.95, dimensions.width + (special ? .96 : .78));
 
-    const plinth = new THREE.Mesh(new THREE.BoxGeometry(1.95, .24, 1.16), pedestalMaterial);
+    const plinth = new THREE.Mesh(new THREE.BoxGeometry(special ? 2.45 : 1.95, .24, special ? 1.34 : 1.16), pedestalMaterial);
     plinth.position.set(0, .12, 0);
+    plinth.name = `honor-plinth-${room.id}`;
     group.add(plinth);
-    const pedestal = new THREE.Mesh(new THREE.BoxGeometry(1.42, .72, .88), pedestalMaterial);
-    pedestal.position.set(0, .60, 0);
+    const pedestal = new THREE.Mesh(new THREE.BoxGeometry(special ? 1.68 : 1.42, special ? .92 : .72, special ? 1.02 : .88), pedestalMaterial);
+    pedestal.position.set(0, special ? .70 : .60, 0);
+    pedestal.name = `honor-pedestal-${room.id}`;
     group.add(pedestal);
-    const pedestalCap = new THREE.Mesh(new THREE.BoxGeometry(1.62, .10, 1.00), frameMaterial);
-    pedestalCap.position.set(0, .99, 0);
+    const pedestalCap = new THREE.Mesh(new THREE.BoxGeometry(special ? 1.90 : 1.62, .10, special ? 1.14 : 1.00), frameHighlightMaterial);
+    pedestalCap.position.set(0, special ? 1.14 : .99, 0);
     group.add(pedestalCap);
 
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + .34, dimensions.height + .34, .16), frameMaterial);
+    const outerFrame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + (special ? .64 : .52), dimensions.height + (special ? .64 : .52), .14), frameMaterial);
+    outerFrame.name = `honor-frame-outer-${room.id}`;
+    outerFrame.position.set(0, portraitY, -.12);
+    group.add(outerFrame);
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + .34, dimensions.height + .34, .18), frameHighlightMaterial);
+    frame.name = `honor-frame-${room.id}`;
     frame.position.set(0, portraitY, -.10);
     group.add(frame);
     const backing = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), darkMaterial);
@@ -852,13 +867,34 @@
     portrait.position.set(0, portraitY, .01);
     group.add(portrait);
 
-    const plaqueBase = new THREE.Mesh(new THREE.BoxGeometry(plaqueWidth, .24, .07), frameMaterial);
-    plaqueBase.position.set(0, 1.16, .25);
+    const glass = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width + .08, dimensions.height + .08), glassMaterial);
+    glass.name = `honor-glass-${room.id}`;
+    glass.position.set(0, portraitY, .09);
+    glass.renderOrder = 4;
+    group.add(glass);
+    const glare = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(.16, dimensions.width * .20), dimensions.height * 1.08), glareMaterial);
+    glare.name = `honor-glass-glare-${room.id}`;
+    glare.position.set(-dimensions.width * .24, portraitY, .13);
+    glare.rotation.z = -.24;
+    glare.renderOrder = 5;
+    group.add(glare);
+    const studOffsetX = dimensions.width / 2 + (special ? .24 : .20);
+    const studOffsetY = dimensions.height / 2 + (special ? .24 : .20);
+    [-1, 1].forEach((x) => [-1, 1].forEach((y) => {
+      const stud = new THREE.Mesh(new THREE.SphereGeometry(special ? .055 : .045, 7, 5), studMaterial);
+      stud.name = `honor-glass-stud-${room.id}-${x}-${y}`;
+      stud.position.set(x * studOffsetX, portraitY + y * studOffsetY, .16);
+      stud.renderOrder = 6;
+      group.add(stud);
+    }));
+
+    const plaqueBase = new THREE.Mesh(new THREE.BoxGeometry(plaqueWidth, special ? .28 : .24, .07), frameHighlightMaterial);
+    plaqueBase.position.set(0, plaqueY, .25);
     group.add(plaqueBase);
     const plaqueMaterial = new THREE.MeshBasicMaterial({ map: makeHonorPlaqueTexture(honor), side: THREE.DoubleSide });
-    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(plaqueWidth - .08, .20), plaqueMaterial);
+    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(plaqueWidth - .08, special ? .24 : .20), plaqueMaterial);
     plaque.name = `honor-plaque-${room.id}`;
-    plaque.position.set(0, 1.16, .292);
+    plaque.position.set(0, plaqueY, .292);
     group.add(plaque);
 
     if (textureLoader) {

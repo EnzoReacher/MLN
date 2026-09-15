@@ -24,7 +24,11 @@ but its section uses `contentOnly: true`, so pressing `E` opens the readable
 text without duplicating the long image in the viewer. Four central honor
 displays use the supplied portraits of Engels, Marx, Hồ Chí Minh, and Lenin;
 they are static, non-interactive room decor placed away from the wall exhibits
-and the player path. Room 01 uses the feudal-state and bourgeois-transition
+and the player path. Each display now has a lightweight transparent glass pane,
+a restrained reflection streak, and four corner studs. The selected
+`ch03-ho-chi-minh-hero.webp` is the supplied black-and-white microphone portrait;
+it receives the largest display, a gold frame, and a deeper pedestal so Room 03
+has a clear centerpiece. Room 01 uses the feudal-state and bourgeois-transition
 images on its first two walls so Engels and Lenin are not repeated outside the
 honor displays.
 

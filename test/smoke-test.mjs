@@ -94,6 +94,7 @@ assert(game.rooms.every((room) => room.artworks?.length === 3), "Each gallery ro
 assert(game.rooms[0].artworks[0].image === "./assets/ch02-feudal-state.webp" && game.rooms[0].artworks[1].image === "./assets/ch02-bourgeois-transition.webp", "Room 01 still uses duplicate historical-figure wall portraits");
 assert(Object.keys(game.roomPlants).length === 4 && Object.values(game.roomPlants).every((plants) => plants.length === 2 && plants.every((plant) => Math.abs(plant.side) === 1 && Math.abs(plant.zOffset) >= 8)), "Each room should have two far-corner plant specs");
 assert(Object.keys(game.roomHonors).length === 4 && Object.values(game.roomHonors).every((honor) => honor.image && honor.name && honor.role), "Each room should have one central historical figure display");
+assert(game.roomHonors.state.image === "./assets/ch03-ho-chi-minh-hero.webp" && game.roomHonors.state.special === true, "Room 03 should use the selected special Hồ Chí Minh centerpiece portrait");
 assert(game.content.find((chapter) => chapter.id === "class")?.sections[2]?.images.length === 1, "Historical state-types exhibit should use one representative image");
 for (const room of game.rooms) {
   const primary = item(room.id);

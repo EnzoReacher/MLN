@@ -24,6 +24,7 @@ const chapterImages = [
 ];
 const contentImages = chapterImages.filter((image) => !["ch01-engels.webp", "ch01-lenin.webp"].includes(image));
 for (const image of chapterImages) assert(fs.existsSync(path.join(root, "dist/assets", image)), `Missing chapter image: ${image}`);
+assert(fs.existsSync(path.join(root, "dist/assets", "ch03-ho-chi-minh-hero.webp")), "Missing selected Hồ Chí Minh centerpiece portrait");
 
 assert(html.includes('id="game-canvas"') && html.includes('src="./vendor/three.min.js"') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
 assert(html.includes('id="test-mode-badge"') && css.includes(".test-mode-badge"), "Test mode badge is missing");
@@ -49,6 +50,8 @@ assert(app.includes("room.artworks.forEach") && app.includes("room.artworks[0].w
 assert(app.includes("const ROOM_PLANTS") && app.includes("function addPlant") && app.includes("function addRoomPlants") && app.includes("CylinderGeometry") && app.includes("SphereGeometry") && !app.includes("function addNpc") && !app.includes("updateAnimatedNpcs"), "Plant-only room decor is missing or NPC logic remains");
 assert(app.includes("const ROOM_HONORS") && app.includes("function addHonorPortrait") && app.includes("honor-display-") && app.includes("honor-plaque-"), "Central figure honor displays are missing");
 assert(["Friedrich Engels", "Karl Marx", "Hồ Chí Minh", "Vladimir Ilyich Lenin"].every((name) => app.includes(name)), "The four central historical figures are not mapped");
+assert(app.includes("ch03-ho-chi-minh-hero.webp") && app.includes("special: true"), "The selected Hồ Chí Minh centerpiece portrait is not mapped as special");
+assert(app.includes("honor-glass-") && app.includes("honor-glass-glare-") && app.includes("honor-glass-stud-"), "Honor portraits are missing their protective glass treatment");
 assert(app.includes("artworkImage") && app.includes("new THREE.TextureLoader") && app.includes("artworkMaterial.map = texture"), "Supplied images are not wired into the 3D gallery paintings");
 assert(!app.includes("new THREE.SpotLight") && !app.includes("spotlight-pool") && !app.includes("contact-shadow") && app.includes("fitArtworkToFrame"), "Spotlight effect is still wired into the 3D gallery or artwork fitting is missing");
 assert(app.includes("viewerImageControls?.classList.toggle(\"hidden\", contentOnly || images.length < 2)"), "Single-image exhibits should not show inactive image arrows");
