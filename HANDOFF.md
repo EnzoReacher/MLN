@@ -9,10 +9,10 @@ Updated: 2026-09-15
 - Local project: `/workspace/sites/social-revolution`
 - GitHub: `https://github.com/EnzoReacher/MLN`
 - Branch: `main`
-- Latest verified commit: `7af8d133318ad3c70a731255f3c5e99a150f8aa2`
+- Latest verified commit: `208040b076eec48179e807ab872ad4d11fb7363c`
 - Production: `https://mln-chi-eight.vercel.app/`
 - Latest Vercel status for that commit: success.
-- The extracted working copy now contains an uncommitted Room 01 artwork swap and opt-in `?test=1` noclip mode. It has no `.git` metadata, so these changes still need to be applied to the real Git checkout before pushing.
+- The Room 01 artwork swap and opt-in `?test=1` noclip mode are included in commit `208040b076eec48179e807ab872ad4d11fb7363c` and deployed to production.
 
 ## Current game design
 
@@ -101,7 +101,7 @@ Already complete:
 - GitHub push and successful Vercel deployment.
 - Automated syntax, runtime, static, smoke and asset-route checks.
 - Opt-in test mode with bounded noclip and progression bypass for manual QA.
-- The current Room 01/test-mode changes still need a commit pushed to `EnzoReacher/MLN` `main`, followed by a Vercel deployment of that same commit.
+- The current Room 01/test-mode changes have been pushed to `EnzoReacher/MLN` `main` and deployed to Vercel.
 
 Still worth doing before presentation:
 
@@ -109,7 +109,7 @@ Still worth doing before presentation:
 2. Confirm WebGL console output and network requests in that browser.
 3. Read every viewer at the real projector resolution and shorten any line that feels too dense.
 4. Confirm the final image/source captions with the lecturer.
-5. From the real Git checkout, commit and push the latest changes to `EnzoReacher/MLN` `main`, deploy that commit to Vercel, and verify `https://mln-chi-eight.vercel.app/?test=1`.
+5. Verify `https://mln-chi-eight.vercel.app/?test=1` on the actual presentation laptop.
 
 ## Next-chat instruction
 
