@@ -58,6 +58,7 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 - [x] Đặt `contentOnly: true` cho hồ sơ ảnh ngang dài của Chương 02 để khi nhấn `E` chỉ hiện nội dung chữ.
 - [x] Thêm hai cây cảnh low-poly kiểu sảnh bảo tàng mỗi phòng: bệ trụ, chậu terracotta lớn, thân phân nhánh và tán lá nhiều lớp; đặt ở góc xa để không che tranh, giữ ngoài lối đi, dùng hình học tĩnh nhẹ, không thêm NPC, spotlight hoặc shadow map.
 - [x] Rút gọn mỗi mục còn tối đa hai đoạn, phù hợp đọc khi thuyết trình.
+- [x] Rà soát lại toàn bộ 12 mục theo tài liệu Chương 7; bổ sung các mắt xích lực lượng sản xuất - tư hữu - giai cấp, chuyên chính cách mạng, động lực và điều kiện cách mạng bằng diễn giải ngắn, dễ thuyết trình.
 - [ ] Nhóm kiểm tra lần cuối nguồn/chú thích ảnh theo yêu cầu của giảng viên.
 - [ ] Nhóm đọc thử toàn bộ nội dung trên đúng màn hình trình chiếu.
 

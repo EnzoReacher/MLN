@@ -37,6 +37,9 @@ for (const concept of ["giai cấp", "tư liệu sản xuất", "mâu thuẫn", 
   const needle = concept.toLocaleLowerCase("vi");
   assert(html.toLocaleLowerCase("vi").includes(needle) || content.toLocaleLowerCase("vi").includes(needle), `Missing academic concept: ${concept}`);
 }
+for (const concept of ["lực lượng sản xuất", "quan hệ sản xuất", "tư hữu", "chuyên chính", "tổ chức - xây dựng", "tình thế cách mạng", "thời cơ", "động lực", "đảo chính", "cải cách"]) {
+  assert(content.toLocaleLowerCase("vi").includes(concept.toLocaleLowerCase("vi")), `Missing source concept: ${concept}`);
+}
 
 for (const marker of [
   "WASD", "MOUSE", "interaction-prompt", "evidence-count", "EXHIBITION MAP", "Cánh cửa cuối", "quit-button", "quit-screen",

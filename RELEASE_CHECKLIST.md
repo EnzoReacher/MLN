@@ -38,6 +38,7 @@
 - [x] Điền `src`, `alt`, `caption` cho từng ảnh trong đúng section.
 - [x] Gắn một ảnh chính và hai ảnh phụ vào không gian của cả bốn phòng.
 - [x] Rút gọn nội dung: mỗi section tối đa hai đoạn, không đoạn nào vượt quá giới hạn đọc trong triển lãm.
+- [x] Rà soát độ bám nguồn: đủ các nhóm ý về nguồn gốc/bản chất/đặc trưng, chức năng/kiểu/hình thức, Nhà nước xã hội chủ nghĩa, và cách mạng xã hội (khái niệm, nguồn gốc, lực lượng, điều kiện, phương pháp).
 - [ ] Kiểm tra nguồn/chú thích ảnh theo yêu cầu cuối của giảng viên.
 - [ ] Đọc thử toàn bộ viewer ở kích thước màn hình trình chiếu.
 
