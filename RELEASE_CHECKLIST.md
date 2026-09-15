@@ -34,8 +34,9 @@
 ## Nội dung đã tích hợp
 
 - [x] Đối chiếu bốn chương trong `dist/content.js` với tài liệu Chương 7 đã cung cấp.
-- [x] Đặt 18 ảnh tư liệu đã nén vào `dist/assets/`.
-- [x] Điền `src`, `alt`, `caption` cho từng ảnh trong đúng section.
+- [x] Đặt 20 ảnh WebP đã nén vào `dist/assets/` (16 ảnh hồ sơ và 4 chân dung honor).
+- [x] Điền `src`, `alt`, `topic`, `caption` cho từng ảnh hồ sơ và gắn đúng khái niệm Chương 7.
+- [x] Kiểm tra tự động để mọi WebP đều được map vào một section hoặc một honor display; không có ảnh mồ côi.
 - [x] Gắn một ảnh chính và hai ảnh phụ vào không gian của cả bốn phòng.
 - [x] Rút gọn nội dung: mỗi section tối đa hai đoạn, không đoạn nào vượt quá giới hạn đọc trong triển lãm.
 - [x] Rà soát độ bám nguồn: đủ các nhóm ý về nguồn gốc/bản chất/đặc trưng, chức năng/kiểu/hình thức, Nhà nước xã hội chủ nghĩa, và cách mạng xã hội (khái niệm, nguồn gốc, lực lượng, điều kiện, phương pháp).

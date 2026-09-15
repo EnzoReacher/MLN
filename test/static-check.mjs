@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import vm from "node:vm";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
@@ -12,6 +13,11 @@ const app = read("dist/app.js");
 const content = read("dist/content.js");
 const vercel = JSON.parse(read("vercel.json"));
 
+const contentSandbox = { window: {} };
+vm.runInNewContext(content, contentSandbox);
+const rawChapters = contentSandbox.window.THE_STATE_CONTENT;
+assert(Array.isArray(rawChapters), "Chapter 7 content data did not load for the image audit");
+
 for (const asset of ["dist/styles.css", "dist/content.js", "dist/app.js", "dist/vendor/three.min.js"]) {
   assert(fs.existsSync(path.join(root, asset)), `Missing referenced asset: ${asset}`);
 }
@@ -22,9 +28,21 @@ const chapterImages = [
   "ch03-marx.webp", "ch03-state-rally.webp", "ch03-soviet-state.webp", "ch03-ho-chi-minh.webp", "ch03-vietnam-socialism.webp", "ch03-vietnam-state.webp", "ch03-public-power.webp",
   "ch04-revolution-origin.webp", "ch04-mass-action.webp", "ch04-revolution-force.webp", "ch04-revolution-method.webp"
 ];
+const honorImages = ["ch01-engels.webp", "ch01-lenin.webp", "ch03-marx.webp", "ch03-ho-chi-minh-hero.webp"];
 const contentImages = chapterImages.filter((image) => !["ch01-engels.webp", "ch01-lenin.webp", "ch03-marx.webp"].includes(image));
+const mappedImages = new Set([...contentImages, ...honorImages]);
+const rawImageRecords = rawChapters.flatMap((chapter) => chapter.sections.flatMap((section) => section.images ?? []));
+const rawContentImageNames = new Set(rawImageRecords.map((image) => String(image.src).replace(/^\.\/assets\//, "")));
 for (const image of chapterImages) assert(fs.existsSync(path.join(root, "dist/assets", image)), `Missing chapter image: ${image}`);
 assert(fs.existsSync(path.join(root, "dist/assets", "ch03-ho-chi-minh-hero.webp")), "Missing selected Hồ Chí Minh centerpiece portrait");
+for (const image of rawImageRecords) {
+  assert(typeof image.alt === "string" && image.alt.trim(), `Image ${image.src} is missing alt text`);
+  assert(typeof image.topic === "string" && image.topic.trim(), `Image ${image.src} is missing its Chapter 7 concept tag`);
+  assert(typeof image.caption === "string" && image.caption.trim(), `Image ${image.src} is missing a topic-linked caption`);
+}
+assert(contentImages.every((image) => rawContentImageNames.has(image)), "Not every content image is connected to chapter data");
+const bundledImages = fs.readdirSync(path.join(root, "dist/assets")).filter((image) => image.endsWith(".webp")).sort();
+assert(bundledImages.length === mappedImages.size && bundledImages.every((image) => mappedImages.has(image)), "Every bundled WebP must have a chapter or honor-display mapping");
 
 assert(html.includes('id="game-canvas"') && html.includes('src="./vendor/three.min.js"') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
 assert(html.includes('id="test-mode-badge"') && css.includes(".test-mode-badge"), "Test mode badge is missing");
@@ -53,6 +71,8 @@ assert(app.includes("room.artworks.forEach") && app.includes("room.artworks[0].w
 assert(app.includes("const ROOM_PLANTS") && app.includes("function addPlant") && app.includes("function addRoomPlants") && app.includes("CylinderGeometry") && app.includes("SphereGeometry") && !app.includes("function addNpc") && !app.includes("updateAnimatedNpcs"), "Plant-only room decor is missing or NPC logic remains");
 assert(app.includes("const ROOM_HONORS") && app.includes("function addHonorPortrait") && app.includes("honor-display-") && app.includes("honor-plaque-"), "Central figure honor displays are missing");
 assert(["Friedrich Engels", "Karl Marx", "Hồ Chí Minh", "Vladimir Ilyich Lenin"].every((name) => app.includes(name)), "The four central historical figures are not mapped");
+assert(["NGUỒN GỐC NHÀ NƯỚC", "GIAI CẤP & SỞ HỮU", "NHÀ NƯỚC VIỆT NAM", "CÁCH MẠNG XÃ HỘI"].every((role) => app.includes(role)), "Honor portraits are missing their topic-linked room roles");
+assert((app.match(/topic:/g) ?? []).length >= 4, "Honor portraits are missing concept metadata");
 assert(app.includes("ch03-ho-chi-minh-hero.webp") && app.includes("special: true"), "The selected Hồ Chí Minh centerpiece portrait is not mapped as special");
 assert(app.includes("honor-glass-") && app.includes("honor-glass-glare-") && app.includes("honor-glass-stud-"), "Honor portraits are missing their protective glass treatment");
 assert(app.includes('textAlign = "center"') && app.includes("plaqueCanvas.width / 2"), "Honor portrait names and captions are not centered");

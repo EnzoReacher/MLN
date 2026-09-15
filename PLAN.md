@@ -35,10 +35,10 @@ Mỗi chương trong `dist/content.js` có `id`, `code`, `label`, `title` và m�
 Ảnh dùng dạng:
 
 ```js
-{ src: "./assets/ch01-state-institutions.webp", alt: "Mô tả ngắn", caption: "Chú thích hiển thị dưới ảnh" }
+{ src: "./assets/ch01-state-institutions.webp", alt: "Mô tả ngắn", topic: "Khái niệm Chương 7 được minh họa", caption: "Chú thích hiển thị dưới ảnh" }
 ```
 
-Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn chương. Không sửa `app.js` để thay chữ hoặc ảnh; chỉ cập nhật dữ liệu trong `content.js` và mapping ảnh trong `dist/assets/`.
+Nội dung Chương 7 và 20 ảnh WebP đã được gắn vào bốn chương hoặc bốn honor display. Không sửa `app.js` để thay chữ hoặc ảnh nội dung; chỉ cập nhật dữ liệu trong `content.js` và mapping ảnh trong `dist/assets/`.
 
 ## Việc còn lại
 
@@ -46,7 +46,8 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 
 - [x] Đối chiếu bốn chương với tài liệu Chương 7 đã cung cấp.
 - [x] Chia nội dung thành ba mục đọc trong mỗi phòng, mỗi mục có một ý rõ ràng.
-- [x] Nén 18 ảnh tư liệu thành WebP, viết `alt`/caption và gắn vào đúng section.
+- [x] Nén 20 ảnh WebP (16 ảnh hồ sơ + 4 chân dung honor), viết `alt`/`topic`/caption và gắn từng ảnh vào đúng khái niệm.
+- [x] Kiểm tra không có ảnh WebP mồ côi và mỗi ảnh hồ sơ đều có chú thích bám sát nội dung Chương 7.
 - [x] Dùng một ảnh đại diện phù hợp làm tranh chính và hai ảnh phụ cho từng phòng.
 - [x] Gắn từng tranh vào đúng mục nội dung; `E` căn theo tâm từng tranh, mỗi exhibit mở độc lập; viewer tự khớp khung theo tỉ lệ từng ảnh và lightbox phủ toàn viewport để xem trọn ảnh.
 - [x] Thêm thảm đỏ trung tâm, viền đồng và bảng nhãn thấp cạnh tranh bằng hình học tĩnh nhẹ, không dùng spotlight hoặc shadow map.

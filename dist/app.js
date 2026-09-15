@@ -112,10 +112,10 @@
   };
 
   const ROOM_HONORS = Object.freeze({
-    base: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "NGUỒN GỐC XÃ HỘI" },
-    class: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "GIAI CẤP & SỞ HỮU" },
-    state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "BIỂU TƯỢNG LỊCH SỬ VIỆT NAM", special: true },
-    revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CÁCH MẠNG XÃ HỘI" }
+    base: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "NGUỒN GỐC NHÀ NƯỚC", topic: "Nguồn gốc Nhà nước, lực lượng sản xuất và đối kháng giai cấp" },
+    class: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "GIAI CẤP & SỞ HỮU", topic: "Giai cấp, sở hữu và cơ sở kinh tế của quyền lực Nhà nước" },
+    state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "NHÀ NƯỚC VIỆT NAM", topic: "Nhà nước Việt Nam, quyền làm chủ của nhân dân và định hướng xã hội chủ nghĩa", special: true },
+    revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CÁCH MẠNG XÃ HỘI", topic: "Cách mạng xã hội, giành chính quyền và chuyển hóa lịch sử" }
   });
 
   const gates = [
@@ -198,11 +198,12 @@
   let gateMeshes = new Map();
 
   function normaliseImage(image) {
-    if (typeof image === "string") return { src: image, alt: "Ảnh tư liệu", caption: "" };
+    if (typeof image === "string") return { src: image, alt: "Ảnh tư liệu", topic: "", caption: "" };
     if (!image || typeof image.src !== "string" || !image.src.trim()) return null;
     return {
       src: image.src.trim(),
       alt: typeof image.alt === "string" && image.alt.trim() ? image.alt.trim() : "Ảnh tư liệu",
+      topic: typeof image.topic === "string" ? image.topic.trim() : "",
       caption: typeof image.caption === "string" ? image.caption : ""
     };
   }

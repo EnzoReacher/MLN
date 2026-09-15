@@ -1,12 +1,13 @@
 # Chapter 7 images
 
-The current WebP files are compressed copies of the reference images supplied
-with the Chapter 7 PDF. They are assigned to rooms by the content data in
-`dist/content.js`:
+The current 20 WebP files are compressed copies of the reference images
+supplied with the Chapter 7 PDF and the supplied portrait batch. Sixteen are
+content images and four are honor-display portraits. They are assigned to
+rooms by the content data in `dist/content.js`:
 
 ```js
 images: [
-  { src: "./assets/ch01-engels.webp", alt: "...", caption: "..." }
+  { src: "./assets/ch01-state-institutions.webp", alt: "...", topic: "...", caption: "..." }
 ]
 ```
 
@@ -14,10 +15,13 @@ The viewer supports multiple images per content section when a comparison is
 useful, and keeps the image caption separate from the chapter text. Single-image
 exhibits hide the inactive image arrows. Images are displayed with `contain` in
 a large presentation frame and can be opened in the lightbox at full size.
-The image assigned to each section is also loaded into the matching 3D wall
-painting and fitted to its original aspect ratio. If a future image is added,
-keep it compressed and update both the relevant section and its matching
-`room.artworks[index]` entry in `dist/app.js`.
+The first image in each section is loaded into its matching 3D wall painting
+and fitted to its original aspect ratio; additional images stay available as
+context in the viewer. Every content image now carries a `topic` tag, alt text
+and a caption that names the Chapter 7 concept it illustrates. If a future
+image is added, keep it compressed, add all three metadata fields, and update
+the relevant section plus its `room.artworks[index]` entry when it should be a
+wall painting.
 
 The wide `ch02-state-functions.webp` exhibit is retained on the Room 02 wall,
 but its section uses `contentOnly: true`, so pressing `E` opens the readable
@@ -51,3 +55,11 @@ Current room mapping:
 - Room 02: State functions, forms, and a single representative image for the historical state types discussed in the text.
 - Room 03: State rally, Soviet State, Ho Chi Minh and Vietnam — socialist State.
 - Room 04: revolution origin, mass action, revolutionary forces and methods.
+
+Semantic image audit:
+
+- Room 01: feudal court as a comparison for class-stratified State origins; bourgeois transition for class contradiction and power change; public institutions for territory, population and professional State apparatus.
+- Room 02: public-management montage for internal/external functions; constitutional assembly for State form; enslaved people for the economic basis of the slave-owning State.
+- Room 03: public rally for mass power in transition; Soviet emblem for the socialist-State historical case; Hồ Chí Minh and Vietnam imagery for the people’s State, organization-building, rule of law and popular mastery.
+- Room 04: revolutionary crowds for social transformation, mass forces, leadership, timing and method.
+- Honor displays: Engels—State origins; Marx—class and ownership; Hồ Chí Minh—Vietnamese socialist State; Lenin—social revolution.

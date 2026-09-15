@@ -3,7 +3,8 @@
  *
  * Source: "Triết học - Chương 7: Nhà nước và Cách mạng xã hội" supplied by
  * the group. The copy is intentionally concise for an in-gallery reading
- * experience; each room keeps the chapter's key argument and one clear image.
+ * experience; each image carries an explicit Chapter 7 concept tag so visual
+ * evidence and educational content stay aligned.
  */
 window.THE_STATE_CONTENT = [
   {
@@ -21,7 +22,7 @@ window.THE_STATE_CONTENT = [
           "Khi lực lượng sản xuất phát triển, sản phẩm dư thừa và tư hữu xuất hiện, xã hội phân hóa và đấu tranh giai cấp nảy sinh. Nguy cơ tan rã đó làm Nhà nước trở thành một tất yếu lịch sử."
         ],
         images: [
-          { src: "./assets/ch02-feudal-state.webp", alt: "Trật tự quyền lực phong kiến trong lịch sử", caption: "Một hình ảnh minh họa cho trật tự Nhà nước phân tầng trong lịch sử." }
+          { src: "./assets/ch02-feudal-state.webp", alt: "Một triều đình phong kiến phân tầng trong lịch sử", topic: "Nguồn gốc Nhà nước: đối chiếu xã hội phân tầng sau khi tư hữu và giai cấp xuất hiện", caption: "Ví dụ về một trật tự Nhà nước phân tầng sau khi xã hội đã xuất hiện sở hữu và giai cấp; dùng để đối chiếu với cộng đồng nguyên thủy." }
         ]
       },
       {
@@ -33,7 +34,7 @@ window.THE_STATE_CONTENT = [
           "Nhà nước vừa bảo vệ một trật tự giai cấp, vừa tổ chức những nhu cầu chung. Vì vậy, không có một Nhà nước hoàn toàn đứng trên mọi giai cấp; muốn hiểu nó phải nhìn cả quyền lực và cơ sở kinh tế."
         ],
         images: [
-          { src: "./assets/ch02-bourgeois-transition.webp", alt: "Đám đông trong một biến chuyển chính trị lịch sử", caption: "Biến chuyển xã hội và những mâu thuẫn làm thay đổi quan hệ quyền lực." }
+          { src: "./assets/ch02-bourgeois-transition.webp", alt: "Đám đông trong một biến chuyển tư sản lịch sử", topic: "Bản chất Nhà nước: mâu thuẫn giai cấp và biến chuyển quyền lực", caption: "Biến chuyển tư sản cho thấy mâu thuẫn xã hội có thể làm thay đổi quan hệ quyền lực và hình thức Nhà nước." }
         ]
       },
       {
@@ -45,7 +46,7 @@ window.THE_STATE_CONTENT = [
           "Bộ máy quyền lực chuyên nghiệp có khả năng cưỡng chế và được duy trì bằng hệ thống thuế khóa. Đó là nền tảng vật chất của quyền lực Nhà nước."
         ],
         images: [
-          { src: "./assets/ch01-state-institutions.webp", alt: "Các công trình và thiết chế nhà nước", caption: "Quyền lực được tổ chức qua cơ quan, lãnh thổ và không gian công cộng." }
+          { src: "./assets/ch01-state-institutions.webp", alt: "Các công trình đại diện cho thiết chế nhà nước", topic: "Đặc trưng Nhà nước: lãnh thổ, dân cư và bộ máy quyền lực", caption: "Các thiết chế công và công trình quyền lực minh họa Nhà nước được tổ chức trên lãnh thổ bằng bộ máy riêng." }
         ]
       }
     ]
@@ -66,7 +67,7 @@ window.THE_STATE_CONTENT = [
           "Đối nội là duy trì trật tự kinh tế, chính trị và xã hội; đối ngoại là bảo vệ lãnh thổ và lợi ích của Nhà nước. Hai mặt này phải được đọc cùng cơ sở quyền lực của từng thời kỳ."
         ],
         images: [
-          { src: "./assets/ch02-state-functions.webp", alt: "Các hoạt động quản lý và thiết chế công", caption: "Các chức năng đối nội, đối ngoại và tổ chức đời sống chung." }
+          { src: "./assets/ch02-state-functions.webp", alt: "Bảng minh họa hoạt động đối nội, đối ngoại và hợp tác công", topic: "Chức năng Nhà nước: đối nội, đối ngoại và tổ chức nhu cầu chung", caption: "Quản lý nội bộ, đại diện đối ngoại và phối hợp công—ba mặt để đọc chức năng Nhà nước trong điều kiện lịch sử cụ thể." }
         ]
       },
       {
@@ -78,7 +79,7 @@ window.THE_STATE_CONTENT = [
           "Hình thức Nhà nước là cách tổ chức và thực hiện quyền lực. Những Nhà nước cùng một kiểu vẫn có thể mang các hình thức khác nhau, nên không thể chỉ nhìn tên gọi hay thiết chế bề ngoài."
         ],
         images: [
-          { src: "./assets/ch02-state-form.webp", alt: "Không gian nghị viện lịch sử", caption: "Hình thức đại diện và cách quyền lực được tổ chức." }
+          { src: "./assets/ch02-state-form.webp", alt: "Không gian nghị viện và hội nghị lập hiến", topic: "Hình thức Nhà nước: cách tổ chức và thực hiện quyền lực", caption: "Hội nghị lập hiến minh họa một hình thức tổ chức và thực hiện quyền lực; hình thức không tự quyết định bản chất giai cấp." }
         ]
       },
       {
@@ -90,7 +91,7 @@ window.THE_STATE_CONTENT = [
           "Quân chủ, cộng hòa, tập quyền hay phân quyền là những hình thức có thể thay đổi. Muốn hiểu bản chất, phải nhìn cả quan hệ kinh tế và giai cấp phía sau hình thức đó."
         ],
         images: [
-          { src: "./assets/ch02-slave-state.webp", alt: "Tranh minh họa xã hội chiếm hữu nô lệ", caption: "Ảnh đại diện cho phần đối chiếu các kiểu Nhà nước trong lịch sử." }
+          { src: "./assets/ch02-slave-state.webp", alt: "Tranh minh họa người nô lệ bị áp bức trong xã hội cổ đại", topic: "Kiểu Nhà nước: cơ sở kinh tế của chế độ chiếm hữu nô lệ", caption: "Hình ảnh xã hội chiếm hữu nô lệ—một ví dụ cụ thể để so sánh các kiểu Nhà nước theo cơ sở kinh tế." }
         ]
       }
     ]
@@ -110,8 +111,8 @@ window.THE_STATE_CONTENT = [
           "Nhà nước mới vừa chống sự phản kháng của lực lượng cũ, vừa tổ chức - xây dựng những điều kiện kinh tế - xã hội cho trật tự mới. Hai nhiệm vụ đó giải thích tính tất yếu của Nhà nước trong thời kỳ quá độ."
         ],
         images: [
-          { src: "./assets/ch03-state-rally.webp", alt: "Quần chúng tập trung trước một công trình lịch sử", caption: "Quần chúng và quyền lực nhà nước trong một thời điểm chuyển biến lịch sử." },
-          { src: "./assets/ch03-soviet-state.webp", alt: "Biểu tượng Nhà nước Xô viết", caption: "Một kinh nghiệm lịch sử của Nhà nước xã hội chủ nghĩa." }
+          { src: "./assets/ch03-state-rally.webp", alt: "Quần chúng tập trung trước một công trình công cộng trong biến chuyển lịch sử", topic: "Nhà nước xã hội chủ nghĩa: quần chúng và quyền lực trong thời kỳ chuyển biến", caption: "Quần chúng tập hợp trước thiết chế công gợi vấn đề giành, tổ chức và thực hiện quyền lực trong một thời kỳ chuyển biến." },
+          { src: "./assets/ch03-soviet-state.webp", alt: "Biểu tượng Nhà nước Xô viết", topic: "Nhà nước xã hội chủ nghĩa: kinh nghiệm lịch sử Xô viết", caption: "Biểu tượng Xô viết đặt phần lý luận về Nhà nước kiểu mới vào một kinh nghiệm lịch sử cụ thể." }
         ]
       },
       {
@@ -123,8 +124,8 @@ window.THE_STATE_CONTENT = [
           "Đây là một ‘nhà nước nửa nhà nước’: khi đối kháng giai cấp mất đi, bộ máy đứng trên xã hội không còn lý do tồn tại và sẽ tự tiêu vong."
         ],
         images: [
-          { src: "./assets/ch03-ho-chi-minh.webp", alt: "Hồ Chí Minh đọc và viết tài liệu", caption: "Tư liệu gợi liên hệ giữa giải phóng dân tộc và cách mạng vô sản." },
-          { src: "./assets/ch03-vietnam-socialism.webp", alt: "Minh họa nhân dân Việt Nam và biểu tượng cách mạng", caption: "Nhân dân, mục tiêu xã hội và tổ chức chính trị." }
+          { src: "./assets/ch03-ho-chi-minh.webp", alt: "Hồ Chí Minh đọc và viết tài liệu", topic: "Nhà nước Việt Nam: giải phóng dân tộc gắn với xây dựng xã hội mới", caption: "Hồ Chí Minh làm việc với tài liệu—tư liệu gợi mối liên hệ giữa lãnh đạo cách mạng, giải phóng dân tộc và xây dựng Nhà nước." },
+          { src: "./assets/ch03-vietnam-socialism.webp", alt: "Minh họa nhân dân Việt Nam và biểu tượng cách mạng", topic: "Nhà nước xã hội chủ nghĩa: của dân, do dân, vì dân", caption: "Hình ảnh nhân dân và biểu tượng chính trị minh họa mục tiêu Nhà nước của dân, do dân, vì dân và nhiệm vụ tổ chức - xây dựng." }
         ]
       },
       {
@@ -136,8 +137,8 @@ window.THE_STATE_CONTENT = [
           "Nền tảng được tài liệu nhấn mạnh là Nhà nước pháp quyền của dân, do dân, vì dân và liên minh công nhân - nông dân - trí thức, gắn với phát triển kinh tế - xã hội theo định hướng xã hội chủ nghĩa."
         ],
         images: [
-          { src: "./assets/ch03-vietnam-state.webp", alt: "Không gian chính trị và đại biểu Việt Nam", caption: "Không gian tổ chức quyền lực ở Việt Nam." },
-          { src: "./assets/ch03-public-power.webp", alt: "Quần chúng trong không gian công cộng", caption: "Vai trò của nhân dân trong việc thực hiện quyền làm chủ." }
+          { src: "./assets/ch03-vietnam-state.webp", alt: "Không gian nghị trường và đại biểu Việt Nam", topic: "Việt Nam: Nhà nước pháp quyền và tổ chức quyền lực", caption: "Nghị trường và đại biểu minh họa không gian tổ chức quyền lực của Nhà nước pháp quyền Việt Nam." },
+          { src: "./assets/ch03-public-power.webp", alt: "Quần chúng tập trung trước một công trình công cộng ở Việt Nam", topic: "Việt Nam: nhân dân thực hiện quyền làm chủ", caption: "Quần chúng trong không gian công cộng gợi vai trò của nhân dân trong việc thực hiện quyền làm chủ." }
         ]
       }
     ]
@@ -157,7 +158,7 @@ window.THE_STATE_CONTENT = [
           "Nguồn gốc sâu xa là mâu thuẫn giữa lực lượng sản xuất đang phát triển và quan hệ sản xuất cũ bị giai cấp thống trị dùng Nhà nước để duy trì."
         ],
         images: [
-          { src: "./assets/ch04-revolution-origin.webp", alt: "Quần chúng trong một cuộc cách mạng lịch sử", caption: "Sự chuyển hóa xã hội và thay đổi chính quyền." }
+          { src: "./assets/ch04-revolution-origin.webp", alt: "Quần chúng trong một cuộc cách mạng lịch sử", topic: "Cách mạng xã hội: thay thế trật tự và chính quyền lỗi thời", caption: "Hình ảnh cách mạng minh họa sự chuyển hóa căn bản của quan hệ xã hội và vấn đề giành chính quyền." }
         ]
       },
       {
@@ -169,8 +170,8 @@ window.THE_STATE_CONTENT = [
           "Lực lượng tham gia gồm nhiều giai cấp và tầng lớp; động lực là những lực lượng gắn bó lợi ích với cách mạng. Giai cấp đại diện cho phương thức sản xuất mới giữ vai trò lãnh đạo; tài liệu liên hệ bốn cuộc cách mạng, năm hình thái kinh tế - xã hội và Cách mạng Tháng Tám 1945 ở Việt Nam."
         ],
         images: [
-          { src: "./assets/ch04-revolution-force.webp", alt: "Đám đông tập hợp trong không gian công cộng", caption: "Quần chúng và lực lượng xã hội trong chuyển biến lịch sử." },
-          { src: "./assets/ch04-mass-action.webp", alt: "Quần chúng mang cờ trong đêm", caption: "Hành động tập thể và sức mạnh của phong trào." }
+          { src: "./assets/ch04-revolution-force.webp", alt: "Diễn giả và quần chúng tập hợp trong một biến chuyển cách mạng", topic: "Lực lượng cách mạng: quần chúng và giai cấp lãnh đạo", caption: "Diễn giả, cờ và đám đông gợi quan hệ giữa lực lượng quần chúng, động lực xã hội và vai trò lãnh đạo." },
+          { src: "./assets/ch04-mass-action.webp", alt: "Quần chúng hành động tập thể trong một cuộc cách mạng", topic: "Lực lượng cách mạng: hành động tập thể của quần chúng", caption: "Hành động tập thể minh họa quần chúng là chủ thể sáng tạo và động lực trực tiếp của biến đổi lịch sử." }
         ]
       },
       {
@@ -182,7 +183,7 @@ window.THE_STATE_CONTENT = [
           "Nhân tố chủ quan gồm tổ chức, quyết tâm, phong trào công nhân, sự sẵn sàng của Đảng và ý chí quần chúng. Bạo lực cách mạng là phương tiện chứ không phải mục đích; phương pháp hòa bình cần được tranh thủ khi điều kiện đặc biệt cho phép."
         ],
         images: [
-          { src: "./assets/ch04-revolution-method.webp", alt: "Quần chúng trong một cuộc tập hợp lịch sử", caption: "Phương pháp hành động và tổ chức lực lượng." }
+          { src: "./assets/ch04-revolution-method.webp", alt: "Quần chúng và người diễn thuyết trong một cuộc tập hợp cách mạng", topic: "Điều kiện và phương pháp cách mạng: tổ chức hành động", caption: "Tập hợp có tổ chức gợi vai trò của phương pháp, thời cơ và sự sẵn sàng chủ quan trong hành động cách mạng." }
         ]
       }
     ]
