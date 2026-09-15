@@ -11,7 +11,7 @@ Updated: 2026-09-15
 - Branch: `main`
 - Latest verified implementation commit: `adfe91e39db3e53663f214dac5e989b2b08d1937`
 - Production: `https://mln-chi-eight.vercel.app/`
-- Latest verified Vercel deployment before this image audit: success for the prior content commit; the new audit commit triggers another auto-deployment from `main`.
+- Latest verified Vercel deployment for the image-audit implementation commit: success; Vercel also completed the documentation follow-up from `main`.
 - The Room 01 artwork swap, Room 03 wall replacement, opt-in `?test=1` noclip mode, portrait/glass upgrade, Chapter 7 content refinement and complete image audit are included in implementation commit `adfe91e39db3e53663f214dac5e989b2b08d1937`.
 
 ## Current game design
