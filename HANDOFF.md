@@ -9,10 +9,10 @@ Updated: 2026-09-15
 - Local project: `/workspace/sites/social-revolution`
 - GitHub: `https://github.com/EnzoReacher/MLN`
 - Branch: `main`
-- Latest verified commit: `99aae51596fd055c3024eeb6a52cfa126d9ffcc8`
+- Latest verified commit: `ce4e45a6d48fdd376d3ebc89359a9cbb0001ad40`
 - Production: `https://mln-chi-eight.vercel.app/`
 - Latest Vercel status for that commit: success.
-- The Room 01 artwork swap, Room 03 wall replacement, opt-in `?test=1` noclip mode, and portrait/glass upgrade are included in commit `99aae51596fd055c3024eeb6a52cfa126d9ffcc8` and deployed to production.
+- The Room 01 artwork swap, Room 03 wall replacement, opt-in `?test=1` noclip mode, portrait/glass upgrade, and Chapter 7 content refinement are included in commit `ce4e45a6d48fdd376d3ebc89359a9cbb0001ad40`; Vercel auto-deployment is triggered from `main`.
 
 ## Current game design
 
@@ -37,6 +37,8 @@ Room 01 no longer duplicates the central historical figures on its walls: the fo
 Room 03 no longer uses Karl Marx on its first wall: the wall and its first exhibit now use `ch03-state-rally.webp`, converted from the second supplied image in the latest batch. Marx remains the central honor portrait in Room 02.
 
 All four honor displays now use a lightweight transparent glass pane, reflection streak, corner studs, a unified bronze/gold frame treatment, and centered name/caption text. Room 03 is the special centerpiece: it uses `ch03-ho-chi-minh-hero.webp`, the supplied formal black-and-white portrait beside a microphone, with a larger gold frame, deeper pedestal and expanded plaque.
+
+The exhibit copy was re-audited against the supplied Chapter 7 material. It now makes the causal chain explicit—productive forces, surplus and private property, class antagonism, the State, and social revolution—and includes the source distinctions between class/social and internal/external functions, State type/form, the transitional socialist State, revolution’s broad/narrow meanings, forces, objective conditions, subjective factors and methods. Added interpretation remains concise and clearly tied to those concepts.
 
 Each room also has a red carpet, bronze trim, simple low-poly museum plants placed away from paintings and interaction points, and a central static honor display. NPCs, spotlights, dynamic shadows, broken hammer-and-sickle glyphs, old theory boxes, A/B choices and the obsolete lens mechanic are intentionally removed.
 
@@ -90,6 +92,7 @@ PASS: vendored Three.js runtime exposes the full gallery API (r159)
 PASS: self-contained WebGL shell, four sequential exhibits/gates, image viewer, no choices/lens/icons, responsive CSS, and Vercel rewrites
 PASS: 3D gallery state, WASD movement gates, E-only content viewer, image detail flow, ending, quit, and restart paths
 HTTP routes checked locally: 25/25
+Content audit: 4 rooms, 24 paragraphs, longest paragraph 286 characters
 ```
 
 ## Release state
@@ -104,12 +107,13 @@ Already complete:
 - Central Engels/Marx/Hồ Chí Minh/Lenin displays.
 - Glass-protected honor displays with a larger gold Hồ Chí Minh centerpiece using the selected supplied portrait.
 - Room 03 wall replacement using the second supplied image, with the matching exhibit content updated and all honor plaque text centered.
+- Chapter 7 content re-audited against the supplied source material, with concise explanatory links added without exceeding the two-paragraph presentation limit.
 - Plants and red-carpet museum dressing.
 - Quit/thank-you ending, restart flow and performance safeguards.
 - GitHub push and successful Vercel deployment.
 - Automated syntax, runtime, static, smoke and asset-route checks.
 - Opt-in test mode with bounded noclip and progression bypass for manual QA.
-- The current Room 01/Room 03/portrait/test-mode changes have been pushed to `EnzoReacher/MLN` `main` and deployed to Vercel.
+- The current Room 01/Room 03/portrait/test-mode/content changes have been pushed to `EnzoReacher/MLN` `main`; Vercel auto-deploys from the branch.
 
 Still worth doing before presentation:
 
