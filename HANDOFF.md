@@ -9,10 +9,10 @@ Updated: 2026-09-15
 - Local project: `/workspace/sites/social-revolution`
 - GitHub: `https://github.com/EnzoReacher/MLN`
 - Branch: `main`
-- Latest verified commit: `208040b076eec48179e807ab872ad4d11fb7363c`
+- Latest verified commit: `c5ff191840ad508f29a75688ff24b63729ae1616`
 - Production: `https://mln-chi-eight.vercel.app/`
 - Latest Vercel status for that commit: success.
-- The Room 01 artwork swap and opt-in `?test=1` noclip mode are included in commit `208040b076eec48179e807ab872ad4d11fb7363c` and deployed to production.
+- The Room 01 artwork swap, opt-in `?test=1` noclip mode, and portrait/glass upgrade are included in commit `c5ff191840ad508f29a75688ff24b63729ae1616` and deployed to production.
 
 ## Current game design
 
@@ -34,6 +34,8 @@ The four central honor portraits are:
 
 Room 01 no longer duplicates the central historical figures on its walls: the former Engels and Lenin wall images are now `ch02-feudal-state.webp` and `ch02-bourgeois-transition.webp`. Engels remains the Room 01 honor display and Lenin remains the Room 04 honor display.
 
+All four honor displays now use a lightweight transparent glass pane, reflection streak and corner studs. Room 03 is the special centerpiece: it uses `ch03-ho-chi-minh-hero.webp`, the supplied formal black-and-white portrait beside a microphone, with a larger gold frame, deeper pedestal and expanded plaque.
+
 Each room also has a red carpet, bronze trim, simple low-poly museum plants placed away from paintings and interaction points, and a central static honor display. NPCs, spotlights, dynamic shadows, broken hammer-and-sickle glyphs, old theory boxes, A/B choices and the obsolete lens mechanic are intentionally removed.
 
 Long horizontal images remain on the wall, but their `E` viewer can use `contentOnly: true` so the text is shown without repeating the same wide image. Other exhibits support image captions, next/previous image controls and a full-viewport lightbox.
@@ -52,6 +54,8 @@ Long horizontal images remain on the wall, but their `E` viewer can use `content
 The app has no backend, database, API or environment variables. It serves the static `dist/` folder directly and is designed for Vercel or a basic static HTTP server.
 
 The current portrait rendering fix changed the portrait material to neutral white with `toneMapped: false`, enabled linear texture filtering and enabled light hardware antialiasing. Dynamic spotlight/shadow rendering remains disabled for performance. Pixel ratio is capped and the scene uses lightweight materials/geometries.
+
+The selected Hồ Chí Minh hero asset is stored at `dist/assets/ch03-ho-chi-minh-hero.webp`; it is used only by the central Room 03 honor display, not as a duplicate wall exhibit.
 
 ## Run locally
 
@@ -83,7 +87,7 @@ Last verified results:
 PASS: vendored Three.js runtime exposes the full gallery API (r159)
 PASS: self-contained WebGL shell, four sequential exhibits/gates, image viewer, no choices/lens/icons, responsive CSS, and Vercel rewrites
 PASS: 3D gallery state, WASD movement gates, E-only content viewer, image detail flow, ending, quit, and restart paths
-HTTP routes checked locally: 23/23
+HTTP routes checked locally: 24/24
 ```
 
 ## Release state
@@ -96,6 +100,7 @@ Already complete:
 - 18 optimized WebP assets with alt text/captions.
 - Full image lightbox and content-only mode for the long image.
 - Central Engels/Marx/Hồ Chí Minh/Lenin displays.
+- Glass-protected honor displays with a larger gold Hồ Chí Minh centerpiece using the selected supplied portrait.
 - Plants and red-carpet museum dressing.
 - Quit/thank-you ending, restart flow and performance safeguards.
 - GitHub push and successful Vercel deployment.
