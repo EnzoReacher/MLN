@@ -26,6 +26,7 @@ Nền tảng này phù hợp deadline 3–4 ngày: không cần Unity, backend, 
 - Renderer ưu tiên độ mượt: tắt shadow map động, giới hạn pixel ratio, dùng vật liệu Lambert/Basic cho hình học và tranh tĩnh, texture không tạo mipmap không cần thiết, HUD không cập nhật DOM ở mọi frame.
 - Bản trình bày dùng ánh sáng nền và ánh sáng định hướng đồng đều; không bật spotlight cục bộ, vùng sáng giả hoặc shadow-map động nên vẫn giữ ưu tiên FPS.
 - Mỗi phòng có một honor display ở trục giữa, dùng ảnh chân dung tư liệu của một nhân vật lịch sử và bảng tên tối giản; đây là decor tĩnh, không thêm điểm tương tác hoặc cản đường.
+- URL có `?test=1` bật chế độ kiểm thử rõ ràng: bỏ qua cổng tuần tự và cho phép noclip trong vùng giới hạn; phím `N` bật/tắt va chạm để kiểm tra cả hai trạng thái.
 
 ## Hợp đồng nội dung
 
@@ -50,6 +51,7 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 - [x] Gắn từng tranh vào đúng mục nội dung; `E` căn theo tâm từng tranh, mỗi exhibit mở độc lập; viewer tự khớp khung theo tỉ lệ từng ảnh và lightbox phủ toàn viewport để xem trọn ảnh.
 - [x] Thêm thảm đỏ trung tâm, viền đồng và bảng nhãn thấp cạnh tranh bằng hình học tĩnh nhẹ, không dùng spotlight hoặc shadow map.
 - [x] Thêm một honor display trung tâm cho mỗi phòng với ảnh Engels, Marx, Hồ Chí Minh và Lenin; bệ không che tranh, không chặn lối đi.
+- [x] Thay hai tranh tường chân dung bị lặp ở Chương 01 bằng `ch02-feudal-state.webp` và `ch02-bourgeois-transition.webp`, giữ Engels và Lenin ở honor display.
 - [x] Đặt `contentOnly: true` cho hồ sơ ảnh ngang dài của Chương 02 để khi nhấn `E` chỉ hiện nội dung chữ.
 - [x] Thêm hai cây cảnh low-poly kiểu sảnh bảo tàng mỗi phòng: bệ trụ, chậu terracotta lớn, thân phân nhánh và tán lá nhiều lớp; đặt ở góc xa để không che tranh, giữ ngoài lối đi, dùng hình học tĩnh nhẹ, không thêm NPC, spotlight hoặc shadow map.
 - [x] Rút gọn mỗi mục còn tối đa hai đoạn, phù hợp đọc khi thuyết trình.
@@ -69,6 +71,7 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 - [x] Push GitHub `EnzoReacher/MLN`, branch `main`.
 - [x] Redeploy Vercel và mở route `/`.
 - [ ] Chơi trọn một vòng production trên máy thuyết trình, kiểm tra console và các đường dẫn ảnh.
+- [ ] Chạy production với `?test=1`, xác nhận badge kiểm thử, noclip bằng `N`, đi xuyên cổng/tường và mở được exhibit ở cả bốn phòng.
 
 ## Cách trình bày trên lớp
 

@@ -53,8 +53,13 @@
   const lightboxImage = document.getElementById("lightbox-image");
   const lightboxCaption = document.getElementById("lightbox-caption");
   const lightboxClose = document.getElementById("lightbox-close");
+  const testModeBadge = document.getElementById("test-mode-badge");
 
   const THREE = window.THREE || null;
+  const TEST_MODE = typeof URLSearchParams === "function"
+    && typeof window.location?.search === "string"
+    && ["1", "true", "yes"].includes(new URLSearchParams(window.location.search).get("test")?.toLowerCase());
+  const TEST_BOUNDS = { halfWidth: 20, minZ: -105, maxZ: 24 };
   const keys = new Set();
   const PLAYER = { height: 1.65, speed: 5.2 };
   const PERFORMANCE = { maxPixelRatio: 1.25, uiInterval: .05 };
@@ -65,8 +70,8 @@
       id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10,
       color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ch01-engels.webp",
       artworks: [
-        { image: "./assets/ch01-engels.webp", wall: "left", zOffset: 0, height: 3.55, maxWidth: 3.15 },
-        { image: "./assets/ch01-lenin.webp", wall: "right", zOffset: -5.4, height: 3.2, maxWidth: 3.05 },
+        { image: "./assets/ch02-feudal-state.webp", wall: "left", zOffset: 0, height: 2.85, maxWidth: 4.8 },
+        { image: "./assets/ch02-bourgeois-transition.webp", wall: "right", zOffset: -5.4, height: 2.9, maxWidth: 4.7 },
         { image: "./assets/ch01-state-institutions.webp", wall: "right", zOffset: 5.4, height: 2.65, maxWidth: 4.85 }
       ]
     },
@@ -179,6 +184,8 @@
     viewerPage: 0,
     viewerArtworkIndex: 0,
     viewerImage: 0,
+    testMode: TEST_MODE,
+    noclip: TEST_MODE,
     uiAccumulator: 0
   };
 
@@ -233,7 +240,7 @@
   function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
 
   function gateUnlocked(item) {
-    return item.kind !== "gate" || !item.requiredEvidence || state.evidence.has(item.requiredEvidence);
+    return state.testMode || item.kind !== "gate" || !item.requiredEvidence || state.evidence.has(item.requiredEvidence);
   }
 
   function gatePassed(item) {
@@ -241,6 +248,10 @@
   }
 
   function canMove(x, z) {
+    if (state.noclip) {
+      return x >= -TEST_BOUNDS.halfWidth && x <= TEST_BOUNDS.halfWidth
+        && z >= TEST_BOUNDS.minZ && z <= TEST_BOUNDS.maxZ;
+    }
     if (x < -6.1 || x > 6.1 || z > GALLERY.maxZ || z < GALLERY.minZ) return false;
     for (const gate of gates) {
       if (!gatePassed(gate) && state.player.z > gate.z + 0.85 && z < gate.z + 0.85) return false;
@@ -284,6 +295,7 @@
   }
 
   function chapterAvailable(chapterId) {
+    if (state.testMode) return true;
     const index = rooms.findIndex((room) => room.id === chapterId);
     return index <= 0 || state.evidence.has(rooms[index - 1].id);
   }
@@ -297,6 +309,10 @@
     zoneName.textContent = room?.name ?? "HÀNH LANG CHUYỂN TIẾP";
     zoneIndex.textContent = room?.index ?? "—";
     evidenceCount.textContent = completedCount;
+    testModeBadge?.classList.toggle("hidden", !state.testMode);
+    if (testModeBadge && state.testMode) {
+      testModeBadge.innerHTML = `TEST MODE / NOCLIP ${state.noclip ? "ON" : "OFF"} <kbd>N</kbd>`;
+    }
     objectiveText.textContent = completedCount === rooms.length
       ? "Tới cánh cửa cuối để khép lại hồ sơ"
       : next
@@ -317,11 +333,13 @@
       }
     }
 
-    statusText.textContent = completedCount === rooms.length
-      ? "Bốn chương đã được ghi nhận. Cánh cửa cuối đang chờ."
-      : next
-        ? `Đọc đủ hồ sơ ${next.number.slice(0, 2)} để mở cổng kế tiếp.`
-        : "Đi theo tuyến triển lãm.";
+    statusText.textContent = state.testMode
+      ? `TEST MODE: ${state.noclip ? "đi xuyên tường/cổng" : "va chạm bật"}. Nhấn N để đổi chế độ.`
+      : completedCount === rooms.length
+        ? "Bốn chương đã được ghi nhận. Cánh cửa cuối đang chờ."
+        : next
+          ? `Đọc đủ hồ sơ ${next.number.slice(0, 2)} để mở cổng kế tiếp.`
+          : "Đi theo tuyến triển lãm.";
 
     const progress = clamp((7 - state.player.z) / (7 - GALLERY.minZ), 0, 1);
     miniPlayer.style.left = `${8 + progress * 135}px`;
@@ -346,6 +364,7 @@
     state.viewerPage = 0;
     state.viewerArtworkIndex = 0;
     state.viewerImage = 0;
+    state.noclip = state.testMode;
     state.uiAccumulator = 0;
     runtimeError?.classList.add("hidden");
     updateUi();
@@ -363,6 +382,14 @@
     theoryNote.classList.add("hidden");
     initThreeGallery();
     scheduleLoop();
+  }
+
+  function toggleNoclip() {
+    if (!state.testMode) return false;
+    state.noclip = !state.noclip;
+    updateGateMeshes();
+    updateUi();
+    return state.noclip;
   }
 
   function reportRuntimeError(message) {
@@ -985,7 +1012,7 @@
 
   function updateGateMeshes() {
     for (const entry of gateMeshes.values()) {
-      const open = gatePassed(entry.gate);
+      const open = state.noclip || gatePassed(entry.gate);
       entry.door.visible = !open;
       const color = gateUnlocked(entry.gate) ? 0xd6ae6c : 0xbd5c5d;
       entry.accentMaterial.color.setHex(color);
@@ -1123,7 +1150,7 @@
 
   function handleKeyDown(event) {
     const key = event.key.toLowerCase();
-    const handledKeys = ["w", "a", "s", "d", "arrowup", "arrowdown", "arrowleft", "arrowright", "e", "escape", "enter", " "];
+    const handledKeys = ["w", "a", "s", "d", "n", "arrowup", "arrowdown", "arrowleft", "arrowright", "e", "escape", "enter", " "];
     if (handledKeys.includes(key)) event.preventDefault();
 
     if (imageLightbox && !imageLightbox.classList.contains("hidden")) {
@@ -1141,6 +1168,10 @@
     }
     if (state.dialogueOpen) {
       if (key === "escape" || key === "e" || key === "enter" || key === " ") closeDialogue();
+      return;
+    }
+    if (key === "n" && state.testMode) {
+      toggleNoclip();
       return;
     }
     if (key === "e") interact();
@@ -1218,7 +1249,9 @@
     showEnding,
     quitGame,
     returnToTitle,
+    toggleNoclip,
     canMove,
+    testMode: TEST_MODE,
     drawWorld: renderFrame,
     updateUi
   };

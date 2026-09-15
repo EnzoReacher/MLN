@@ -89,6 +89,8 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
 .zone-card { position: absolute; top: 112px; left: 30px; display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-left: 3px solid var(--red); background: rgba(51, 47, 49, .92); }
 .zone-index { color: var(--gold); font: 20px var(--mono); }
 .zone-card strong { display: block; margin-top: 4px; color: var(--paper); font-size: 16px; letter-spacing: .04em; }
+.test-mode-badge { position: absolute; top: 174px; left: 30px; padding: 8px 11px; border: 1px solid var(--red); background: rgba(51, 47, 49, .94); color: #f0d5a0; font: 10px var(--mono); letter-spacing: .08em; }
+.test-mode-badge kbd { margin-left: 8px; padding: 2px 5px; color: var(--paper); font-size: 10px; }
 .interaction-prompt { position: absolute; left: 50%; bottom: 34px; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--gold); background: rgba(51, 47, 49, .96); box-shadow: 0 9px 28px rgba(22, 20, 21, .30); transform: translateX(-50%); }
 .prompt-key { display: grid; place-items: center; width: 32px; height: 32px; background: var(--red); color: var(--paper); font: 700 14px var(--mono); }
 .interaction-prompt span:last-child { color: var(--paper); font-size: 15px; }
@@ -182,6 +184,7 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
   .quit-button { padding: 8px 9px; font-size: 10px; }
   .minimap { top: auto; right: 17px; bottom: 18px; transform: scale(.88); transform-origin: bottom right; }
   .zone-card { top: 91px; left: 17px; }
+  .test-mode-badge { top: 153px; left: 17px; }
   .bottom-hint { left: 17px; bottom: 18px; max-width: 48%; line-height: 1.45; }
   .content-viewer { padding: 14px; }
   .viewer-card { width: 100%; max-height: 94vh; }
@@ -212,6 +215,7 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
   .quit-button { font-size: 9px; }
   .zone-card { top: 82px; left: 12px; padding: 9px 11px; }
   .zone-card strong { font-size: 13px; }
+  .test-mode-badge { top: 137px; left: 12px; max-width: calc(100% - 24px); font-size: 9px; }
   .minimap { right: 12px; bottom: 12px; transform: scale(.72); }
   .bottom-hint { left: 12px; bottom: 13px; font-size: 10px; }
   .interaction-prompt { bottom: 14px; max-width: calc(100% - 24px); padding: 9px 11px; }

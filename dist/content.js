@@ -21,7 +21,7 @@ window.THE_STATE_CONTENT = [
           "Khi lực lượng sản xuất phát triển, tư hữu xuất hiện, xã hội phân hóa và đấu tranh giai cấp nảy sinh. Nguy cơ tan rã đó làm Nhà nước trở thành một tất yếu lịch sử."
         ],
         images: [
-          { src: "./assets/ch01-engels.webp", alt: "Chân dung Friedrich Engels", caption: "Engels và luận điểm về xã hội trước khi Nhà nước xuất hiện." }
+          { src: "./assets/ch02-feudal-state.webp", alt: "Trật tự quyền lực phong kiến trong lịch sử", caption: "Một hình ảnh minh họa cho trật tự Nhà nước phân tầng trong lịch sử." }
         ]
       },
       {
@@ -33,7 +33,7 @@ window.THE_STATE_CONTENT = [
           "Nhà nước vừa bảo vệ một trật tự giai cấp, vừa tổ chức những nhu cầu chung. Vì vậy, không có một Nhà nước hoàn toàn đứng trên mọi giai cấp."
         ],
         images: [
-          { src: "./assets/ch01-lenin.webp", alt: "Chân dung Vladimir Ilyich Lenin", caption: "Lenin và vấn đề Nhà nước trong mối quan hệ với đấu tranh giai cấp." }
+          { src: "./assets/ch02-bourgeois-transition.webp", alt: "Đám đông trong một biến chuyển chính trị lịch sử", caption: "Biến chuyển xã hội và những mâu thuẫn làm thay đổi quan hệ quyền lực." }
         ]
       },
       {

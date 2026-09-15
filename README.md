@@ -25,6 +25,10 @@ Mở <http://localhost:4173>.
 - `ESC`: đóng ảnh lớn, hồ sơ hoặc thông báo.
 - **RỜI TRIỂN LÃM**: dừng phiên chơi và hiện màn cảm ơn.
 
+### Chế độ kiểm thử
+
+Mở URL với `?test=1` để bật badge kiểm thử, bỏ qua cổng tuần tự và đi xuyên tường/cổng trong một vùng giới hạn. Nhấn `N` để bật/tắt noclip trong khi kiểm thử. Ví dụ: `http://localhost:4173/?test=1`.
+
 ## Tuyến chơi
 
 1. Điều kiện vật chất — sản xuất, sản phẩm dư thừa và tư liệu sản xuất.
@@ -53,7 +57,7 @@ Mỗi chương có các mục dạng:
 }
 ```
 
-18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Mỗi phòng có ba tranh tường liên kết với ba mục nội dung: `E` ở tranh 01 mở mục 01, `E` ở tranh 02 mở mục 02, và `E` ở tranh 03 mở mục 03. Viewer không còn thanh điều hướng phòng nên không thể vô tình bật cả ba nội dung cùng lúc; nút đóng chỉ xử lý exhibit đang mở. Tranh chính được ghi nhận để mở cổng, còn tranh phụ bổ sung bối cảnh. Mọi tranh tường đều được fit theo tỉ lệ gốc, không kéo méo; viewer tự khớp khung theo tỉ lệ thật của từng ảnh để ảnh ngang không còn bị lọt trong khoảng đen lớn, đồng thời có lightbox phủ toàn viewport để xem ảnh ở kích thước tối đa. Mục `Chức năng, kiểu và hình thức Nhà nước` dùng `contentOnly: true`: ảnh ngang dài vẫn ở trên tường, nhưng bấm `E` chỉ mở hồ sơ chữ rộng, không lặp lại ảnh trong modal. Mỗi phòng có thêm một thảm đỏ trung tâm và một honor display ở trục giữa để tôn vinh một nhân vật lịch sử phù hợp: Engels, Marx, Hồ Chí Minh hoặc Lenin; bệ và bảng tên dùng hình học tĩnh nhẹ, không thêm điểm tương tác hay cản lối đi. Nội dung mỗi mục được giữ ở dạng ngắn để đọc trong lớp. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật section tương ứng cùng mapping tranh nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
+18 ảnh tư liệu đã được nén WebP, đặt trong `dist/assets/` và gắn vào đúng section theo chủ đề. Mỗi phòng có ba tranh tường liên kết với ba mục nội dung: `E` ở tranh 01 mở mục 01, `E` ở tranh 02 mở mục 02, và `E` ở tranh 03 mở mục 03. Viewer không còn thanh điều hướng phòng nên không thể vô tình bật cả ba nội dung cùng lúc; nút đóng chỉ xử lý exhibit đang mở. Tranh chính được ghi nhận để mở cổng, còn tranh phụ bổ sung bối cảnh. Room 01 không còn lặp chân dung Engels và Lenin trên tường: hai tranh đó nay dùng `ch02-feudal-state.webp` và `ch02-bourgeois-transition.webp`, còn Engels/Lenin được giữ ở honor display trung tâm của các phòng tương ứng. Mọi tranh tường đều được fit theo tỉ lệ gốc, không kéo méo; viewer tự khớp khung theo tỉ lệ thật của từng ảnh để ảnh ngang không còn bị lọt trong khoảng đen lớn, đồng thời có lightbox phủ toàn viewport để xem ảnh ở kích thước tối đa. Mục `Chức năng, kiểu và hình thức Nhà nước` dùng `contentOnly: true`: ảnh ngang dài vẫn ở trên tường, nhưng bấm `E` chỉ mở hồ sơ chữ rộng, không lặp lại ảnh trong modal. Mỗi phòng có thêm một thảm đỏ trung tâm và một honor display ở trục giữa để tôn vinh một nhân vật lịch sử phù hợp: Engels, Marx, Hồ Chí Minh hoặc Lenin; bệ và bảng tên dùng hình học tĩnh nhẹ, không thêm điểm tương tác hay cản lối đi. Nội dung mỗi mục được giữ ở dạng ngắn để đọc trong lớp. Nếu sau này thêm ảnh, giữ ảnh ở dạng nhẹ và cập nhật section tương ứng cùng mapping tranh nếu muốn dùng làm tranh tường. Game vẫn hiện khung chờ rõ ràng nếu đường dẫn ảnh sai thay vì để ảnh vỡ. Xem [`dist/assets/README.md`](dist/assets/README.md) để biết mapping hiện tại.
 
 Không gian cũng có hai cây cảnh low-poly kiểu sảnh bảo tàng trong mỗi phòng: bệ trụ thấp, chậu terracotta lớn, thân cây phân nhánh và tán lá nhiều lớp được đặt ở các góc xa. Cây đủ nổi bật để làm không gian có chiều sâu nhưng không che mặt tranh, không chắn đường đi hoặc điểm `E`, không dùng spotlight hay shadow động và chỉ tạo bằng hình học nhẹ.
 
@@ -64,6 +68,7 @@ node --check dist/app.js
 node test/runtime-test.mjs
 node test/static-check.mjs
 node test/smoke-test.mjs
+node test/test-mode.mjs
 ```
 
 Smoke test mô phỏng cả tuyến: vào game, mở đúng hồ sơ của tranh phụ và tranh chính, kiểm tra đóng exhibit không làm nhảy nội dung hay mở cổng sớm, kiểm tra ảnh và lightbox, cổng tuần tự, ending, nút thoát và quay lại màn hình đầu.

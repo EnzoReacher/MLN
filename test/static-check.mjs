@@ -22,10 +22,11 @@ const chapterImages = [
   "ch03-marx.webp", "ch03-soviet-state.webp", "ch03-ho-chi-minh.webp", "ch03-vietnam-socialism.webp", "ch03-vietnam-state.webp", "ch03-public-power.webp",
   "ch04-revolution-origin.webp", "ch04-mass-action.webp", "ch04-revolution-force.webp", "ch04-revolution-method.webp"
 ];
-const activeChapterImages = chapterImages.filter((image) => !["ch02-feudal-state.webp", "ch02-bourgeois-transition.webp"].includes(image));
+const contentImages = chapterImages.filter((image) => !["ch01-engels.webp", "ch01-lenin.webp"].includes(image));
 for (const image of chapterImages) assert(fs.existsSync(path.join(root, "dist/assets", image)), `Missing chapter image: ${image}`);
 
 assert(html.includes('id="game-canvas"') && html.includes('src="./vendor/three.min.js"') && html.includes('src="./content.js"') && html.includes('src="./app.js"'), "3D/content shell is incomplete");
+assert(html.includes('id="test-mode-badge"') && css.includes(".test-mode-badge"), "Test mode badge is missing");
 assert(html.includes('id="content-viewer"') && html.includes('id="viewer-image"') && html.includes('id="viewer-next"') && html.includes('id="viewer-close"'), "Content viewer shell is incomplete");
 assert(html.includes('id="runtime-error"') && html.includes('id="runtime-reload-button"') && app.includes("function reportRuntimeError"), "3D runtime recovery shell is incomplete");
 assert(html.includes('id="image-lightbox"') && html.includes('id="lightbox-image"'), "Image detail viewer shell is incomplete");
@@ -55,10 +56,12 @@ assert(app.includes("syncViewerImageFrame") && app.includes("--viewer-image-rati
 assert(app.includes("contentOnly") && app.includes("viewerLayout?.classList.toggle(\"content-only\"") && app.includes("viewerVisual?.classList.toggle(\"hidden\", contentOnly)"), "Long-image exhibits should support a text-only E viewer");
 assert(app.includes("const gates = [") && app.includes('id: "gate-end"') && app.includes('id: "gate-revolt"'), "Expected three chapter gates plus one ending gate");
 assert(app.includes("function canMove") && app.includes("passedGates") && app.includes("GALLERY.minZ"), "3D movement and gate collision system missing");
+assert(app.includes("TEST_MODE") && app.includes("TEST_BOUNDS") && app.includes("state.noclip") && app.includes("function toggleNoclip"), "Opt-in noclip test mode is missing");
 assert(app.includes("antialias: true") && app.includes("shadowMap.enabled = false") && app.includes("maxPixelRatio") && app.includes("MeshLambertMaterial") && app.includes("portraitMaterial") && app.includes("color: 0xffffff"), "Performance-safe renderer and readable portrait configuration is missing");
 assert(app.includes("section.images") && app.includes("viewerImage.onerror") && app.includes("function cycleImage") && app.includes("viewerArtworkIndex") && app.includes("GHI NHẬN & ĐÓNG"), "Image/content data flow is missing");
 assert(content.includes("sections:") && content.includes("images:") && content.includes("ch04-revolution-method.webp"), "Chapter 7 content/image contract is incomplete");
-assert(activeChapterImages.every((image) => content.includes(`./assets/${image}`)), "Not every active chapter image is connected to content");
+assert(content.includes("./assets/ch02-feudal-state.webp") && content.includes("./assets/ch02-bourgeois-transition.webp"), "Room 01 replacement wall images are not connected to content");
+assert(contentImages.every((image) => content.includes(`./assets/${image}`)), "Not every content image is connected to chapter data");
 
 assert(!html.includes("☭") && !app.includes("☭") && !html.includes("mark.svg") && !app.includes("mark.svg"), "Old hammer-and-sickle rendering is still referenced");
 assert(!html.includes("lens-button") && !app.includes("lensActive") && !app.includes("drawRelationField"), "Removed lens mechanic is still referenced");

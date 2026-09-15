@@ -26,6 +26,7 @@
 - [x] Mỗi phòng có thảm đỏ trung tâm, viền đồng mảnh và bảng nhãn thấp cạnh tranh; decor dùng hình học tĩnh, không spotlight.
 - [x] Mỗi phòng có hai cây cảnh low-poly kiểu sảnh bảo tàng, có bệ trụ/chậu lớn/thân phân nhánh/tán lá nhiều lớp; đặt ở góc xa, không che tranh và không chặn đường/phím `E`.
 - [x] Mỗi phòng có một honor display ở trục giữa với chân dung Engels, Marx, Hồ Chí Minh hoặc Lenin; có bệ/bảng tên gọn, không thêm tương tác và không chắn điểm `E`.
+- [x] URL `?test=1` có badge kiểm thử, bỏ qua progression và hỗ trợ noclip có thể bật/tắt bằng `N`; không mở network port hay quyền hệ thống.
 
 ## Nội dung đã tích hợp
 
@@ -61,6 +62,7 @@ Các test xác nhận:
 - Có thể đóng exhibit phụ mà chương chưa bị ghi nhận; đóng exhibit chính bằng nút ghi nhận mới mở cổng.
 - Cây cảnh tĩnh dùng hình học Lambert nhẹ với bệ, chậu, thân, cành và tán lá low-poly; không thêm NPC, spotlight hoặc shadow map động.
 - Honor display trung tâm dùng bốn ảnh nhân vật lịch sử, hình học tĩnh và bảng tên canvas nhẹ; không thêm NPC, spotlight hoặc shadow map động.
+- Chế độ `?test=1` hiển thị rõ trạng thái noclip, bỏ qua cổng và giữ vùng di chuyển kiểm thử hữu hạn.
 - Mỗi lần `E` chỉ mở đúng một painting; chỉ exhibit chính mở cổng kế tiếp.
 - Ending, nút thoát, màn cảm ơn và quay lại màn hình đầu hoạt động.
 - Vercel rewrite giữ `/` về `dist/index.html`.
@@ -76,6 +78,7 @@ Các test xác nhận:
 7. Qua cổng cuối; kiểm tra ending và số panel/ảnh.
 8. Thử **RỜI TRIỂN LÃM**, màn cảm ơn, quay lại màn hình đầu và chơi lại.
 9. Mở DevTools, xác nhận Console không có lỗi và Network không có đường dẫn ảnh sai.
+10. Khi cần kiểm tra nhanh, mở `/?test=1`, xác nhận badge `TEST MODE`, dùng `N` bật/tắt noclip và đi qua các cổng mà không cần hoàn tất chương.
 
 ## Deployment
 

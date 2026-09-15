@@ -24,7 +24,9 @@ but its section uses `contentOnly: true`, so pressing `E` opens the readable
 text without duplicating the long image in the viewer. Four central honor
 displays use the supplied portraits of Engels, Marx, Hồ Chí Minh, and Lenin;
 they are static, non-interactive room decor placed away from the wall exhibits
-and the player path.
+and the player path. Room 01 uses the feudal-state and bourgeois-transition
+images on its first two walls so Engels and Lenin are not repeated outside the
+honor displays.
 
 Six replacement images have been refreshed from the supplied files:
 `ch02-state-form.webp`, `ch02-slave-state.webp`, `ch03-soviet-state.webp`,
@@ -36,7 +38,7 @@ bundled as gallery content.
 
 Current room mapping:
 
-- Room 01: Engels, Lenin, State institutions — origin, nature and characteristics.
-- Room 02: State functions, forms, and a single representative image for the historical state types discussed in the text. The older feudal and bourgeois comparison files remain in the archive but are not opened by the painting viewer.
+- Room 01: Feudal state, bourgeois transition, State institutions — origin, nature and characteristics.
+- Room 02: State functions, forms, and a single representative image for the historical state types discussed in the text.
 - Room 03: Marx, Soviet State, Ho Chi Minh and Vietnam — socialist State.
 - Room 04: revolution origin, mass action, revolutionary forces and methods.
