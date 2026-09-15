@@ -9,10 +9,10 @@ Updated: 2026-09-15
 - Local project: `/workspace/sites/social-revolution`
 - GitHub: `https://github.com/EnzoReacher/MLN`
 - Branch: `main`
-- Latest verified commit: `ce4e45a6d48fdd376d3ebc89359a9cbb0001ad40`
+- Latest verified implementation commit: `adfe91e39db3e53663f214dac5e989b2b08d1937`
 - Production: `https://mln-chi-eight.vercel.app/`
-- Latest Vercel status for that commit: success.
-- The Room 01 artwork swap, Room 03 wall replacement, opt-in `?test=1` noclip mode, portrait/glass upgrade, and Chapter 7 content refinement are included in commit `ce4e45a6d48fdd376d3ebc89359a9cbb0001ad40`; Vercel auto-deployment is triggered from `main`.
+- Latest verified Vercel deployment before this image audit: success for the prior content commit; the new audit commit triggers another auto-deployment from `main`.
+- The Room 01 artwork swap, Room 03 wall replacement, opt-in `?test=1` noclip mode, portrait/glass upgrade, Chapter 7 content refinement and complete image audit are included in implementation commit `adfe91e39db3e53663f214dac5e989b2b08d1937`.
 
 ## Current game design
 
@@ -39,6 +39,8 @@ Room 03 no longer uses Karl Marx on its first wall: the wall and its first exhib
 All four honor displays now use a lightweight transparent glass pane, reflection streak, corner studs, a unified bronze/gold frame treatment, and centered name/caption text. Room 03 is the special centerpiece: it uses `ch03-ho-chi-minh-hero.webp`, the supplied formal black-and-white portrait beside a microphone, with a larger gold frame, deeper pedestal and expanded plaque.
 
 The exhibit copy was re-audited against the supplied Chapter 7 material. It now makes the causal chain explicit—productive forces, surplus and private property, class antagonism, the State, and social revolution—and includes the source distinctions between class/social and internal/external functions, State type/form, the transitional socialist State, revolution’s broad/narrow meanings, forces, objective conditions, subjective factors and methods. Added interpretation remains concise and clearly tied to those concepts.
+
+Every bundled image was then checked against that content map: 20 WebP assets are accounted for (16 content images plus four honor portraits), every content image has alt text, a Chapter 7 concept tag and a topic-linked caption, and the static audit fails if any image is unmapped or under-described. The image descriptions distinguish direct evidence from historical comparison where an image is illustrative rather than literal.
 
 Each room also has a red carpet, bronze trim, simple low-poly museum plants placed away from paintings and interaction points, and a central static honor display. NPCs, spotlights, dynamic shadows, broken hammer-and-sickle glyphs, old theory boxes, A/B choices and the obsolete lens mechanic are intentionally removed.
 
@@ -102,12 +104,13 @@ Already complete:
 - Four-room 3D gallery and sequential gates.
 - Independent painting interaction with `E`.
 - Content from the supplied philosophy document mapped into four rooms.
-- 18 optimized WebP assets with alt text/captions.
+- 20 optimized WebP assets: 16 content images plus four honor portraits, all mapped to Chapter 7 concepts with alt text/captions.
 - Full image lightbox and content-only mode for the long image.
 - Central Engels/Marx/Hồ Chí Minh/Lenin displays.
 - Glass-protected honor displays with a larger gold Hồ Chí Minh centerpiece using the selected supplied portrait.
 - Room 03 wall replacement using the second supplied image, with the matching exhibit content updated and all honor plaque text centered.
 - Chapter 7 content re-audited against the supplied source material, with concise explanatory links added without exceeding the two-paragraph presentation limit.
+- Complete image-to-topic audit with concept tags, precise captions and automated orphan-asset coverage checks.
 - Plants and red-carpet museum dressing.
 - Quit/thank-you ending, restart flow and performance safeguards.
 - GitHub push and successful Vercel deployment.
@@ -125,4 +128,4 @@ Still worth doing before presentation:
 
 ## Next-chat instruction
 
-Start by reading this file, then inspect `README.md`, `PLAN.md`, `RELEASE_CHECKLIST.md`, `dist/content.js` and `dist/app.js`. Preserve the existing linear progression, one-painting-per-`E` interaction, text-only wide-image behavior, central historical portraits and performance-first constraints unless the user explicitly changes them. For any new change, run the syntax, runtime, static, smoke and `test-mode` checks plus the 23-route asset check before committing/deploying.
+Start by reading this file, then inspect `README.md`, `PLAN.md`, `RELEASE_CHECKLIST.md`, `dist/content.js` and `dist/app.js`. Preserve the existing linear progression, one-painting-per-`E` interaction, text-only wide-image behavior, central historical portraits and performance-first constraints unless the user explicitly changes them. For any new change, run the syntax, runtime, static, smoke and `test-mode` checks plus the 25-route asset check before committing/deploying.
