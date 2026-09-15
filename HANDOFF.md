@@ -9,10 +9,10 @@ Updated: 2026-09-15
 - Local project: `/workspace/sites/social-revolution`
 - GitHub: `https://github.com/EnzoReacher/MLN`
 - Branch: `main`
-- Latest verified commit: `c5ff191840ad508f29a75688ff24b63729ae1616`
+- Latest verified commit: `99aae51596fd055c3024eeb6a52cfa126d9ffcc8`
 - Production: `https://mln-chi-eight.vercel.app/`
 - Latest Vercel status for that commit: success.
-- The Room 01 artwork swap, opt-in `?test=1` noclip mode, and portrait/glass upgrade are included in commit `c5ff191840ad508f29a75688ff24b63729ae1616` and deployed to production.
+- The Room 01 artwork swap, Room 03 wall replacement, opt-in `?test=1` noclip mode, and portrait/glass upgrade are included in commit `99aae51596fd055c3024eeb6a52cfa126d9ffcc8` and deployed to production.
 
 ## Current game design
 
@@ -34,7 +34,9 @@ The four central honor portraits are:
 
 Room 01 no longer duplicates the central historical figures on its walls: the former Engels and Lenin wall images are now `ch02-feudal-state.webp` and `ch02-bourgeois-transition.webp`. Engels remains the Room 01 honor display and Lenin remains the Room 04 honor display.
 
-All four honor displays now use a lightweight transparent glass pane, reflection streak and corner studs. Room 03 is the special centerpiece: it uses `ch03-ho-chi-minh-hero.webp`, the supplied formal black-and-white portrait beside a microphone, with a larger gold frame, deeper pedestal and expanded plaque.
+Room 03 no longer uses Karl Marx on its first wall: the wall and its first exhibit now use `ch03-state-rally.webp`, converted from the second supplied image in the latest batch. Marx remains the central honor portrait in Room 02.
+
+All four honor displays now use a lightweight transparent glass pane, reflection streak, corner studs, a unified bronze/gold frame treatment, and centered name/caption text. Room 03 is the special centerpiece: it uses `ch03-ho-chi-minh-hero.webp`, the supplied formal black-and-white portrait beside a microphone, with a larger gold frame, deeper pedestal and expanded plaque.
 
 Each room also has a red carpet, bronze trim, simple low-poly museum plants placed away from paintings and interaction points, and a central static honor display. NPCs, spotlights, dynamic shadows, broken hammer-and-sickle glyphs, old theory boxes, A/B choices and the obsolete lens mechanic are intentionally removed.
 
@@ -55,7 +57,7 @@ The app has no backend, database, API or environment variables. It serves the st
 
 The current portrait rendering fix changed the portrait material to neutral white with `toneMapped: false`, enabled linear texture filtering and enabled light hardware antialiasing. Dynamic spotlight/shadow rendering remains disabled for performance. Pixel ratio is capped and the scene uses lightweight materials/geometries.
 
-The selected Hồ Chí Minh hero asset is stored at `dist/assets/ch03-ho-chi-minh-hero.webp`; it is used only by the central Room 03 honor display, not as a duplicate wall exhibit.
+The selected Hồ Chí Minh hero asset is stored at `dist/assets/ch03-ho-chi-minh-hero.webp`; it is used only by the central Room 03 honor display, not as a duplicate wall exhibit. The Room 03 replacement asset is `dist/assets/ch03-state-rally.webp` and keeps its supplied 2048×1090 landscape ratio.
 
 ## Run locally
 
@@ -87,7 +89,7 @@ Last verified results:
 PASS: vendored Three.js runtime exposes the full gallery API (r159)
 PASS: self-contained WebGL shell, four sequential exhibits/gates, image viewer, no choices/lens/icons, responsive CSS, and Vercel rewrites
 PASS: 3D gallery state, WASD movement gates, E-only content viewer, image detail flow, ending, quit, and restart paths
-HTTP routes checked locally: 24/24
+HTTP routes checked locally: 25/25
 ```
 
 ## Release state
@@ -101,12 +103,13 @@ Already complete:
 - Full image lightbox and content-only mode for the long image.
 - Central Engels/Marx/Hồ Chí Minh/Lenin displays.
 - Glass-protected honor displays with a larger gold Hồ Chí Minh centerpiece using the selected supplied portrait.
+- Room 03 wall replacement using the second supplied image, with the matching exhibit content updated and all honor plaque text centered.
 - Plants and red-carpet museum dressing.
 - Quit/thank-you ending, restart flow and performance safeguards.
 - GitHub push and successful Vercel deployment.
 - Automated syntax, runtime, static, smoke and asset-route checks.
 - Opt-in test mode with bounded noclip and progression bypass for manual QA.
-- The current Room 01/test-mode changes have been pushed to `EnzoReacher/MLN` `main` and deployed to Vercel.
+- The current Room 01/Room 03/portrait/test-mode changes have been pushed to `EnzoReacher/MLN` `main` and deployed to Vercel.
 
 Still worth doing before presentation:
 
