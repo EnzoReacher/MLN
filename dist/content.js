@@ -110,7 +110,7 @@ window.THE_STATE_CONTENT = [
           "Nhà nước mới vừa chống sự phản kháng của lực lượng cũ, vừa tổ chức xây dựng những điều kiện kinh tế - xã hội cho trật tự mới."
         ],
         images: [
-          { src: "./assets/ch03-marx.webp", alt: "Chân dung Karl Marx", caption: "Marx và tư tưởng về Nhà nước trong thời kỳ quá độ." },
+          { src: "./assets/ch03-state-rally.webp", alt: "Quần chúng tập trung trước một công trình lịch sử", caption: "Quần chúng và quyền lực nhà nước trong một thời điểm chuyển biến lịch sử." },
           { src: "./assets/ch03-soviet-state.webp", alt: "Biểu tượng Nhà nước Xô viết", caption: "Một kinh nghiệm lịch sử của Nhà nước xã hội chủ nghĩa." }
         ]
       },

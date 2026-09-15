@@ -52,6 +52,8 @@ Nội dung Chương 7 và 18 ảnh tư liệu đã được gắn vào bốn ch�
 - [x] Thêm thảm đỏ trung tâm, viền đồng và bảng nhãn thấp cạnh tranh bằng hình học tĩnh nhẹ, không dùng spotlight hoặc shadow map.
 - [x] Thêm một honor display trung tâm cho mỗi phòng với ảnh Engels, Marx, Hồ Chí Minh và Lenin; bệ không che tranh, không chặn lối đi.
 - [x] Nâng cấp cả bốn honor display với kính bảo vệ, phản quang nhẹ và chốt góc; chọn ảnh Hồ Chí Minh đen trắng bên micro làm centerpiece với khung vàng và bệ lớn hơn.
+- [x] Thay tranh Karl Marx trên tường Room 03 bằng ảnh thứ hai người dùng cung cấp, nối ảnh mới vào đúng exhibit và giữ Marx ở honor display Room 02.
+- [x] Căn giữa tên nhân vật và dòng chú thích trên cả bốn bảng tên honor display, đồng bộ hóa khung ngoài và lớp kính bảo vệ.
 - [x] Thay hai tranh tường chân dung bị lặp ở Chương 01 bằng `ch02-feudal-state.webp` và `ch02-bourgeois-transition.webp`, giữ Engels và Lenin ở honor display.
 - [x] Đặt `contentOnly: true` cho hồ sơ ảnh ngang dài của Chương 02 để khi nhấn `E` chỉ hiện nội dung chữ.
 - [x] Thêm hai cây cảnh low-poly kiểu sảnh bảo tàng mỗi phòng: bệ trụ, chậu terracotta lớn, thân phân nhánh và tán lá nhiều lớp; đặt ở góc xa để không che tranh, giữ ngoài lối đi, dùng hình học tĩnh nhẹ, không thêm NPC, spotlight hoặc shadow map.

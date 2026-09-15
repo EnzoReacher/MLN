@@ -27,6 +27,8 @@
 - [x] Mỗi phòng có hai cây cảnh low-poly kiểu sảnh bảo tàng, có bệ trụ/chậu lớn/thân phân nhánh/tán lá nhiều lớp; đặt ở góc xa, không che tranh và không chặn đường/phím `E`.
 - [x] Mỗi phòng có một honor display ở trục giữa với chân dung Engels, Marx, Hồ Chí Minh hoặc Lenin; có bệ/bảng tên gọn, không thêm tương tác và không chắn điểm `E`.
 - [x] Bốn honor display có lớp kính trong suốt, vệt phản quang và chốt góc; Hồ Chí Minh dùng portrait đen trắng bên micro với khung/bệ vàng lớn hơn.
+- [x] Room 03 thay tranh Karl Marx trên tường bằng ảnh thứ hai người dùng cung cấp; ảnh mới giữ đúng tỉ lệ và liên kết với exhibit đầu tiên.
+- [x] Tên và chú thích dưới cả bốn chân dung được căn giữa; khung và kính hiển thị đồng bộ theo phong cách bảo tàng.
 - [x] URL `?test=1` có badge kiểm thử, bỏ qua progression và hỗ trợ noclip có thể bật/tắt bằng `N`; không mở network port hay quyền hệ thống.
 
 ## Nội dung đã tích hợp

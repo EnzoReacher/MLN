@@ -32,6 +32,11 @@ has a clear centerpiece. Room 01 uses the feudal-state and bourgeois-transition
 images on its first two walls so Engels and Lenin are not repeated outside the
 honor displays.
 
+Room 03's first wall now uses `ch03-state-rally.webp`, a WebP conversion of the
+second supplied image in the latest batch. It replaces the former Karl Marx wall
+image and is connected to the first Room 03 exhibit; `ch03-marx.webp` remains
+available for the Room 02 central honor display.
+
 Six replacement images have been refreshed from the supplied files:
 `ch02-state-form.webp`, `ch02-slave-state.webp`, `ch03-soviet-state.webp`,
 `ch04-mass-action.webp`, `ch04-revolution-origin.webp`, and
@@ -44,5 +49,5 @@ Current room mapping:
 
 - Room 01: Feudal state, bourgeois transition, State institutions — origin, nature and characteristics.
 - Room 02: State functions, forms, and a single representative image for the historical state types discussed in the text.
-- Room 03: Marx, Soviet State, Ho Chi Minh and Vietnam — socialist State.
+- Room 03: State rally, Soviet State, Ho Chi Minh and Vietnam — socialist State.
 - Room 04: revolution origin, mass action, revolutionary forces and methods.

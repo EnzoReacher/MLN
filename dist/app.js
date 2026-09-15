@@ -86,9 +86,9 @@
     },
     {
       id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58,
-      color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-marx.webp",
+      color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-state-rally.webp",
       artworks: [
-        { image: "./assets/ch03-marx.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 3.15 },
+        { image: "./assets/ch03-state-rally.webp", wall: "left", zOffset: 0, height: 2.70, maxWidth: 5.10 },
         { image: "./assets/ch03-vietnam-socialism.webp", wall: "right", zOffset: -5.4, height: 2.8, maxWidth: 4.65 },
         { image: "./assets/ch03-vietnam-state.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.4 }
       ]
@@ -712,6 +712,7 @@
     "./assets/ch02-slave-state.webp": 1024 / 680,
     "./assets/ch02-bourgeois-transition.webp": 1140 / 814,
     "./assets/ch03-marx.webp": 482 / 622,
+    "./assets/ch03-state-rally.webp": 2048 / 1090,
     "./assets/ch03-soviet-state.webp": 1040 / 818,
     "./assets/ch03-ho-chi-minh.webp": 884 / 738,
     "./assets/ch03-ho-chi-minh-hero.webp": 449 / 683,
@@ -803,12 +804,14 @@
     plaque.strokeStyle = "#d6ae6c";
     plaque.lineWidth = 3;
     plaque.strokeRect(8, 8, plaqueCanvas.width - 16, plaqueCanvas.height - 16);
+    plaque.textAlign = "center";
+    plaque.textBaseline = "middle";
     plaque.fillStyle = "#f4ecdf";
     plaque.font = "600 25px 'DM Sans', sans-serif";
-    plaque.fillText(honor.name.toUpperCase(), 30, 53);
+    plaque.fillText(honor.name.toUpperCase(), plaqueCanvas.width / 2, 43);
     plaque.fillStyle = "#d6ae6c";
     plaque.font = "500 17px 'DM Mono', monospace";
-    plaque.fillText(honor.role, 30, 91);
+    plaque.fillText(honor.role, plaqueCanvas.width / 2, 84);
     const texture = new THREE.CanvasTexture(plaqueCanvas);
     if ("colorSpace" in texture && THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
     texture.generateMipmaps = false;
@@ -825,13 +828,13 @@
     group.name = `honor-display-${room.id}`;
     group.position.set(0, 0, room.centerZ + .65);
 
-    const frameMaterial = new THREE.MeshLambertMaterial({ color: special ? 0xc79b50 : Number.parseInt(room.accent.slice(1), 16) });
-    const frameHighlightMaterial = new THREE.MeshLambertMaterial({ color: special ? 0xf0d18b : Number.parseInt(room.accent.slice(1), 16) });
+    const frameMaterial = new THREE.MeshLambertMaterial({ color: special ? 0xc79b50 : 0x9a713d });
+    const frameHighlightMaterial = new THREE.MeshLambertMaterial({ color: special ? 0xf0d18b : 0xd7ad67 });
     const pedestalMaterial = new THREE.MeshLambertMaterial({ color: special ? 0x4b3c35 : 0x403a38 });
     const darkMaterial = new THREE.MeshBasicMaterial({ color: 0x171516, side: THREE.DoubleSide });
     const portraitMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, toneMapped: false });
-    const glassMaterial = new THREE.MeshBasicMaterial({ color: special ? 0xf2f8ff : 0xdbeaf2, transparent: true, opacity: special ? .16 : .11, side: THREE.DoubleSide, depthWrite: false });
-    const glareMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: special ? .16 : .09, side: THREE.DoubleSide, depthWrite: false });
+    const glassMaterial = new THREE.MeshBasicMaterial({ color: special ? 0xf2f8ff : 0xdbeaf2, transparent: true, opacity: special ? .16 : .11, side: THREE.DoubleSide, depthWrite: false, toneMapped: false });
+    const glareMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: special ? .16 : .09, side: THREE.DoubleSide, depthWrite: false, toneMapped: false });
     const studMaterial = new THREE.MeshBasicMaterial({ color: special ? 0xffe4a4 : 0xd6ae6c, toneMapped: false });
     const dimensions = paintingDimensions({ image: honor.image, height: special ? 3.10 : 2.55, maxWidth: special ? 2.70 : 2.35 });
     const portraitBaseY = special ? 1.28 : 1.10;

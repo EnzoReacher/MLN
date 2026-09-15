@@ -61,6 +61,8 @@ Mỗi chương có các mục dạng:
 
 Không gian cũng có hai cây cảnh low-poly kiểu sảnh bảo tàng trong mỗi phòng: bệ trụ thấp, chậu terracotta lớn, thân cây phân nhánh và tán lá nhiều lớp được đặt ở các góc xa. Cây đủ nổi bật để làm không gian có chiều sâu nhưng không che mặt tranh, không chắn đường đi hoặc điểm `E`, không dùng spotlight hay shadow động và chỉ tạo bằng hình học nhẹ.
 
+Room 03 không còn dùng chân dung Karl Marx trên tường: bức tranh đầu tiên nay là `ch03-state-rally.webp`, bản WebP của ảnh thứ hai trong batch mới nhất do người dùng cung cấp, và được nối đúng vào exhibit đầu tiên. Karl Marx vẫn được giữ ở honor display trung tâm của Room 02. Bốn honor display dùng khung ngoài đồng bộ, kính trong suốt, phản quang nhẹ, chốt góc và bảng tên căn giữa; Hồ Chí Minh vẫn là centerpiece với khung vàng và bệ lớn hơn.
+
 ## Kiểm thử
 
 ```bash

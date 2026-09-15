@@ -19,10 +19,10 @@ for (const asset of ["dist/styles.css", "dist/content.js", "dist/app.js", "dist/
 const chapterImages = [
   "ch01-engels.webp", "ch01-lenin.webp", "ch01-state-institutions.webp",
   "ch02-state-functions.webp", "ch02-state-form.webp", "ch02-slave-state.webp", "ch02-feudal-state.webp", "ch02-bourgeois-transition.webp",
-  "ch03-marx.webp", "ch03-soviet-state.webp", "ch03-ho-chi-minh.webp", "ch03-vietnam-socialism.webp", "ch03-vietnam-state.webp", "ch03-public-power.webp",
+  "ch03-marx.webp", "ch03-state-rally.webp", "ch03-soviet-state.webp", "ch03-ho-chi-minh.webp", "ch03-vietnam-socialism.webp", "ch03-vietnam-state.webp", "ch03-public-power.webp",
   "ch04-revolution-origin.webp", "ch04-mass-action.webp", "ch04-revolution-force.webp", "ch04-revolution-method.webp"
 ];
-const contentImages = chapterImages.filter((image) => !["ch01-engels.webp", "ch01-lenin.webp"].includes(image));
+const contentImages = chapterImages.filter((image) => !["ch01-engels.webp", "ch01-lenin.webp", "ch03-marx.webp"].includes(image));
 for (const image of chapterImages) assert(fs.existsSync(path.join(root, "dist/assets", image)), `Missing chapter image: ${image}`);
 assert(fs.existsSync(path.join(root, "dist/assets", "ch03-ho-chi-minh-hero.webp")), "Missing selected Hồ Chí Minh centerpiece portrait");
 
@@ -52,6 +52,8 @@ assert(app.includes("const ROOM_HONORS") && app.includes("function addHonorPortr
 assert(["Friedrich Engels", "Karl Marx", "Hồ Chí Minh", "Vladimir Ilyich Lenin"].every((name) => app.includes(name)), "The four central historical figures are not mapped");
 assert(app.includes("ch03-ho-chi-minh-hero.webp") && app.includes("special: true"), "The selected Hồ Chí Minh centerpiece portrait is not mapped as special");
 assert(app.includes("honor-glass-") && app.includes("honor-glass-glare-") && app.includes("honor-glass-stud-"), "Honor portraits are missing their protective glass treatment");
+assert(app.includes('textAlign = "center"') && app.includes("plaqueCanvas.width / 2"), "Honor portrait names and captions are not centered");
+assert(app.includes("ch03-state-rally.webp") && content.includes("./assets/ch03-state-rally.webp"), "Room 03 still uses the Karl Marx wall image instead of the supplied replacement");
 assert(app.includes("artworkImage") && app.includes("new THREE.TextureLoader") && app.includes("artworkMaterial.map = texture"), "Supplied images are not wired into the 3D gallery paintings");
 assert(!app.includes("new THREE.SpotLight") && !app.includes("spotlight-pool") && !app.includes("contact-shadow") && app.includes("fitArtworkToFrame"), "Spotlight effect is still wired into the 3D gallery or artwork fitting is missing");
 assert(app.includes("viewerImageControls?.classList.toggle(\"hidden\", contentOnly || images.length < 2)"), "Single-image exhibits should not show inactive image arrows");
