@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - The State Exhibition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #eaddd5;
+      --black: #171516;
+      --red: #bd5c5d;
+      --gold: #cfa861;
+      --accent: #5e6853;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--black);
+      color: var(--paper);
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      padding: 40px;
+    }
+    h1 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 800;
+      font-size: 3.5rem;
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    h1 span {
+      color: var(--red);
+    }
+    p.subtitle {
+      font-family: 'Space Mono', monospace;
+      color: rgba(234, 221, 213, 0.6);
+      margin-top: 0;
+      margin-bottom: 50px;
+      font-size: 1.1rem;
+    }
+    .leaderboard-container {
+      width: 100%;
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-family: 'Space Mono', monospace;
+      font-size: 1.4rem;
+    }
+    .row.header {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-bottom: 2px solid rgba(207, 168, 97, 0.3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .col-rank { width: 10%; font-weight: bold; color: var(--red); }
+    .col-name { width: 50%; font-weight: bold; }
+    .col-score { width: 20%; text-align: right; color: var(--gold); }
+    .col-time { width: 20%; text-align: right; color: rgba(234, 221, 213, 0.7); }
+    
+    .rank-1 .col-rank, .rank-1 .col-name { color: var(--gold); font-size: 1.8rem; }
+    .rank-2 .col-rank, .rank-2 .col-name { color: #c0c0c0; font-size: 1.6rem; }
+    .rank-3 .col-rank, .rank-3 .col-name { color: #cd7f32; font-size: 1.5rem; }
+
+    .admin-controls {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      color: rgba(234, 221, 213, 0.6);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      background-color: #4CAF50;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #4CAF50;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+    button {
+      background: rgba(189, 92, 93, 0.1);
+      color: var(--red);
+      border: 1px solid var(--red);
+      padding: 10px 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 4px;
+    }
+    button:hover {
+      background: var(--red);
+      color: var(--black);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px;
+      color: rgba(234, 221, 213, 0.5);
+      font-family: 'Space Mono', monospace;
+      font-size: 1.2rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-controls">
+    <div class="status-indicator">
+      <div class="dot"></div>
+      <span id="last-update">Đang kết nối...</span>
+    </div>
+    <button id="clear-btn">XÓA DỮ LIỆU</button>
+  </div>
+
+  <h1><span>TOP</span> THÁM HIỂM</h1>
+  <p class="subtitle">LIVE LEADERBOARD - TỰ ĐỘNG CẬP NHẬT MỖI 3 GIÂY</p>
+
+  <div class="leaderboard-container">
+    <div class="row header">
+      <div class="col-rank">TOP</div>
+      <div class="col-name">TÊN NGƯỜI CHƠI</div>
+      <div class="col-score">TỔNG ĐIỂM</div>
+      <div class="col-time">THỜI GIAN</div>
+    </div>
+    <div id="leaderboard-list">
+      <div class="empty-state">Đang tải dữ liệu...</div>
+    </div>
+  </div>
+
+  <script>
+    const KVDB_BUCKET = "ADkjsg26cP3urgwo94ctcg";
+    const listEl = document.getElementById("leaderboard-list");
+    const clearBtn = document.getElementById("clear-btn");
+    const updateText = document.getElementById("last-update");
+
+    function fetchLeaderboard() {
+      fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard?t=${Date.now()}`, { cache: 'no-store' })
+        .then(res => res.ok ? res.json() : [])
+        .then(data => {
+          if (!Array.isArray(data) || data.length === 0) {
+            listEl.innerHTML = `<div class="empty-state">Chưa có người chơi nào hoàn thành triển lãm.</div>`;
+            updateTime();
+            return;
+          }
+
+          // Sort exactly like the game: score descending, then time ascending
+          data.sort((a, b) => b.score - a.score || a.time - b.time);
+          
+          listEl.innerHTML = "";
+          // Hiển thị top 15 người xuất sắc nhất
+          data.slice(0, 15).forEach((entry, i) => {
+            const row = document.createElement("div");
+            row.className = `row rank-${i + 1}`;
+            
+            // Format time MM:SS
+            const timeStr = `${Math.floor(entry.time / 60)}:${String(entry.time % 60).padStart(2, "0")}`;
+            
+            row.innerHTML = `
+              <div class="col-rank">#${i + 1}</div>
+              <div class="col-name">${entry.name}</div>
+              <div class="col-score">${entry.score} pts</div>
+              <div class="col-time">${timeStr}</div>
+            `;
+            listEl.appendChild(row);
+          });
+          
+          updateTime();
+        })
+        .catch(err => {
+          console.error("Lỗi lấy dữ liệu:", err);
+          updateText.textContent = "Mất kết nối mạng!";
+          document.querySelector('.dot').style.backgroundColor = "var(--red)";
+          document.querySelector('.dot').style.boxShadow = "0 0 10px var(--red)";
+        });
+    }
+
+    function updateTime() {
+      const now = new Date();
+      updateText.textContent = `Cập nhật: ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+      document.querySelector('.dot').style.backgroundColor = "#4CAF50";
+      document.querySelector('.dot').style.boxShadow = "0 0 10px #4CAF50";
+    }
+
+    clearBtn.addEventListener("click", () => {
+      if (confirm("CẢNH BÁO: Hành động này sẽ xóa toàn bộ dữ liệu trên bảng xếp hạng của TẤT CẢ mọi người. Bạn có chắc chắn muốn xóa?")) {
+        clearBtn.textContent = "ĐANG XÓA...";
+        fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard`, {
+          method: "POST",
+          body: "[]" // Ghi đè bằng mảng rỗng
+        }).then(() => {
+          clearBtn.textContent = "XÓA DỮ LIỆU";
+          fetchLeaderboard();
+        });
+      }
+    });
+
+    // Chạy lần đầu tiên
+    fetchLeaderboard();
+
+    // Tự động làm mới mỗi 3 giây
+    setInterval(fetchLeaderboard, 3000);
+  </script>
+</body>
+</html>

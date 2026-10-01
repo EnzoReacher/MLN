@@ -60,7 +60,7 @@ window.THE_STATE_CONTENT = [
       {
         label: "01 / CHỨC NĂNG",
         title: "Thống trị chính trị và tổ chức đời sống chung",
-        lead: "Chức năng Nhà nước có hai mặt gắn với nhau: bảo vệ trật tự quyền lực và xử lý những nhu cầu chung của cộng đồng.",
+        lead: "Chức năng Nhà nước luôn tồn tại hai mặt gắn liền với nhau: bảo vệ trật tự quyền lực và xử lý những nhu cầu chung của cộng đồng.",
         contentOnly: true,
         paragraphs: [
           "Chức năng thống trị chính trị bảo vệ địa vị của giai cấp cầm quyền. Chức năng xã hội tổ chức đời sống chung trong những điều kiện lịch sử cụ thể, nhưng không xóa đi quan hệ giai cấp.",
@@ -75,7 +75,7 @@ window.THE_STATE_CONTENT = [
         title: "Kiểu Nhà nước khác với hình thức Nhà nước",
         lead: "Một khái niệm hỏi Nhà nước thuộc về giai cấp nào; khái niệm kia hỏi quyền lực được tổ chức ra sao.",
         paragraphs: [
-          "Kiểu Nhà nước gắn với giai cấp thống trị, cơ sở kinh tế và hình thái kinh tế - xã hội; đây là tầng phân tích về bản chất.",
+          "Kiểu Nhà nước gắn với giai cấp thống trị, cơ sở kinh tế và hình thái kinh tế - xã hội; mọi hình thức đa dạng cuối cùng đều quy về một bản chất.",
           "Hình thức Nhà nước là cách tổ chức và thực hiện quyền lực. Những Nhà nước cùng một kiểu vẫn có thể mang các hình thức khác nhau, nên không thể chỉ nhìn tên gọi hay thiết chế bề ngoài."
         ],
         images: [
@@ -87,7 +87,7 @@ window.THE_STATE_CONTENT = [
         title: "Các kiểu Nhà nước trong lịch sử",
         lead: "Chiếm hữu nô lệ, phong kiến và tư sản là những kiểu Nhà nước gắn với các cơ sở kinh tế khác nhau.",
         paragraphs: [
-          "Nhà nước chiếm hữu nô lệ dựa trên chế độ chiếm hữu nô lệ; Nhà nước phong kiến dựa trên sở hữu tư nhân về ruộng đất; Nhà nước tư sản dựa trên sở hữu tư nhân về tư liệu sản xuất.",
+          "Trong tiến trình năm hình thái kinh tế - xã hội, lịch sử đã ghi nhận ba kiểu Nhà nước bóc lột cơ bản: Nhà nước chiếm hữu nô lệ, Nhà nước phong kiến và Nhà nước tư sản.",
           "Quân chủ, cộng hòa, tập quyền hay phân quyền là những hình thức có thể thay đổi. Muốn hiểu bản chất, phải nhìn cả quan hệ kinh tế và giai cấp phía sau hình thức đó."
         ],
         images: [

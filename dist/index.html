@@ -1,95 +1,430 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#292829" />
-    <meta name="description" content="THE STATE: Exhibition 01 — game 3D khám phá triển lãm chính trị." />
-    <title>THE STATE // EXHIBITION 01</title>
-    <link rel="stylesheet" href="./styles.css" />
-  </head>
-  <body>
-    <main class="game-shell">
-      <canvas id="game-canvas" aria-label="Không gian triển lãm tương tác"></canvas>
 
-      <section id="title-screen" class="overlay title-screen" aria-labelledby="game-title">
-        <div class="title-noise" aria-hidden="true"></div>
-        <div class="title-content">
-          <div class="archive-seal" aria-hidden="true">01</div>
-          <p class="overline">THE STATE / EXHIBITION 01 / POLITICAL ARCHIVE</p>
-          <h1 id="game-title">WHO<br /><em>HOLDS</em><br />THE ROOM?</h1>
-          <p class="title-copy">Một triển lãm 3D về Nhà nước và Cách mạng xã hội.<br />Bước vào từng phòng, đến gần tranh, rồi mở hồ sơ phía sau hình ảnh.</p>
-          <button id="start-button" class="primary-button" type="button"><span>VÀO TRIỂN LÃM</span><b>ENTER</b></button>
-          <div class="control-strip"><span><kbd>WASD</kbd> DI CHUYỂN</span><span><kbd>MOUSE</kbd> NHÌN</span><span><kbd>E</kbd> MỞ HỒ SƠ</span></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#292829" />
+  <meta name="description" content="THE STATE: Exhibition 01 — game 3D khám phá triển lãm chính trị." />
+  <title>THE STATE // EXHIBITION 01</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <!-- GUIDE MODAL -->
+  <div id="guide-modal" class="ui-layer hidden"
+    style="background-color: rgba(23, 21, 22, 0.95); z-index: 1000; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 20px;">
+    <div
+      style="background: var(--black); border: 1px solid var(--red); padding: 40px; max-width: 700px; width: 100%; max-height: 85vh; overflow-y: auto; color: var(--paper); border-radius: 8px;">
+      <h2
+        style="color: var(--gold); margin-top: 0; text-transform: uppercase; font-family: var(--sans); font-size: 32px; border-bottom: 2px solid rgba(207, 168, 97, 0.3); padding-bottom: 15px; margin-bottom: 25px;">
+        CẨM NANG THÁM HIỂM</h2>
+
+      <p style="font-size: 18px; margin-bottom: 20px;"><strong>🎮 1. CÁCH ĐỂ ĐIỀU KHIỂN</strong><br>W A S D : Di
+        chuyển<br>MOUSE : Nhìn<br>E : Mở Hồ Sơ<br>Q : Bảng Xếp Hạng</p>
+
+      <p style="font-size: 18px; margin-bottom: 20px;"><strong>⏳ 2. THỜI GIAN GIỚI HẠN: 10 PHÚT</strong><br>Bạn chỉ có
+        đúng 10 phút để hoàn thành toàn bộ triển lãm. Đồng hồ đếm ngược sẽ hiển thị trên góc phải. Khi hết giờ, hệ thống
+        sẽ cưỡng chế dừng game và chốt điểm ngay lập tức.</p>
+
+      <p style="font-size: 18px; margin-bottom: 20px;"><strong>🔍 3. NHIỆM VỤ CHÍNH: TÌM BẰNG CHỨNG</strong><br>Mỗi
+        phòng trưng bày đều có một bức tranh lớn chứa <strong>Hồ sơ Bằng chứng</strong> (Mảnh ghép kiến thức). Bạn bắt
+        buộc phải tương tác bằng cách xem tranh để đọc và thu thập hồ sơ này mới có thể giải đố mở cổng sang phòng tiếp
+        theo.
+      </p>
+
+      <p style="font-size: 18px; margin-bottom: 15px;"><strong>⚔️ 4. CÁC THỬ THÁCH</strong></p>
+      <ul style="font-size: 17px; line-height: 1.6; margin-bottom: 25px;">
+        <li style="margin-bottom: 10px;"><strong>Ngôi sao ẩn (8 sao):</strong> Một phòng 2 sao.
+        </li>
+        <li style="margin-bottom: 10px;"><strong>Cửa 1:</strong> Trả lời trắc nghiệm.</li>
+        <li style="margin-bottom: 10px;"><strong>Cửa 2:</strong> Giải mã mở khóa .</li>
+        <li style="margin-bottom: 10px;"><strong>Cửa 3 :</strong> Sắp xếp.</li>
+        <li style="margin-bottom: 10px;"><strong>Cửa 4:</strong> Lật thẻ.</li>
+      </ul>
+
+      <div style="text-align: right; margin-top: 35px;">
+        <button id="close-guide-button" class="primary-button" type="button" style="width: 200px;"><span>ĐÃ
+            HIỂU!</span><b>OK</b></button>
+      </div>
+    </div>
+  </div>
+  <main class="game-shell">
+    <canvas id="game-canvas" aria-label="Không gian triển lãm tương tác"></canvas>
+
+    <section id="title-screen" class="overlay title-screen" aria-labelledby="game-title">
+      <div class="title-noise" aria-hidden="true"></div>
+      <div class="title-content">
+        <div class="archive-seal" aria-hidden="true">01</div>
+        <p class="overline">THE STATE / EXHIBITION 01 / POLITICAL ARCHIVE</p>
+        <h1 id="game-title">WHO<br /><em>HOLDS</em><br />THE ROOM?</h1>
+        <p class="title-copy">Một triển lãm 3D về Nhà nước và Cách mạng xã hội.<br />Bước vào từng phòng, đến gần tranh,
+          rồi mở hồ sơ phía sau hình ảnh.</p>
+        <button id="guide-button" class="primary-button" type="button"
+          style="margin-bottom: 15px; border-color: var(--gold); color: var(--gold);"><span>CẨM NANG THÁM
+            HIỂM</span><b>📖</b></button>
+        <button id="start-button" class="primary-button" type="button"><span>BẮT ĐẦU</span><b>ENTER</b></button>
+        <div id="name-input-container" class="hidden" style="margin-top: 20px;">
+          <input type="text" id="start-name-input" placeholder="Nhập tên của bạn..."
+            style="padding: 12px; font-size: 16px; margin-bottom: 15px; width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.5); border: 1px solid var(--gold); color: white; border-radius: 4px; font-family: var(--sans);" />
+          <button id="enter-exhibition-button" class="primary-button" type="button" style="width: 100%;"><span>VÀO TRIỂN
+              LÃM</span><b>ENTER</b></button>
         </div>
-        <div class="title-side-note">A CLASSROOM GAME<br /><span>MARXIST–LENINIST ARCHIVE</span></div>
-      </section>
+      </div>
+      <div class="title-side-note">A CLASSROOM GAME<br /><span>MARXIST–LENINIST ARCHIVE</span></div>
+    </section>
 
-      <section id="game-ui" class="game-ui hidden" aria-live="polite">
-        <header class="topbar">
-          <div class="brand"><span class="brand-mark">01</span><div><strong>THE STATE</strong><small>EXHIBITION 01 / POLITICAL ARCHIVE</small></div></div>
-          <div class="objective"><span class="ui-label">CURRENT OBJECTIVE</span><strong id="objective-text">Khám phá các khu triển lãm</strong></div>
-          <div class="hud-actions"><div class="evidence-counter"><span class="ui-label">CHAPTERS</span><strong><span id="evidence-count">0</span><b>/</b>4</strong></div><button id="quit-button" class="quit-button" type="button">RỜI TRIỂN LÃM <b>×</b></button></div>
-        </header>
-
-        <div class="zone-card"><span class="zone-index" id="zone-index">00</span><div><span class="ui-label">YOU ARE IN</span><strong id="zone-name">SẢNH ĐÓN</strong></div></div>
-        <div id="test-mode-badge" class="test-mode-badge hidden" aria-live="polite"></div>
-        <div id="interaction-prompt" class="interaction-prompt hidden"><span class="prompt-key">E</span><span id="prompt-text">Tương tác</span></div>
-        <div class="minimap" aria-label="Sơ đồ triển lãm"><div class="mini-title">EXHIBITION MAP</div><div class="mini-map-art"><span class="mini-room mini-base">01</span><span class="mini-room mini-class">02</span><span class="mini-room mini-state">03</span><span class="mini-room mini-revolt">04</span><i class="mini-player"></i></div></div>
-        <div class="bottom-hint"><span class="pulse-dot"></span><span id="status-text">Tìm tranh chính trong các phòng.</span></div>
-      </section>
-
-      <section id="runtime-error" class="runtime-error hidden" aria-live="assertive" aria-labelledby="runtime-error-title">
-        <div class="runtime-error-card">
-          <span class="overline">3D RUNTIME / RECOVERY</span>
-          <h2 id="runtime-error-title">Không thể mở không gian triển lãm.</h2>
-          <p id="runtime-error-message">Game chưa tải được bộ máy 3D. Hãy tải lại trang trước khi bắt đầu lại.</p>
-          <button id="runtime-reload-button" class="primary-button" type="button"><span>TẢI LẠI TRIỂN LÃM</span><b>↻</b></button>
+    <section id="game-ui" class="game-ui hidden" aria-live="polite">
+      <header class="topbar">
+        <div class="brand" style="display: flex; align-items: center; gap: 15px;">
+          <span class="brand-mark">01</span>
+          <div><strong>THE STATE</strong><small>EXHIBITION 01 / POLITICAL ARCHIVE</small></div>
+          <button id="music-toggle" class="control-button"
+            style="pointer-events: auto; background: rgba(0,0,0,0.6); color: var(--gold); border: 1px solid var(--gold); padding: 4px 8px; cursor: pointer; border-radius: 4px; font-family: var(--mono); font-weight: bold; font-size: 11px;">🔊
+            Nhạc (Bật)</button>
         </div>
-      </section>
-
-      <section id="content-viewer" class="content-viewer hidden" aria-labelledby="viewer-title">
-        <div class="viewer-backdrop"></div>
-        <article class="viewer-card">
-          <header class="viewer-header"><div><span id="viewer-kicker" class="viewer-kicker">ARCHIVE 01</span><h2 id="viewer-title">Chương triển lãm</h2></div><button id="viewer-close" class="viewer-close" type="button" aria-label="Đóng hồ sơ">×</button></header>
-          <div class="viewer-progress"><span id="viewer-page">01</span><b>/</b><span id="viewer-page-total">03</span><i><em id="viewer-progress-bar"></em></i></div>
-          <div class="viewer-layout">
-            <div class="viewer-copy"><span id="viewer-section-label" class="viewer-section-label">SECTION 01</span><h3 id="viewer-section-title">Nội dung chương</h3><p id="viewer-lead" class="viewer-lead"></p><div id="viewer-paragraphs" class="viewer-paragraphs"></div></div>
-            <figure class="viewer-visual"><div class="viewer-image-stage"><div id="viewer-image-placeholder" class="viewer-image-placeholder"><span>IMAGE SLOT</span><strong>Ảnh tư liệu sẽ được đặt tại đây</strong><small>Khung này đã sẵn sàng nhận ảnh của chương.</small></div><img id="viewer-image" class="hidden" alt="" /></div><figcaption id="viewer-caption"></figcaption><div class="image-controls"><button id="viewer-prev-image" type="button" aria-label="Ảnh trước">←</button><span id="viewer-image-count">0 / 0</span><button id="viewer-next-image" type="button" aria-label="Ảnh sau">→</button></div></figure>
+        <div class="objective"><span class="ui-label">CURRENT OBJECTIVE</span><strong id="objective-text">Khám phá các
+            khu triển lãm</strong></div>
+        <div class="hud-actions">
+          <div class="time-counter"><span class="ui-label">TIME</span><strong><span
+                id="time-count">00:00</span></strong></div>
+          <div class="score-counter"><span class="ui-label">SCORE</span><strong><span id="score-count">0</span></strong>
           </div>
-          <footer class="viewer-footer"><span id="viewer-note">Đọc đúng hồ sơ của bức tranh đang chọn rồi đóng exhibit.</span><div><button id="viewer-next" class="primary-button" type="button"><span>ĐÓNG TRANH</span><b>×</b></button></div></footer>
-        </article>
-      </section>
-
-      <section id="image-lightbox" class="image-lightbox hidden" aria-label="Ảnh tư liệu phóng to">
-        <div class="image-lightbox-backdrop"></div>
-        <figure class="lightbox-card">
-          <button id="lightbox-close" class="viewer-close" type="button" aria-label="Đóng ảnh">×</button>
-          <img id="lightbox-image" alt="" />
-          <figcaption id="lightbox-caption"></figcaption>
-        </figure>
-      </section>
-
-      <section id="dialogue" class="dialogue hidden" aria-labelledby="dialogue-title">
-        <div class="dialogue-backdrop"></div>
-        <div class="dialogue-card">
-          <div class="dialogue-meta"><span id="dialogue-type">ARCHIVE ENTRY</span><span id="dialogue-number">01 / 04</span></div>
-          <h2 id="dialogue-title">Điều kiện vật chất</h2>
-          <p id="dialogue-body"></p>
-          <button id="dialogue-close" class="text-button hidden" type="button">ĐÓNG <kbd>ESC</kbd></button>
+          <div class="star-counter"><span class="ui-label">STARS</span><strong><span
+                id="star-count">0</span><b>/</b>8</strong></div>
+          <div class="evidence-counter"><span class="ui-label">CHAPTERS</span><strong><span
+                id="evidence-count">0</span><b>/</b>4</strong></div><button id="quit-button" class="quit-button"
+            type="button">RỜI TRIỂN LÃM <b>×</b></button>
         </div>
-      </section>
+      </header>
 
-      <section id="ending-screen" class="overlay ending-screen hidden" aria-labelledby="ending-title">
-        <div class="ending-content"><div class="archive-seal small-seal" aria-hidden="true">04</div><p class="overline">EXHIBITION COMPLETE / FIELD REPORT</p><h2 id="ending-title">THE ROOM<br /><em>REMEMBERS.</em></h2><p id="ending-copy" class="ending-copy"></p><div class="ending-stats"><span><b id="ending-evidence">4/4</b><small>chapters viewed</small></span><span><b id="ending-pages">—</b><small>content panels</small></span><span><b id="ending-images">—</b><small>images viewed</small></span></div><div class="ending-actions"><button id="restart-button" class="primary-button" type="button"><span>WALK THE EXHIBITION AGAIN</span><b>↻</b></button><button id="theory-button" class="text-button" type="button">MỞ GHI CHÚ LÝ THUYẾT</button><button id="ending-exit-button" class="text-button danger-button" type="button">RỜI TRIỂN LÃM →</button></div><div id="theory-note" class="theory-note hidden"><strong>READ THE ROOM</strong><p>Điều kiện vật chất tổ chức đời sống xã hội. Khi quyền kiểm soát tư liệu sản xuất bị phân hóa, giai cấp và mâu thuẫn xuất hiện. Nhà nước hình thành như một thiết chế quyền lực trong bối cảnh đó; cách mạng xã hội là bước biến đổi căn bản khi quan hệ cũ trở thành lực cản.</p></div></div>
-      </section>
+      <div class="zone-card"><span class="zone-index" id="zone-index">00</span>
+        <div><span class="ui-label">YOU ARE IN</span><strong id="zone-name">SẢNH ĐÓN</strong></div>
+      </div>
+      <div id="test-mode-badge" class="test-mode-badge hidden" aria-live="polite"></div>
+      <div id="interaction-prompt" class="interaction-prompt hidden"><span class="prompt-key">E</span><span
+          id="prompt-text">Tương tác</span></div>
+      <div id="game-toast" class="game-toast hidden" aria-live="polite"></div>
 
-      <section id="quit-screen" class="overlay quit-screen hidden" aria-labelledby="quit-title">
-        <div class="quit-content"><div class="archive-seal" aria-hidden="true">—</div><p class="overline">ARCHIVE CLOSED / SESSION ENDED</p><h2 id="quit-title">CẢM ƠN BẠN ĐÃ<br /><em>THAM QUAN.</em></h2><p>Triển lãm kết thúc ở đây. Nhưng những câu hỏi về quyền lực, giai cấp, Nhà nước và biến đổi xã hội vẫn tiếp tục bên ngoài căn phòng.</p><div class="quit-rule"></div><div class="quit-actions"><button id="return-title-button" class="primary-button" type="button"><span>VỀ MÀN HÌNH ĐẦU</span><b>↩</b></button><span>THE STATE / POLITICAL ARCHIVE</span></div></div>
-      </section>
-    </main>
-    <script src="./vendor/three.min.js"></script>
-    <script src="./content.js"></script>
-    <script src="./app.js"></script>
-  </body>
+      <!-- Leaderboard Hint -->
+      <div id="leaderboard-hint"
+        style="position: absolute; bottom: 100px; left: 30px; z-index: 1000; color: rgba(255,255,255,0.7); font-family: var(--sans); font-size: 12px; font-weight: bold; padding: 5px 10px; background: rgba(0,0,0,0.4); border-radius: 4px; border: 1px solid rgba(255,255,255,0.1);">
+        Phím <kbd>Q</kbd> : Bảng xếp hạng</div>
+
+      <div class="minimap" aria-label="Sơ đồ triển lãm">
+        <div class="mini-title">EXHIBITION MAP</div>
+        <div class="mini-map-art"><span class="mini-room mini-base">01</span><span
+            class="mini-room mini-class">02</span><span class="mini-room mini-state">03</span><span
+            class="mini-room mini-revolt">04</span><i class="mini-player"></i></div>
+      </div>
+      <div class="bottom-hint"><span class="pulse-dot"></span><span id="status-text">Tìm tranh chính trong các
+          phòng.</span></div>
+    </section>
+
+    <section id="runtime-error" class="runtime-error hidden" aria-live="assertive"
+      aria-labelledby="runtime-error-title">
+      <div class="runtime-error-card">
+        <span class="overline">3D RUNTIME / RECOVERY</span>
+        <h2 id="runtime-error-title">Không thể mở không gian triển lãm.</h2>
+        <p id="runtime-error-message">Game chưa tải được bộ máy 3D. Hãy tải lại trang trước khi bắt đầu lại.</p>
+        <button id="runtime-reload-button" class="primary-button" type="button"><span>TẢI LẠI TRIỂN
+            LÃM</span><b>↻</b></button>
+      </div>
+    </section>
+
+    <section id="content-viewer" class="content-viewer hidden" aria-labelledby="viewer-title">
+      <div class="viewer-backdrop"></div>
+      <article class="viewer-card">
+        <header class="viewer-header">
+          <div><span id="viewer-kicker" class="viewer-kicker">ARCHIVE 01</span>
+            <h2 id="viewer-title">Chương triển lãm</h2>
+          </div><button id="viewer-close" class="viewer-close" type="button" aria-label="Đóng hồ sơ">×</button>
+        </header>
+        <div class="viewer-progress"><span id="viewer-page">01</span><b>/</b><span
+            id="viewer-page-total">03</span><i><em id="viewer-progress-bar"></em></i></div>
+        <div class="viewer-layout">
+          <div class="viewer-copy"><span id="viewer-section-label" class="viewer-section-label">SECTION 01</span>
+            <h3 id="viewer-section-title">Nội dung chương</h3>
+            <p id="viewer-lead" class="viewer-lead"></p>
+            <div id="viewer-paragraphs" class="viewer-paragraphs"></div>
+          </div>
+          <figure class="viewer-visual">
+            <div class="viewer-image-stage">
+              <div id="viewer-image-placeholder" class="viewer-image-placeholder"><span>IMAGE SLOT</span><strong>Ảnh tư
+                  liệu sẽ được đặt tại đây</strong><small>Khung này đã sẵn sàng nhận ảnh của chương.</small></div><img
+                id="viewer-image" class="hidden" alt="" />
+            </div>
+            <figcaption id="viewer-caption"></figcaption>
+            <div class="image-controls"><button id="viewer-prev-image" type="button"
+                aria-label="Ảnh trước">←</button><span id="viewer-image-count">0 / 0</span><button
+                id="viewer-next-image" type="button" aria-label="Ảnh sau">→</button></div>
+          </figure>
+        </div>
+        <footer class="viewer-footer"><span id="viewer-note">Đọc đúng hồ sơ của bức tranh đang chọn rồi đóng
+            exhibit.</span>
+          <div><button id="viewer-next" class="primary-button" type="button"><span>ĐÓNG TRANH</span><b>×</b></button>
+          </div>
+        </footer>
+      </article>
+    </section>
+
+    <section id="image-lightbox" class="image-lightbox hidden" aria-label="Ảnh tư liệu phóng to">
+      <div class="image-lightbox-backdrop"></div>
+      <figure class="lightbox-card">
+        <button id="lightbox-close" class="viewer-close" type="button" aria-label="Đóng ảnh">×</button>
+        <img id="lightbox-image" alt="" />
+        <figcaption id="lightbox-caption"></figcaption>
+      </figure>
+    </section>
+
+    <section id="dialogue" class="dialogue hidden" aria-labelledby="dialogue-title">
+      <div class="dialogue-backdrop"></div>
+      <div class="dialogue-card">
+        <div class="dialogue-meta"><span id="dialogue-type">ARCHIVE ENTRY</span><span id="dialogue-number">01 /
+            04</span></div>
+        <h2 id="dialogue-title">Điều kiện vật chất</h2>
+        <p id="dialogue-body"></p>
+        <button id="dialogue-close" class="text-button hidden" type="button">ĐÓNG <kbd>ESC</kbd></button>
+      </div>
+    </section>
+
+    <section id="ending-screen" class="overlay ending-screen hidden" aria-labelledby="ending-title">
+      <div class="ending-content">
+        <div class="archive-seal small-seal" aria-hidden="true">04</div>
+        <p class="overline">EXHIBITION COMPLETE / FIELD REPORT</p>
+        <h2 id="ending-title">THE ROOM<br /><em>REMEMBERS.</em></h2>
+        <p id="ending-copy" class="ending-copy"></p>
+        <div class="ending-stats">
+          <span><b id="ending-time">00:00</b><small>thời gian</small></span>
+          <span><b id="ending-score">0</b><small>tổng điểm</small></span>
+          <span><b id="ending-evidence">4/4</b><small>chương</small></span>
+        </div>
+        <div id="leaderboard-section" class="leaderboard-section">
+          <div id="leaderboard-form-container" class="leaderboard-form">
+            <input type="text" id="player-name-input" placeholder="Nhập tên của bạn để lưu điểm" maxlength="30" />
+            <button id="submit-score-button" class="primary-button small-button" type="button"><span>GỬI
+                ĐIỂM</span><b>↵</b></button>
+          </div>
+          <div id="leaderboard-loading" class="hidden">Đang tải bảng xếp hạng...</div>
+          <ul id="leaderboard-list" class="leaderboard-list hidden"></ul>
+        </div>
+        <div class="ending-actions">
+          <button id="restart-button" class="primary-button" type="button"><span>WALK THE EXHIBITION
+              AGAIN</span><b>↻</b></button>
+          <button id="theory-button" class="text-button" type="button">MỞ GHI CHÚ LÝ THUYẾT</button>
+          <button id="ending-exit-button" class="text-button danger-button" type="button">RỜI TRIỂN LÃM →</button>
+        </div>
+        <div id="theory-note" class="theory-note hidden"><strong>READ THE ROOM</strong>
+          <p>Điều kiện vật chất tổ chức đời sống xã hội. Khi quyền kiểm soát tư liệu sản xuất bị phân hóa, giai cấp và
+            mâu thuẫn xuất hiện. Nhà nước hình thành như một thiết chế quyền lực trong bối cảnh đó; cách mạng xã hội là
+            bước biến đổi căn bản khi quan hệ cũ trở thành lực cản.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="quiz-ui" class="overlay quiz-ui hidden" aria-labelledby="quiz-title">
+      <div class="quiz-content">
+        <div class="archive-seal small-seal" aria-hidden="true">?</div>
+        <p class="overline">SECURITY CLEARANCE / KNOWLEDGE CHECK</p>
+        <h2 id="quiz-title">CÂU HỎI MỞ CỔNG</h2>
+        <p id="quiz-timer" class="quiz-timer"
+          style="color: var(--gold); font-size: 24px; font-weight: bold; margin: 10px 0;">10</p>
+        <p id="quiz-question" class="quiz-question">Nội dung câu hỏi sẽ hiển thị ở đây...</p>
+        <div id="quiz-options" class="quiz-options">
+          <button class="quiz-option-button" data-index="0"><span class="quiz-option-letter">A</span><span
+              class="quiz-option-text">Lựa chọn A</span></button>
+          <button class="quiz-option-button" data-index="1"><span class="quiz-option-letter">B</span><span
+              class="quiz-option-text">Lựa chọn B</span></button>
+          <button class="quiz-option-button" data-index="2"><span class="quiz-option-letter">C</span><span
+              class="quiz-option-text">Lựa chọn C</span></button>
+          <button class="quiz-option-button" data-index="3"><span class="quiz-option-letter">D</span><span
+              class="quiz-option-text">Lựa chọn D</span></button>
+        </div>
+        <div id="quiz-feedback" class="quiz-feedback"></div>
+        <button id="quiz-close-button" class="text-button danger-button hidden" type="button">BỎ QUA & ĐÓNG
+          <kbd>ESC</kbd></button>
+      </div>
+    </section>
+
+    <section id="numpad-ui" class="overlay numpad-ui hidden" aria-labelledby="numpad-title">
+      <div class="quiz-content" style="max-width: 320px; text-align: center;">
+        <div class="archive-seal small-seal" aria-hidden="true" style="margin: 0 auto 20px;">*</div>
+        <p class="overline">SECURITY CLEARANCE / CIPHER LOCK</p>
+        <h2 id="numpad-title" style="font-size: 32px; margin-bottom: 8px;">MÃ KHÓA BẢO TÀNG</h2>
+        <p id="numpad-hint-text" class="quiz-question" style="font-size: 15px; margin-bottom: 24px; line-height: 1.4;">
+          Yêu cầu nhập mật mã 4 chữ số.<br />(Manh mối ẩn trong bảo tàng)</p>
+        <div id="numpad-display" class="numpad-display">----</div>
+        <div class="numpad-grid">
+          <button class="numpad-btn" data-val="1">1</button>
+          <button class="numpad-btn" data-val="2">2</button>
+          <button class="numpad-btn" data-val="3">3</button>
+          <button class="numpad-btn" data-val="4">4</button>
+          <button class="numpad-btn" data-val="5">5</button>
+          <button class="numpad-btn" data-val="6">6</button>
+          <button class="numpad-btn" data-val="7">7</button>
+          <button class="numpad-btn" data-val="8">8</button>
+          <button class="numpad-btn" data-val="9">9</button>
+          <button class="numpad-btn numpad-danger" id="numpad-clear">C</button>
+          <button class="numpad-btn" data-val="0">0</button>
+          <button class="numpad-btn numpad-primary" id="numpad-submit">OK</button>
+        </div>
+        <div id="numpad-feedback" class="quiz-feedback"></div>
+        <button id="numpad-request-hint" class="text-button" type="button"
+          style="margin-top: 20px; color: var(--gold); background: transparent; border: 1px solid var(--gold); padding: 5px 10px; cursor: pointer;">XEM
+          GỢI Ý (-50 ĐIỂM)</button>
+        <button id="numpad-close-button" class="text-button danger-button" type="button"
+          style="margin-top: 10px; margin-left: auto; margin-right: auto; display: block;">BỎ QUA & ĐÓNG
+          <kbd>ESC</kbd></button>
+      </div>
+    </section>
+
+    <section id="timeline-ui" class="overlay timeline-ui hidden" aria-labelledby="timeline-title">
+      <div class="quiz-content" style="max-width: 650px;">
+        <div class="archive-seal small-seal" aria-hidden="true">III</div>
+        <p class="overline">SECURITY CLEARANCE / TIMELINE RECONSTRUCTION</p>
+        <h2 id="timeline-title">SẮP XẾP LỊCH SỬ</h2>
+        <p class="quiz-question" style="font-size: 15px; margin-bottom: 24px; line-height: 1.4;">
+          Cánh cửa sẽ mở khi bạn sắp xếp 5 hình thái kinh tế - xã hội này theo đúng tiến trình lịch sử (từ xa xưa nhất
+          đến tương lai). Kéo thả để đổi vị trí.
+        </p>
+
+        <ul id="timeline-list" class="timeline-list">
+          <!-- Rendered by JS -->
+        </ul>
+
+        <div id="timeline-feedback" class="quiz-feedback"></div>
+        <button id="timeline-submit" class="primary-button" type="button"
+          style="width: 100%; margin-top: 15px;"><span>XÁC NHẬN</span><b>↵</b></button>
+        <button id="timeline-close-button" class="text-button danger-button" type="button"
+          style="width: 100%; margin-top: 15px;">ĐÓNG <kbd>ESC</kbd></button>
+      </div>
+    </section>
+
+    <section id="memory-ui" class="overlay memory-ui hidden" aria-labelledby="memory-title">
+      <div class="quiz-content"
+        style="width: 92vw; max-width: 1600px; max-height: 92vh; display: flex; flex-direction: column; padding: 40px; overflow-y: auto; position: relative;">
+        <div class="archive-seal small-seal" aria-hidden="true">IV</div>
+        <p class="overline">FINAL CLEARANCE / MEMORY MATCH</p>
+        <h2 id="memory-title">GHÉP CẶP KIẾN THỨC</h2>
+        <p class="quiz-question" style="font-size: 15px; margin-bottom: 24px; line-height: 1.4;">
+          Tìm và lật các cặp thẻ tương ứng (Hình ảnh ↔ Tên gọi/Khái niệm) để mở cánh cửa cuối cùng.<br />
+          Số lượt đã lật: <strong id="memory-moves" style="color: var(--gold);">0</strong> <strong
+            style="color: rgba(255,255,255,0.5);">/ 20</strong>
+        </p>
+
+        <div id="memory-grid" class="memory-grid">
+          <!-- Rendered by JS -->
+        </div>
+
+        <button id="memory-close-button" class="text-button danger-button" type="button"
+          style="position: absolute; top: 20px; right: 20px; z-index: 10;">ĐÓNG
+          <kbd>ESC</kbd></button>
+      </div>
+    </section>
+
+    <section id="quit-screen" class="overlay quit-screen hidden" aria-labelledby="quit-title">
+      <div class="quit-content">
+        <div class="archive-seal" aria-hidden="true">—</div>
+        <p class="overline">ARCHIVE CLOSED / SESSION ENDED</p>
+        <h2 id="quit-title">CẢM ƠN BẠN ĐÃ<br /><em>THAM QUAN.</em></h2>
+        <p>Triển lãm kết thúc ở đây. Nhưng những câu hỏi về quyền lực, giai cấp, Nhà nước và biến đổi xã hội vẫn tiếp
+          tục bên ngoài căn phòng.</p>
+        <div class="quit-rule"></div>
+        <div class="quit-actions"><button id="return-title-button" class="primary-button" type="button"><span>VỀ MÀN
+              HÌNH ĐẦU</span><b>↩</b></button><span>THE STATE / POLITICAL ARCHIVE</span></div>
+      </div>
+    </section>
+
+    <!-- Leaderboard In-Game Overlay -->
+    <section id="leaderboard-ui" class="overlay hidden" aria-labelledby="leaderboard-title" style="z-index: 2000;">
+      <div class="quiz-content" style="max-width: 500px; padding: 30px; background: rgba(20, 18, 15, 0.95);">
+        <div class="archive-seal small-seal" aria-hidden="true">★</div>
+        <p class="overline">TOP RECORDS</p>
+        <h2 id="leaderboard-title">BẢNG XẾP HẠNG</h2>
+        <p style="font-size: 14px; margin-bottom: 20px; color: var(--paper);">Danh sách các nhà thám hiểm hoàn thành
+          triển lãm nhanh nhất:</p>
+        <ul id="live-leaderboard-list" class="leaderboard-list"
+          style="margin-bottom: 20px; max-height: 40vh; overflow-y: auto;">
+          <!-- Rendered by JS -->
+        </ul>
+        <button id="close-leaderboard-button" class="text-button" type="button"
+          style="width: 100%; margin-bottom: 10px;">ĐÓNG <kbd>Q</kbd></button>
+        <button id="clear-leaderboard-button" class="text-button danger-button" type="button"
+          style="width: 100%;">[TEST] XÓA DỮ LIỆU</button>
+      </div>
+    </section>
+  </main>
+  <script src="./vendor/three.min.js"></script>
+  <script src="./content.js"></script>
+  <script src="./app.js"></script>
+
+  <!-- YouTube Background Music -->
+  <div id="youtube-bgm"
+    style="position: fixed; z-index: -999; top: 0; left: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none;">
+  </div>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    var bgmPlayer;
+    var bgmReady = false;
+    function onYouTubeIframeAPIReady() {
+      bgmPlayer = new YT.Player('youtube-bgm', {
+        height: '10',
+        width: '10',
+        videoId: 'Go5cLeiWyP8',
+        playerVars: {
+          'playsinline': 1,
+          'loop': 1,
+          'playlist': 'Go5cLeiWyP8',
+          'controls': 0
+        },
+        events: {
+          'onReady': function (event) {
+            bgmReady = true;
+            event.target.setVolume(50);
+          },
+          'onError': function (event) {
+            console.error("YouTube Player Error:", event.data);
+            const errCode = event.data;
+            let msg = "Lỗi phát nhạc YouTube.";
+            if (errCode === 101 || errCode === 150) msg = "Video nhạc này không cho phép phát trên trang web khác.";
+
+            // Show toast if possible
+            const toast = document.getElementById("game-toast");
+            if (toast) {
+              toast.textContent = msg;
+              toast.classList.remove("hidden");
+              toast.classList.add("show");
+              setTimeout(() => {
+                toast.classList.remove("show");
+                toast.classList.add("hidden");
+              }, 5000);
+            }
+          }
+        }
+      });
+    }
+
+    // Play music logic and toggle
+    document.addEventListener("DOMContentLoaded", () => {
+      const musicBtn = document.getElementById("music-toggle");
+      musicBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (bgmPlayer && typeof bgmPlayer.getPlayerState === 'function') {
+          const state = bgmPlayer.getPlayerState();
+          if (state === YT.PlayerState.PLAYING) {
+            bgmPlayer.pauseVideo();
+            musicBtn.textContent = "🔇 Nhạc (Tắt)";
+            musicBtn.style.color = "rgba(255,255,255,0.5)";
+          } else {
+            bgmPlayer.playVideo();
+            musicBtn.textContent = "🔊 Nhạc (Bật)";
+            musicBtn.style.color = "var(--gold)";
+          }
+        }
+      });
+    });
+
+  </script>
+</body>
+
 </html>
