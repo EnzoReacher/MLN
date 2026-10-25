@@ -64,15 +64,74 @@
           style="margin-bottom: 15px; border-color: var(--gold); color: var(--gold);"><span>CẨM NANG THÁM
             HIỂM</span><b>📖</b></button>
         <button id="start-button" class="primary-button" type="button"><span>BẮT ĐẦU</span><b>ENTER</b></button>
-        <div id="name-input-container" class="hidden" style="margin-top: 20px;">
-          <input type="text" id="start-name-input" placeholder="Nhập tên của bạn..."
-            style="padding: 12px; font-size: 16px; margin-bottom: 15px; width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.5); border: 1px solid var(--gold); color: white; border-radius: 4px; font-family: var(--sans);" />
-          <button id="enter-exhibition-button" class="primary-button" type="button" style="width: 100%;"><span>VÀO TRIỂN
-              LÃM</span><b>ENTER</b></button>
+        <div id="name-input-container" class="hidden" style="margin-top: 20px; width: 100%; max-width: 420px;">
+          <div style="margin-bottom: 12px; text-align: left;">
+            <label for="start-name-input" style="display: block; font-family: var(--mono); font-size: 11px; color: var(--gold); margin-bottom: 5px; letter-spacing: 0.1em; text-transform: uppercase;">1. Tên người chơi</label>
+            <input type="text" id="start-name-input" placeholder="Nhập tên của bạn..." maxlength="25"
+              style="padding: 12px 14px; font-size: 15px; width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.6); border: 1px solid var(--line); color: var(--paper); border-radius: 4px; font-family: var(--sans); outline: none;" />
+          </div>
+
+          <div style="margin-bottom: 15px; text-align: left;">
+            <label for="start-room-input" style="display: block; font-family: var(--mono); font-size: 11px; color: var(--gold); margin-bottom: 5px; letter-spacing: 0.1em; text-transform: uppercase;">2. Mã phòng 4 số (Admin cấp)</label>
+            <input type="text" id="start-room-input" placeholder="0000" maxlength="4" inputmode="numeric"
+              style="padding: 10px 14px; font-size: 24px; font-weight: bold; letter-spacing: 0.3em; text-align: center; width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.6); border: 1px solid var(--gold); color: var(--gold); border-radius: 4px; font-family: var(--mono); outline: none;" />
+          </div>
+
+          <div id="room-input-error" class="hidden" style="color: #ff7b7b; font-family: var(--mono); font-size: 12px; margin-bottom: 12px; padding: 8px 12px; background: rgba(255,0,0,0.18); border: 1px solid rgba(255,123,123,0.3); border-radius: 4px; text-align: left;"></div>
+
+          <button id="enter-exhibition-button" class="primary-button" type="button" style="width: 100%; justify-content: center; margin-bottom: 10px;">
+            <span>VÀO PHÒNG CHỜ</span><b>↵</b>
+          </button>
+
+          <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 8px;">
+            <button id="back-to-menu-button" type="button" style="background: none; border: none; color: var(--muted); font-family: var(--mono); font-size: 11px; cursor: pointer; text-decoration: underline; padding: 4px 0;">← Quay lại</button>
+          </div>
         </div>
       </div>
       <div class="title-side-note">A CLASSROOM GAME<br /><span>MARXIST–LENINIST ARCHIVE</span></div>
     </section>
+
+    <!-- SẢNH CHỜ PHÒNG ĐẤU MULTIPLAYER -->
+    <section id="waiting-lobby" class="overlay waiting-lobby hidden" aria-labelledby="lobby-title">
+      <div class="lobby-card">
+        <div class="archive-seal small-seal" aria-hidden="true">01</div>
+        <p class="overline">MULTIPLAYER LOBBY // TRIỂN LÃM MÁC - LÊNIN</p>
+        <h2 id="lobby-title" style="margin: 0 0 6px; font-size: clamp(24px, 3.5vw, 36px); color: var(--paper);">
+          PHÒNG CHỜ THÁM HIỂM
+        </h2>
+
+        <div class="lobby-room-badge">
+          <span style="font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: 0.1em;">MÃ PHÒNG:</span>
+          <span id="lobby-room-code" class="lobby-room-code">0000</span>
+        </div>
+
+        <div style="margin-bottom: 20px; font-size: 14px; color: var(--muted);">
+          Xin chào: <strong id="lobby-player-name" style="color: var(--paper);">...</strong>
+        </div>
+
+        <div class="lobby-status-banner">
+          <div class="pulse-dot"></div>
+          <span id="lobby-status-text">Đang chờ Admin bấm BẮT ĐẦU...</span>
+        </div>
+
+        <div class="lobby-roster-box">
+          <div class="lobby-roster-header">
+            <span>DANH SÁCH THÀNH VIÊN ĐÃ VÀO</span>
+            <span id="lobby-player-count">0 thành viên</span>
+          </div>
+          <ul id="lobby-player-list" class="lobby-player-list">
+            <!-- Danh sách người chơi hiển thị động -->
+          </ul>
+        </div>
+
+        <div>
+          <button id="leave-lobby-button" class="text-button danger-button" type="button" style="color: var(--red); border-color: rgba(189,92,93,0.5);">
+            ← RỜI PHÒNG
+          </button>
+        </div>
+      </div>
+    </section>
+
 
     <section id="game-ui" class="game-ui hidden" aria-live="polite">
       <header class="topbar">
@@ -209,8 +268,7 @@
           <ul id="leaderboard-list" class="leaderboard-list hidden"></ul>
         </div>
         <div class="ending-actions">
-          <button id="restart-button" class="primary-button" type="button"><span>WALK THE EXHIBITION
-              AGAIN</span><b>↻</b></button>
+          <button id="restart-button" class="primary-button" type="button"><span>QUAY VỀ MÀN HÌNH CHÍNH</span><b>↻</b></button>
           <button id="theory-button" class="text-button" type="button">MỞ GHI CHÚ LÝ THUYẾT</button>
           <button id="ending-exit-button" class="text-button danger-button" type="button">RỜI TRIỂN LÃM →</button>
         </div>
@@ -355,6 +413,7 @@
     </section>
   </main>
   <script src="./vendor/three.min.js"></script>
+  <script src="./sync.js"></script>
   <script src="./content.js"></script>
   <script src="./app.js"></script>
 

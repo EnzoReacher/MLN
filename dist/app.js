@@ -71,7 +71,7 @@
 
   const numpadUi = document.getElementById("numpad-ui");
   const numpadDisplay = document.getElementById("numpad-display");
-  const numpadBtns = document.querySelectorAll(".numpad-btn[data-val]");
+  const numpadBtns = typeof document.querySelectorAll === "function" ? document.querySelectorAll(".numpad-btn[data-val]") : [];
   const numpadClear = document.getElementById("numpad-clear");
   const numpadSubmit = document.getElementById("numpad-submit");
   const numpadFeedback = document.getElementById("numpad-feedback");
@@ -79,6 +79,21 @@
   const numpadHintText = document.getElementById("numpad-hint-text");
   const numpadRequestHint = document.getElementById("numpad-request-hint");
   let numpadInput = "";
+
+  // Multiplayer Lobby DOM Elements
+  const startRoomInput = document.getElementById("start-room-input");
+  const roomInputError = document.getElementById("room-input-error");
+  const backToMenuButton = document.getElementById("back-to-menu-button");
+  const waitingLobby = document.getElementById("waiting-lobby");
+  const lobbyRoomCode = document.getElementById("lobby-room-code");
+  const lobbyPlayerName = document.getElementById("lobby-player-name");
+  const lobbyStatusText = document.getElementById("lobby-status-text");
+  const lobbyPlayerCount = document.getElementById("lobby-player-count");
+  const lobbyPlayerList = document.getElementById("lobby-player-list");
+  const leaveLobbyButton = document.getElementById("leave-lobby-button");
+
+  let currentRoomCode = null;
+  let lobbyPollInterval = null;
 
   const endingTime = document.getElementById("ending-time");
   const endingScore = document.getElementById("ending-score");
@@ -117,6 +132,13 @@
   const lightboxCaption = document.getElementById("lightbox-caption");
   const lightboxClose = document.getElementById("lightbox-close");
   const testModeBadge = document.getElementById("test-mode-badge");
+
+  const setInterval = typeof globalThis !== "undefined" && typeof globalThis.setInterval === "function"
+    ? globalThis.setInterval
+    : (typeof window !== "undefined" && typeof window.setInterval === "function" ? window.setInterval : () => null);
+  const clearInterval = typeof globalThis !== "undefined" && typeof globalThis.clearInterval === "function"
+    ? globalThis.clearInterval
+    : (typeof window !== "undefined" && typeof window.clearInterval === "function" ? window.clearInterval : () => {});
 
   const THREE = window.THREE || null;
   const TEST_MODE = typeof URLSearchParams === "function"
@@ -443,7 +465,7 @@
     zoneName.textContent = room?.name ?? "HÀNH LANG CHUYỂN TIẾP";
     zoneIndex.textContent = room?.index ?? "—";
     evidenceCount.textContent = completedCount;
-    starCount.textContent = state.starsCollected;
+    if (starCount) starCount.textContent = state.starsCollected;
     const scoreCountEl = document.getElementById("score-count");
     if (scoreCountEl) scoreCountEl.textContent = state.quizPoints;
 
@@ -1065,8 +1087,11 @@
     leaderboardList.classList.add("hidden");
     leaderboardList.innerHTML = "";
 
-    fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard?t=${Date.now()}`, { cache: 'no-store' })
-      .then(res => res.ok ? res.json() : [])
+    const promise = typeof window !== "undefined" && window.RoomSync
+      ? window.RoomSync.getLeaderboard()
+      : Promise.resolve([]);
+
+    promise
       .then(data => {
         leaderboardLoading.classList.add("hidden");
         leaderboardList.classList.remove("hidden");
@@ -1076,7 +1101,6 @@
           return;
         }
 
-        // Sort by score descending, then time ascending
         data.sort((a, b) => b.score - a.score || a.time - b.time);
 
         data.slice(0, 10).forEach((entry, i) => {
@@ -1102,35 +1126,31 @@
     }
   }
 
-  function syncLiveScore() {
+  async function syncLiveScore() {
     if (!playerName || (!state.running && !state.endTime)) return;
 
     const timeToUse = state.running ? Math.floor((performance.now() - state.startTime) / 1000) : state.lastComputedTime;
-    
-    fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard?t=${Date.now()}`, { cache: 'no-store' })
-      .then(res => res.ok ? res.json() : [])
-      .then(data => {
-        let board = Array.isArray(data) ? data : [];
-        let pIndex = board.findIndex(e => e.name === playerName);
-        
+
+    if (typeof window !== "undefined" && window.RoomSync) {
+      try {
+        const board = await window.RoomSync.getLeaderboard();
+        let list = Array.isArray(board) ? [...board] : [];
+        let pIndex = list.findIndex(e => e.name === playerName);
+
         if (pIndex !== -1) {
-          board[pIndex].score = state.quizPoints;
-          board[pIndex].time = timeToUse;
+          list[pIndex].score = state.quizPoints;
+          list[pIndex].time = timeToUse;
         } else {
-          board.push({
+          list.push({
             name: playerName,
             score: state.quizPoints,
             time: timeToUse
           });
         }
-        
-        fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(board)
-        });
-      })
-      .catch(() => {});
+
+        await window.RoomSync.saveLeaderboard(list);
+      } catch (_) {}
+    }
   }
 
   function makeArtworkTexture(room) {
@@ -2380,6 +2400,10 @@
   }
 
   function quitGame() {
+    if (window.syncIntervalId) {
+      clearInterval(window.syncIntervalId);
+      window.syncIntervalId = null;
+    }
     state.running = false;
     state.frameRequested = false;
     keys.clear();
@@ -2395,9 +2419,20 @@
   }
 
   function returnToTitle() {
+    if (window.syncIntervalId) {
+      clearInterval(window.syncIntervalId);
+      window.syncIntervalId = null;
+    }
     if (window.bgmReady && window.bgmPlayer && typeof window.bgmPlayer.pauseVideo === 'function') {
       window.bgmPlayer.pauseVideo();
     }
+    if (lobbyPollInterval) {
+      clearInterval(lobbyPollInterval);
+      lobbyPollInterval = null;
+    }
+    currentRoomCode = null;
+    waitingLobby?.classList.add("hidden");
+
     state.running = false;
     state.frameRequested = false;
     keys.clear();
@@ -2443,8 +2478,11 @@
     const list = document.getElementById("live-leaderboard-list");
     if (!silent) list.innerHTML = "<li><span style='color: var(--paper)'>Đang tải dữ liệu...</span></li>";
 
-    fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard?t=${Date.now()}`, { cache: 'no-store' })
-      .then(res => res.ok ? res.json() : [])
+    const promise = typeof window !== "undefined" && window.RoomSync
+      ? window.RoomSync.getLeaderboard()
+      : Promise.resolve([]);
+
+    promise
       .then(data => {
         list.innerHTML = "";
         let ranks = [];
@@ -2608,17 +2646,11 @@
   });
 
   document.getElementById("close-leaderboard-button")?.addEventListener("click", toggleLeaderboard);
-  document.getElementById("clear-leaderboard-button")?.addEventListener("click", () => {
+  document.getElementById("clear-leaderboard-button")?.addEventListener("click", async () => {
     if (confirm("Xóa toàn bộ dữ liệu bảng xếp hạng trên server?")) {
-      fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard`, {
-        method: "POST",
-        body: "[]"
-      }).then(() => {
-        alert("Đã xóa dữ liệu thành công!");
-        renderLiveLeaderboard(); // refresh the list
-      }).catch(err => {
-        alert("Có lỗi xảy ra: " + err);
-      });
+      if (window.RoomSync) await window.RoomSync.clearLeaderboard();
+      alert("Đã xóa dữ liệu thành công!");
+      renderLiveLeaderboard();
     }
   });
 
@@ -2630,24 +2662,213 @@
     document.getElementById("guide-modal")?.classList.add("hidden");
   });
 
-  // Start flow logic
+  // Start flow logic & Multiplayer Lobby integration
   document.getElementById("start-button").addEventListener("click", () => {
     document.getElementById("start-button").classList.add("hidden");
     document.getElementById("guide-button")?.classList.add("hidden");
     const controlStrip = document.querySelector(".control-strip");
     if (controlStrip) controlStrip.classList.add("hidden");
     document.getElementById("name-input-container").classList.remove("hidden");
+    showRoomError("");
   });
 
-  document.getElementById("enter-exhibition-button").addEventListener("click", () => {
+  function showRoomError(msg) {
+    if (!roomInputError) return;
+    if (!msg) {
+      roomInputError.textContent = "";
+      roomInputError.classList.add("hidden");
+    } else {
+      roomInputError.textContent = msg;
+      roomInputError.classList.remove("hidden");
+    }
+  }
+
+  async function joinRoomLobby() {
+    showRoomError("");
     const startInput = document.getElementById("start-name-input");
-    const inputVal = startInput ? startInput.value.trim() : "";
-    if (inputVal) playerName = inputVal;
-    showToast(`Chúc bạn may mắn, ${playerName}!`, 4000);
-    start();
+    const roomInput = document.getElementById("start-room-input");
+    const nameVal = startInput ? startInput.value.trim() : "";
+    const codeVal = roomInput ? roomInput.value.trim() : "";
+
+    if (!nameVal) {
+      showRoomError("Vui lòng nhập tên người chơi của bạn!");
+      startInput?.focus();
+      return;
+    }
+    if (!codeVal || !/^\d{4}$/.test(codeVal)) {
+      showRoomError("Vui lòng nhập đúng mã phòng gồm 4 chữ số!");
+      roomInput?.focus();
+      return;
+    }
+
+    const enterBtn = document.getElementById("enter-exhibition-button");
+    if (enterBtn) {
+      enterBtn.disabled = true;
+      enterBtn.innerHTML = "<span>ĐANG KẾT NỐI PHÒNG...</span>";
+    }
+
+    try {
+      const room = typeof window !== "undefined" && window.RoomSync
+        ? await window.RoomSync.getRoom(codeVal)
+        : null;
+
+      if (!room || String(room.code).trim() !== codeVal) {
+        showRoomError(`Mã phòng [${codeVal}] không tồn tại hoặc chưa được tạo bởi Admin!`);
+        return;
+      }
+
+      if (room.status === "PLAYING") {
+        showRoomError(`Phòng [${codeVal}] đã bắt đầu chơi rồi! Hãy liên hệ Admin để reset hoặc tạo phòng mới.`);
+        return;
+      }
+      if (room.status === "ENDED") {
+        showRoomError(`Phòng [${codeVal}] đã kết thúc! Vui lòng chờ Admin mở lại phòng hoặc tạo phòng mới.`);
+        return;
+      }
+
+      // Add player to room if not yet added
+      if (!Array.isArray(room.players)) room.players = [];
+      const existing = room.players.find(p => p.name === nameVal);
+      if (!existing) {
+        room.players.push({
+          name: nameVal,
+          joinedAt: Date.now()
+        });
+        if (window.RoomSync) await window.RoomSync.saveRoom(room);
+      }
+
+      playerName = nameVal;
+      currentRoomCode = codeVal;
+
+      // Switch to Waiting Lobby screen
+      titleScreen.classList.add("hidden");
+      waitingLobby?.classList.remove("hidden");
+      if (lobbyRoomCode) lobbyRoomCode.textContent = codeVal;
+      if (lobbyPlayerName) lobbyPlayerName.textContent = nameVal;
+      if (lobbyStatusText) {
+        lobbyStatusText.textContent = "Đang chờ Admin bấm BẮT ĐẦU...";
+        lobbyStatusText.style.color = "var(--gold)";
+      }
+
+      renderLobbyRoster(room.players);
+      startLobbyPolling(codeVal);
+
+    } catch (err) {
+      showRoomError("Lỗi kết nối phòng: " + err.message);
+    } finally {
+      if (enterBtn) {
+        enterBtn.disabled = false;
+        enterBtn.innerHTML = "<span>VÀO PHÒNG CHỜ</span><b>↵</b>";
+      }
+    }
+  }
+
+  function renderLobbyRoster(players) {
+    if (!lobbyPlayerList) return;
+    lobbyPlayerList.innerHTML = "";
+    const list = Array.isArray(players) ? players : [];
+    if (lobbyPlayerCount) lobbyPlayerCount.textContent = `${list.length} thành viên`;
+
+    list.forEach(p => {
+      const li = document.createElement("li");
+      li.className = "lobby-player-item" + (p.name === playerName ? " is-me" : "");
+      li.innerHTML = `
+        <span>${p.name === playerName ? "★ " : ""}${p.name}</span>
+        <span class="lobby-player-tag">SẴN SÀNG</span>
+      `;
+      lobbyPlayerList.appendChild(li);
+    });
+  }
+
+  function startLobbyPolling(code) {
+    if (lobbyPollInterval) clearInterval(lobbyPollInterval);
+
+    // Subscribe to real-time events via RoomSync
+    if (typeof window !== "undefined" && window.RoomSync && !window.__roomSyncSubscribed) {
+      window.__roomSyncSubscribed = true;
+      window.RoomSync.subscribe((event) => {
+        if (!currentRoomCode) return;
+        if (event.type === "ROOM_UPDATE" && event.room && event.room.code === currentRoomCode) {
+          renderLobbyRoster(event.room.players);
+          if (event.room.status === "PLAYING") {
+            triggerGameStart();
+          } else if (event.room.status === "ENDED") {
+            alert("Admin đã đóng phòng này.");
+            leaveLobby();
+          }
+        } else if (event.type === "ROOM_CLOSED" && event.code === currentRoomCode) {
+          alert("Admin đã đóng phòng này.");
+          leaveLobby();
+        }
+      });
+    }
+
+    lobbyPollInterval = setInterval(async () => {
+      if (!currentRoomCode || currentRoomCode !== code) return;
+      try {
+        const room = typeof window !== "undefined" && window.RoomSync
+          ? await window.RoomSync.getRoom(code)
+          : null;
+        if (!room) return;
+
+        renderLobbyRoster(room.players);
+
+        if (room.status === "PLAYING") {
+          triggerGameStart();
+        } else if (room.status === "ENDED") {
+          clearInterval(lobbyPollInterval);
+          lobbyPollInterval = null;
+          alert("Admin đã đóng phòng này.");
+          leaveLobby();
+        }
+      } catch (e) {
+        console.warn("Lobby poll error:", e);
+      }
+    }, 2000);
+  }
+
+  function triggerGameStart() {
+    if (lobbyPollInterval) {
+      clearInterval(lobbyPollInterval);
+      lobbyPollInterval = null;
+    }
+    if (lobbyStatusText) {
+      lobbyStatusText.textContent = "🚀 ADMIN ĐÃ BẮT ĐẦU! ĐANG VÀO TRIỂN LÃM...";
+      lobbyStatusText.style.color = "#81c784";
+    }
+    setTimeout(() => {
+      waitingLobby?.classList.add("hidden");
+      showToast(`Chào mừng ${playerName} bước vào triển lãm!`, 4000);
+      start();
+    }, 1000);
+  }
+
+  function leaveLobby() {
+    if (lobbyPollInterval) {
+      clearInterval(lobbyPollInterval);
+      lobbyPollInterval = null;
+    }
+    currentRoomCode = null;
+    waitingLobby?.classList.add("hidden");
+    returnToTitle();
+  }
+
+  // Join Room Button
+  document.getElementById("enter-exhibition-button")?.addEventListener("click", joinRoomLobby);
+
+  // Back to Menu Button
+  backToMenuButton?.addEventListener("click", () => {
+    document.getElementById("name-input-container").classList.add("hidden");
+    document.getElementById("start-button").classList.remove("hidden");
+    document.getElementById("guide-button")?.classList.remove("hidden");
+    const controlStrip = document.querySelector(".control-strip");
+    if (controlStrip) controlStrip.classList.remove("hidden");
   });
 
-  document.getElementById("restart-button").addEventListener("click", start);
+  // Leave Lobby Button
+  leaveLobbyButton?.addEventListener("click", leaveLobby);
+
+  document.getElementById("restart-button")?.addEventListener("click", returnToTitle);
   document.getElementById("quit-button").addEventListener("click", quitGame);
   document.getElementById("ending-exit-button").addEventListener("click", quitGame);
   document.getElementById("return-title-button").addEventListener("click", returnToTitle);

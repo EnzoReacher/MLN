@@ -6,18 +6,25 @@
   <title>Admin Dashboard - The State Exhibition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --paper: #eaddd5;
       --black: #171516;
+      --card-bg: #221f20;
       --red: #bd5c5d;
+      --red-hover: #d16b6c;
       --gold: #cfa861;
       --accent: #5e6853;
+      --green: #4caf50;
+      --border: rgba(255, 255, 255, 0.1);
+    }
+    * {
+      box-sizing: border-box;
     }
     body {
       margin: 0;
-      padding: 0;
+      padding: 30px 20px 60px;
       background-color: var(--black);
       color: var(--paper);
       font-family: 'Inter', sans-serif;
@@ -25,16 +32,60 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      box-sizing: border-box;
-      padding: 40px;
+    }
+    .top-bar {
+      width: 100%;
+      max-width: 1050px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .status-group {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: rgba(234, 221, 213, 0.7);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .dot {
+      width: 9px;
+      height: 9px;
+      background-color: var(--green);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
     }
     h1 {
-      font-family: 'Inter', sans-serif;
       font-weight: 800;
-      font-size: 3.5rem;
-      letter-spacing: -0.05em;
+      font-size: 2.8rem;
+      letter-spacing: -0.04em;
       text-transform: uppercase;
-      margin-bottom: 10px;
+      margin: 0 0 6px;
       text-align: center;
     }
     h1 span {
@@ -43,31 +94,293 @@
     p.subtitle {
       font-family: 'Space Mono', monospace;
       color: rgba(234, 221, 213, 0.6);
-      margin-top: 0;
-      margin-bottom: 50px;
-      font-size: 1.1rem;
+      margin: 0 0 35px;
+      font-size: 0.95rem;
+      text-align: center;
+      letter-spacing: 0.05em;
     }
-    .leaderboard-container {
+
+    /* Container blocks */
+    .dashboard-panel {
       width: 100%;
-      max-width: 1000px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 20px;
+      max-width: 1050px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      margin-bottom: 35px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
     }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 18px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Buttons */
+    button {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-radius: 5px;
+      padding: 10px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+      border: 1px solid var(--red);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--red-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(189, 92, 93, 0.4);
+    }
+    .btn-gold {
+      background: var(--gold);
+      color: var(--black);
+      border: 1px solid var(--gold);
+    }
+    .btn-gold:hover:not(:disabled) {
+      background: #e2ba73;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(207, 168, 97, 0.4);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--paper);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .btn-danger {
+      background: rgba(189, 92, 93, 0.15);
+      color: var(--red);
+      border: 1px solid var(--red);
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--red);
+      color: var(--black);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    /* No room state */
+    .create-room-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .create-room-desc {
+      color: rgba(234, 221, 213, 0.7);
+      margin-bottom: 24px;
+      max-width: 500px;
+      line-height: 1.6;
+    }
+    .input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 480px;
+    }
+    .room-input {
+      flex: 1;
+      padding: 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-align: center;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid var(--gold);
+      color: var(--gold);
+      border-radius: 6px;
+      outline: none;
+    }
+    .room-input:focus {
+      border-color: #ffd88a;
+      box-shadow: 0 0 14px rgba(207, 168, 97, 0.3);
+    }
+
+    /* Active room display */
+    .room-hero-card {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 20px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(207, 168, 97, 0.25);
+      border-radius: 8px;
+      padding: 22px 25px;
+      margin-bottom: 25px;
+    }
+    @media (max-width: 768px) {
+      .room-hero-card {
+        grid-template-columns: 1fr;
+      }
+    }
+    .hero-stat-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .hero-stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: rgba(234, 221, 213, 0.6);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .hero-stat-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: 0.15em;
+      line-height: 1;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      width: fit-content;
+    }
+    .status-badge.waiting {
+      background: rgba(207, 168, 97, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      animation: pulse 2s infinite;
+    }
+    .status-badge.playing {
+      background: rgba(76, 175, 80, 0.15);
+      border: 1px solid var(--green);
+      color: #81c784;
+    }
+
+    /* Room Action bar */
+    .room-actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: center;
+      margin-bottom: 25px;
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .btn-start-room {
+      padding: 14px 28px;
+      font-size: 1.05rem;
+      background: var(--red);
+      color: #fff;
+      border: 1px solid var(--red);
+      box-shadow: 0 6px 20px rgba(189, 92, 93, 0.35);
+    }
+    .btn-start-room:hover:not(:disabled) {
+      background: #cf6768;
+      box-shadow: 0 8px 25px rgba(189, 92, 93, 0.55);
+      transform: translateY(-2px);
+    }
+
+    /* Table styling */
+    .roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Space Mono', monospace;
+    }
+    .roster-table th {
+      color: var(--gold);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-align: left;
+      padding: 12px 16px;
+      border-bottom: 2px solid rgba(207, 168, 97, 0.3);
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .roster-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.95rem;
+    }
+    .roster-table tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .player-tag-ready {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      background: rgba(207, 168, 97, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(207, 168, 97, 0.3);
+    }
+    .player-tag-playing {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      background: rgba(76, 175, 80, 0.15);
+      color: #81c784;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: rgba(234, 221, 213, 0.5);
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      font-style: italic;
+    }
+
+    /* Leaderboard rows */
     .row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 30px;
+      padding: 15px 20px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       font-family: 'Space Mono', monospace;
-      font-size: 1.4rem;
+      font-size: 1.15rem;
     }
     .row.header {
       color: var(--gold);
       font-weight: 700;
-      font-size: 1.1rem;
+      font-size: 0.9rem;
       border-bottom: 2px solid rgba(207, 168, 97, 0.3);
       text-transform: uppercase;
       letter-spacing: 0.1em;
@@ -79,166 +392,485 @@
     .col-name { width: 50%; font-weight: bold; }
     .col-score { width: 20%; text-align: right; color: var(--gold); }
     .col-time { width: 20%; text-align: right; color: rgba(234, 221, 213, 0.7); }
-    
-    .rank-1 .col-rank, .rank-1 .col-name { color: var(--gold); font-size: 1.8rem; }
-    .rank-2 .col-rank, .rank-2 .col-name { color: #c0c0c0; font-size: 1.6rem; }
-    .rank-3 .col-rank, .rank-3 .col-name { color: #cd7f32; font-size: 1.5rem; }
+    .rank-1 .col-rank, .rank-1 .col-name { color: var(--gold); font-size: 1.4rem; }
+    .rank-2 .col-rank, .rank-2 .col-name { color: #c0c0c0; font-size: 1.25rem; }
+    .rank-3 .col-rank, .rank-3 .col-name { color: #cd7f32; font-size: 1.2rem; }
 
-    .admin-controls {
-      position: absolute;
-      top: 30px;
-      right: 30px;
-      display: flex;
-      gap: 20px;
-      align-items: center;
-    }
-    .status-indicator {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.9rem;
-      color: rgba(234, 221, 213, 0.6);
-      background: rgba(255, 255, 255, 0.05);
-      padding: 8px 16px;
-      border-radius: 20px;
-    }
-    .dot {
-      width: 10px;
-      height: 10px;
-      background-color: #4CAF50;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #4CAF50;
-      animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.3; }
-      100% { opacity: 1; }
-    }
-    button {
-      background: rgba(189, 92, 93, 0.1);
-      color: var(--red);
-      border: 1px solid var(--red);
-      padding: 10px 20px;
-      font-family: 'Space Mono', monospace;
-      font-size: 0.9rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.2s;
-      border-radius: 4px;
-    }
-    button:hover {
-      background: var(--red);
-      color: var(--black);
-    }
-    .empty-state {
-      text-align: center;
-      padding: 60px;
-      color: rgba(234, 221, 213, 0.5);
-      font-family: 'Space Mono', monospace;
-      font-size: 1.2rem;
-      font-style: italic;
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
 <body>
 
-  <div class="admin-controls">
-    <div class="status-indicator">
-      <div class="dot"></div>
-      <span id="last-update">Đang kết nối...</span>
-    </div>
-    <button id="clear-btn">XÓA DỮ LIỆU</button>
-  </div>
-
-  <h1><span>TOP</span> THÁM HIỂM</h1>
-  <p class="subtitle">LIVE LEADERBOARD - TỰ ĐỘNG CẬP NHẬT MỖI 3 GIÂY</p>
-
-  <div class="leaderboard-container">
-    <div class="row header">
-      <div class="col-rank">TOP</div>
-      <div class="col-name">TÊN NGƯỜI CHƠI</div>
-      <div class="col-score">TỔNG ĐIỂM</div>
-      <div class="col-time">THỜI GIAN</div>
-    </div>
-    <div id="leaderboard-list">
-      <div class="empty-state">Đang tải dữ liệu...</div>
+  <!-- Top bar with status -->
+  <div class="top-bar">
+    <div class="brand-title">THE STATE // EXHIBITION ADMIN</div>
+    <div class="status-group">
+      <div class="status-indicator">
+        <div class="dot"></div>
+        <span id="last-update">Đang kết nối...</span>
+      </div>
     </div>
   </div>
 
+  <h1><span>QUẢN TRỊ</span> TRIỂN LÃM</h1>
+  <p class="subtitle">HỆ THỐNG ĐIỀU PHỐI PHÒNG THI ĐẤU & BẢNG XẾP HẠNG THỜI GIAN THỰC</p>
+
+  <!-- 1. ROOM CONTROLLER PANEL -->
+  <section class="dashboard-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span>🎮 QUẢN LÝ PHÒNG ĐẤU 4 SỐ</span>
+      </div>
+      <div id="room-header-actions" class="hidden">
+        <button id="refresh-room-btn" class="btn-outline">🔄 Làm mới danh sách</button>
+      </div>
+    </div>
+
+    <!-- State A: Chưa tạo phòng -->
+    <div id="no-room-state" class="create-room-box">
+      <p class="create-room-desc">
+        Tạo mã phòng 4 số để các bạn học sinh / người chơi tham gia vào sảnh chờ. 
+        Admin sẽ kiểm soát danh sách người chơi và quyết định thời điểm bấm bắt đầu cùng lúc!
+      </p>
+      <div class="input-group">
+        <input type="text" id="room-code-input" class="room-input" maxlength="4" placeholder="0000" inputmode="numeric" />
+        <button id="random-code-btn" class="btn-outline" type="button" title="Tạo mã 4 số ngẫu nhiên">🎲 Sinh mã</button>
+      </div>
+      <button id="create-room-btn" class="btn-gold" type="button" style="padding: 14px 32px; font-size: 1rem;">
+        <span>TẠO PHÒNG MỚI & MỞ SẢNH CHỜ</span> →
+      </button>
+    </div>
+
+    <!-- State B: Phòng đang mở -->
+    <div id="active-room-state" class="hidden">
+      <!-- Hero Room Stats -->
+      <div class="room-hero-card">
+        <div class="hero-stat-item">
+          <span class="hero-stat-label">MÃ PHÒNG (CHO NGƯỜI CHƠI)</span>
+          <span id="display-room-code" class="hero-stat-value">0000</span>
+        </div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-label">TRẠNG THÁI HIỆN TẠI</span>
+          <div id="display-room-status">
+            <span class="status-badge waiting">⏳ ĐANG CHỜ NGƯỜI CHƠI</span>
+          </div>
+        </div>
+        <div class="hero-stat-item">
+          <span class="hero-stat-label">SĨ SỐ ĐÃ VÀO PHÒNG</span>
+          <span id="display-player-count" class="hero-stat-value" style="color: var(--paper);">0</span>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="room-actions-bar">
+        <button id="start-room-btn" class="btn-start-room" type="button">
+          <span>🚀 BẮT ĐẦU PHÒNG CHO TẤT CẢ NGƯỜI CHƠI</span>
+        </button>
+        <button id="recreate-room-btn" class="btn-gold" type="button" style="display: none;">
+          <span>🔄 CHƠI LẠI PHÒNG NÀY (RESET SẢNH CHỜ)</span>
+        </button>
+        <button id="close-room-btn" class="btn-danger" type="button" style="margin-left: auto;">
+          <span>🛑 ĐÓNG / HỦY PHÒNG NÀY</span>
+        </button>
+      </div>
+
+      <!-- Player Roster Table -->
+      <div style="background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th style="width: 10%;">#</th>
+              <th style="width: 50%;">TÊN NGƯỜI CHƠI ĐÃ VÀO</th>
+              <th style="width: 20%;">GIỜ VÀO</th>
+              <th style="width: 20%; text-align: right;">TRẠNG THÁI</th>
+            </tr>
+          </thead>
+          <tbody id="room-players-table-body">
+            <tr>
+              <td colspan="4" class="empty-state">Chưa có người chơi nào vào phòng. Hãy chia sẻ mã phòng cho học sinh!</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. LIVE LEADERBOARD PANEL -->
+  <section class="dashboard-panel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span>🏆 BẢNG XẾP HẠNG TRỰC TIẾP (LIVE LEADERBOARD)</span>
+      </div>
+      <button id="clear-btn" class="btn-danger">XÓA DỮ LIỆU BXH</button>
+    </div>
+
+    <div class="leaderboard-container" style="background: rgba(0,0,0,0.25); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
+      <div class="row header">
+        <div class="col-rank">TOP</div>
+        <div class="col-name">TÊN NGƯỜI CHƠI</div>
+        <div class="col-score">TỔNG ĐIỂM</div>
+        <div class="col-time">THỜI GIAN</div>
+      </div>
+      <div id="leaderboard-list">
+        <div class="empty-state">Đang tải bảng xếp hạng...</div>
+      </div>
+    </div>
+  </section>
+
+  <script src="./sync.js"></script>
   <script>
-    const KVDB_BUCKET = "ADkjsg26cP3urgwo94ctcg";
+    // DOM Elements - Room
+    const noRoomState = document.getElementById("no-room-state");
+    const activeRoomState = document.getElementById("active-room-state");
+    const roomCodeInput = document.getElementById("room-code-input");
+    const randomCodeBtn = document.getElementById("random-code-btn");
+    const createRoomBtn = document.getElementById("create-room-btn");
+    const displayRoomCode = document.getElementById("display-room-code");
+    const displayRoomStatus = document.getElementById("display-room-status");
+    const displayPlayerCount = document.getElementById("display-player-count");
+    const startRoomBtn = document.getElementById("start-room-btn");
+    const recreateRoomBtn = document.getElementById("recreate-room-btn");
+    const closeRoomBtn = document.getElementById("close-room-btn");
+    const refreshRoomBtn = document.getElementById("refresh-room-btn");
+    const roomHeaderActions = document.getElementById("room-header-actions");
+    const roomPlayersTableBody = document.getElementById("room-players-table-body");
+
+    // DOM Elements - Leaderboard & Global
     const listEl = document.getElementById("leaderboard-list");
     const clearBtn = document.getElementById("clear-btn");
     const updateText = document.getElementById("last-update");
 
-    function fetchLeaderboard() {
-      fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard?t=${Date.now()}`, { cache: 'no-store' })
-        .then(res => res.ok ? res.json() : [])
-        .then(data => {
-          if (!Array.isArray(data) || data.length === 0) {
-            listEl.innerHTML = `<div class="empty-state">Chưa có người chơi nào hoàn thành triển lãm.</div>`;
-            updateTime();
-            return;
-          }
+    let currentRoom = null;
+    let roomPollTimer = null;
+    let leaderboardPollTimer = null;
 
-          // Sort exactly like the game: score descending, then time ascending
-          data.sort((a, b) => b.score - a.score || a.time - b.time);
-          
-          listEl.innerHTML = "";
-          // Hiển thị top 15 người xuất sắc nhất
-          data.slice(0, 15).forEach((entry, i) => {
-            const row = document.createElement("div");
-            row.className = `row rank-${i + 1}`;
-            
-            // Format time MM:SS
-            const timeStr = `${Math.floor(entry.time / 60)}:${String(entry.time % 60).padStart(2, "0")}`;
-            
-            row.innerHTML = `
-              <div class="col-rank">#${i + 1}</div>
-              <div class="col-name">${entry.name}</div>
-              <div class="col-score">${entry.score} pts</div>
-              <div class="col-time">${timeStr}</div>
-            `;
-            listEl.appendChild(row);
-          });
-          
-          updateTime();
-        })
-        .catch(err => {
-          console.error("Lỗi lấy dữ liệu:", err);
-          updateText.textContent = "Mất kết nối mạng!";
-          document.querySelector('.dot').style.backgroundColor = "var(--red)";
-          document.querySelector('.dot').style.boxShadow = "0 0 10px var(--red)";
-        });
+    // --- Helper: Format time ---
+    function formatTime(timestamp) {
+      if (!timestamp) return "--:--:--";
+      const d = new Date(timestamp);
+      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
     }
 
-    function updateTime() {
+    function updateConnectionStatus(isOk = true) {
       const now = new Date();
-      updateText.textContent = `Cập nhật: ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-      document.querySelector('.dot').style.backgroundColor = "#4CAF50";
-      document.querySelector('.dot').style.boxShadow = "0 0 10px #4CAF50";
+      updateText.textContent = `Cập nhật: ${formatTime(now)}`;
+      const dot = document.querySelector('.dot');
+      if (dot) {
+        dot.style.backgroundColor = isOk ? "var(--green)" : "var(--red)";
+        dot.style.boxShadow = isOk ? "0 0 8px var(--green)" : "0 0 8px var(--red)";
+      }
     }
 
-    clearBtn.addEventListener("click", () => {
-      if (confirm("CẢNH BÁO: Hành động này sẽ xóa toàn bộ dữ liệu trên bảng xếp hạng của TẤT CẢ mọi người. Bạn có chắc chắn muốn xóa?")) {
-        clearBtn.textContent = "ĐANG XÓA...";
-        fetch(`https://kvdb.io/${KVDB_BUCKET}/leaderboard`, {
-          method: "POST",
-          body: "[]" // Ghi đè bằng mảng rỗng
-        }).then(() => {
-          clearBtn.textContent = "XÓA DỮ LIỆU";
-          fetchLeaderboard();
-        });
+    // --- 1. ROOM MANAGEMENT LOGIC ---
+
+    // Generate random 4-digit code
+    randomCodeBtn.addEventListener("click", () => {
+      const rand = Math.floor(1000 + Math.random() * 9000).toString();
+      roomCodeInput.value = rand;
+    });
+
+    // Create Room
+    createRoomBtn.addEventListener("click", async () => {
+      let code = roomCodeInput.value.trim();
+      if (!code) {
+        code = Math.floor(1000 + Math.random() * 9000).toString();
+        roomCodeInput.value = code;
+      }
+      if (!/^\d{4}$/.test(code)) {
+        alert("Vui lòng nhập đúng 4 chữ số cho mã phòng!");
+        return;
+      }
+
+      createRoomBtn.disabled = true;
+      createRoomBtn.textContent = "ĐANG TẠO PHÒNG...";
+
+      // Reset clean room data (clearing any old session with same code)
+      const newRoom = {
+        code: code,
+        status: "WAITING",
+        createdAt: Date.now(),
+        startedAt: null,
+        players: []
+      };
+
+      try {
+        await window.RoomSync.saveRoom(newRoom);
+        currentRoom = newRoom;
+        renderActiveRoom(newRoom);
+        startRoomPolling(code);
+      } catch (err) {
+        alert("Không thể tạo phòng: " + err.message);
+      } finally {
+        createRoomBtn.disabled = false;
+        createRoomBtn.textContent = "TẠO PHÒNG MỚI & MỞ SẢNH CHỜ →";
       }
     });
 
-    // Chạy lần đầu tiên
-    fetchLeaderboard();
+    // Start Room (Allow all players to enter 3D game)
+    startRoomBtn.addEventListener("click", async () => {
+      if (!currentRoom) return;
 
-    // Tự động làm mới mỗi 3 giây
-    setInterval(fetchLeaderboard, 3000);
+      if (currentRoom.status === "PLAYING") {
+        alert("Phòng này đã được bắt đầu!");
+        return;
+      }
+
+      const confirmed = confirm(`Bạn có chắc chắn muốn BẮT ĐẦU PHÒNG [${currentRoom.code}] cho ${currentRoom.players ? currentRoom.players.length : 0} người chơi?`);
+      if (!confirmed) return;
+
+      startRoomBtn.disabled = true;
+      startRoomBtn.textContent = "ĐANG PHÁT LỆNH...";
+
+      try {
+        const freshest = await window.RoomSync.getRoom(currentRoom.code);
+        const roomData = freshest || currentRoom;
+
+        roomData.status = "PLAYING";
+        roomData.startedAt = Date.now();
+
+        await window.RoomSync.saveRoom(roomData);
+        currentRoom = roomData;
+        renderActiveRoom(roomData);
+        alert(`ĐÃ BẮT ĐẦU PHÒNG THÀNH CÔNG! Toàn bộ người chơi đang được đưa vào triển lãm.`);
+      } catch (err) {
+        alert("Lỗi khi phát lệnh bắt đầu: " + err.message);
+        startRoomBtn.disabled = false;
+        startRoomBtn.textContent = "🚀 BẮT ĐẦU PHÒNG CHO TẤT CẢ NGƯỜI CHƠI";
+      }
+    });
+
+    // Recreate / Reset Room (For new round with same room code)
+    recreateRoomBtn?.addEventListener("click", async () => {
+      if (!currentRoom) return;
+      if (!confirm(`Bạn có chắc chắn muốn MỞ LẠI SẢNH CHỜ cho phòng [${currentRoom.code}] để bắt đầu vòng thi đấu mới?`)) return;
+
+      recreateRoomBtn.disabled = true;
+      recreateRoomBtn.textContent = "ĐANG RESET SẢNH...";
+
+      const newRoom = {
+        code: String(currentRoom.code).trim(),
+        status: "WAITING",
+        createdAt: Date.now(),
+        startedAt: null,
+        players: []
+      };
+
+      try {
+        await window.RoomSync.saveRoom(newRoom);
+        currentRoom = newRoom;
+        renderActiveRoom(newRoom);
+        alert(`ĐÃ MỞ LẠI PHÒNG [${newRoom.code}] THÀNH CÔNG! Người chơi có thể nhập lại mã phòng để vào sảnh chờ ngay.`);
+      } catch (err) {
+        alert("Lỗi khi reset phòng: " + err.message);
+      } finally {
+        recreateRoomBtn.disabled = false;
+        recreateRoomBtn.innerHTML = "<span>🔄 CHƠI LẠI PHÒNG NÀY (RESET SẢNH CHỜ)</span>";
+      }
+    });
+
+    // Close / End Room
+    closeRoomBtn.addEventListener("click", async () => {
+      if (!currentRoom) return;
+      const closedCode = currentRoom.code;
+      if (!confirm(`Bạn có chắc chắn muốn ĐÓNG phòng [${closedCode}]? Hành động này sẽ kết thúc phiên chơi hiện tại.`)) return;
+
+      closeRoomBtn.disabled = true;
+      closeRoomBtn.textContent = "ĐANG ĐÓNG...";
+
+      try {
+        await window.RoomSync.closeRoom(closedCode);
+        if (roomPollTimer) clearInterval(roomPollTimer);
+        currentRoom = null;
+
+        noRoomState.classList.remove("hidden");
+        activeRoomState.classList.add("hidden");
+        roomHeaderActions.classList.add("hidden");
+        // Giữ lại mã phòng vừa đóng để Admin có thể bấm Tạo Lại ngay lập tức nếu muốn
+        roomCodeInput.value = closedCode;
+      } catch (err) {
+        alert("Lỗi khi đóng phòng: " + err.message);
+      } finally {
+        closeRoomBtn.disabled = false;
+        closeRoomBtn.textContent = "🛑 ĐÓNG / HỦY PHÒNG NÀY";
+      }
+    });
+
+    // Manual Refresh
+    refreshRoomBtn.addEventListener("click", () => {
+      if (currentRoom) fetchRoomData(currentRoom.code);
+    });
+
+    // Fetch Room Data
+    async function fetchRoomData(code) {
+      try {
+        const data = await window.RoomSync.getRoom(code);
+        if (data && String(data.code).trim() === String(code).trim()) {
+          currentRoom = data;
+          renderActiveRoom(data);
+          updateConnectionStatus(true);
+        }
+      } catch (err) {
+        console.warn("Lỗi cập nhật phòng:", err);
+        updateConnectionStatus(false);
+      }
+    }
+
+    // Render Room into UI
+    function renderActiveRoom(room) {
+      noRoomState.classList.add("hidden");
+      activeRoomState.classList.remove("hidden");
+      roomHeaderActions.classList.remove("hidden");
+
+      displayRoomCode.textContent = room.code;
+      displayPlayerCount.textContent = (room.players ? room.players.length : 0);
+
+      // Status Badge & Action buttons
+      if (room.status === "WAITING") {
+        displayRoomStatus.innerHTML = `<span class="status-badge waiting">⏳ ĐANG CHỜ NGƯỜI CHƠI VÀO</span>`;
+        startRoomBtn.disabled = false;
+        startRoomBtn.classList.remove("btn-outline");
+        startRoomBtn.classList.add("btn-start-room");
+        startRoomBtn.innerHTML = `<span>🚀 BẮT ĐẦU PHÒNG CHO TẤT CẢ NGƯỜI CHƠI</span>`;
+        if (recreateRoomBtn) recreateRoomBtn.style.display = "none";
+      } else if (room.status === "PLAYING") {
+        displayRoomStatus.innerHTML = `<span class="status-badge playing">🚀 ĐÃ BẮT ĐẦU (ĐANG THI ĐẤU)</span>`;
+        startRoomBtn.disabled = true;
+        startRoomBtn.classList.remove("btn-start-room");
+        startRoomBtn.classList.add("btn-outline");
+        startRoomBtn.innerHTML = `<span>✅ PHÒNG ĐANG DIỄN RA</span>`;
+        if (recreateRoomBtn) recreateRoomBtn.style.display = "inline-flex";
+      } else {
+        displayRoomStatus.innerHTML = `<span class="status-badge" style="background: rgba(255,255,255,0.1); color: var(--paper);">ĐÃ KẾT THÚC</span>`;
+        startRoomBtn.disabled = true;
+        if (recreateRoomBtn) recreateRoomBtn.style.display = "inline-flex";
+      }
+
+      // Roster Table
+      const players = Array.isArray(room.players) ? room.players : [];
+      if (players.length === 0) {
+        roomPlayersTableBody.innerHTML = `
+          <tr>
+            <td colspan="4" class="empty-state">Chưa có người chơi nào vào phòng. Hãy chia sẻ mã phòng <strong>${room.code}</strong> cho học sinh!</td>
+          </tr>
+        `;
+      } else {
+        roomPlayersTableBody.innerHTML = "";
+        players.forEach((p, idx) => {
+          const tr = document.createElement("tr");
+          const tagHtml = room.status === "WAITING"
+            ? `<span class="player-tag-ready">SẴN SÀNG</span>`
+            : `<span class="player-tag-playing">ĐANG THI ĐẤU</span>`;
+
+          tr.innerHTML = `
+            <td style="color: var(--gold); font-weight: bold;">#${idx + 1}</td>
+            <td style="font-weight: 600; color: var(--paper);">${p.name}</td>
+            <td style="color: rgba(234, 221, 213, 0.7); font-size: 0.85rem;">${formatTime(p.joinedAt)}</td>
+            <td style="text-align: right;">${tagHtml}</td>
+          `;
+          roomPlayersTableBody.appendChild(tr);
+        });
+      }
+    }
+
+    // Start Polling for active room
+    function startRoomPolling(code) {
+      if (roomPollTimer) clearInterval(roomPollTimer);
+      fetchRoomData(code);
+      roomPollTimer = setInterval(() => {
+        if (currentRoom && currentRoom.code) {
+          fetchRoomData(currentRoom.code);
+        }
+      }, 2000);
+    }
+
+    // Subscribe to real-time events via RoomSync
+    if (window.RoomSync) {
+      window.RoomSync.subscribe((event) => {
+        if (event.type === "ROOM_UPDATE" && event.room) {
+          if (currentRoom && currentRoom.code === event.room.code) {
+            currentRoom = event.room;
+            renderActiveRoom(event.room);
+            updateConnectionStatus(true);
+          }
+        } else if (event.type === "ROOM_CLOSED") {
+          if (currentRoom && currentRoom.code === event.code) {
+            currentRoom = null;
+            noRoomState.classList.remove("hidden");
+            activeRoomState.classList.add("hidden");
+            roomHeaderActions.classList.add("hidden");
+          }
+        }
+      });
+    }
+
+    // Check on startup if there is an active room
+    async function initRoomCheck() {
+      try {
+        const active = await window.RoomSync.getActiveRoom();
+        if (active && active.code && active.status !== "ENDED") {
+          currentRoom = active;
+          renderActiveRoom(active);
+          startRoomPolling(active.code);
+          return;
+        }
+      } catch (err) {
+        console.warn("Không có active_room:", err);
+      }
+      noRoomState.classList.remove("hidden");
+      activeRoomState.classList.add("hidden");
+      roomHeaderActions.classList.add("hidden");
+    }
+
+    // --- 2. LIVE LEADERBOARD LOGIC ---
+
+    async function fetchLeaderboard() {
+      try {
+        const data = await window.RoomSync.getLeaderboard();
+        if (!Array.isArray(data) || data.length === 0) {
+          listEl.innerHTML = `<div class="empty-state">Chưa có người chơi nào hoàn thành triển lãm.</div>`;
+          updateConnectionStatus(true);
+          return;
+        }
+
+        data.sort((a, b) => b.score - a.score || a.time - b.time);
+        listEl.innerHTML = "";
+
+        data.slice(0, 15).forEach((entry, i) => {
+          const row = document.createElement("div");
+          row.className = `row rank-${i + 1}`;
+          const timeStr = `${Math.floor(entry.time / 60)}:${String(entry.time % 60).padStart(2, "0")}`;
+
+          row.innerHTML = `
+            <div class="col-rank">#${i + 1}</div>
+            <div class="col-name">${entry.name}</div>
+            <div class="col-score">${entry.score} pts</div>
+            <div class="col-time">${timeStr}</div>
+          `;
+          listEl.appendChild(row);
+        });
+
+        updateConnectionStatus(true);
+      } catch (err) {
+        console.warn("Lỗi lấy dữ liệu BXH:", err);
+        updateConnectionStatus(false);
+      }
+    }
+
+    clearBtn.addEventListener("click", async () => {
+      if (confirm("CẢNH BÁO: Hành động này sẽ xóa toàn bộ dữ liệu trên bảng xếp hạng của TẤT CẢ mọi người. Bạn có chắc chắn muốn xóa?")) {
+        clearBtn.textContent = "ĐANG XÓA...";
+        await window.RoomSync.clearLeaderboard();
+        clearBtn.textContent = "XÓA DỮ LIỆU BXH";
+        fetchLeaderboard();
+      }
+    });
+
+    // Startup
+    initRoomCheck();
+    fetchLeaderboard();
+    leaderboardPollTimer = setInterval(fetchLeaderboard, 4000);
   </script>
 </body>
 </html>
