@@ -185,9 +185,14 @@
       correct: 2
     },
     "gate-end": {
-      question: "Động lực trực tiếp của cách mạng xã hội là gì?",
-      options: ["Lực lượng sản xuất", "Giai cấp thống trị", "Quần chúng nhân dân", "Các thiết chế nhà nước"],
-      correct: 2
+      question: "Vận dụng: Kinh tế số có còn tuân theo quy luật cung – cầu truyền thống?",
+      options: [
+        "Vẫn tuân theo bản chất, nhưng biểu hiện linh hoạt và tốc độ phản ứng nhanh hơn nhờ dữ liệu và thuật toán số",
+        "Không còn tuân theo, vì kinh tế số đã xóa bỏ hoàn toàn mối quan hệ cung – cầu của thị trường truyền thống",
+        "Hoàn toàn rập khuôn như truyền thống, công nghệ không làm thay đổi tốc độ hay phương thức điều tiết giá cả",
+        "Không, vì thuật toán trên nền tảng số tự ý ấn định giá độc quyền mà không phụ thuộc nhu cầu thực tế"
+      ],
+      correct: 0
     }
   };
 
