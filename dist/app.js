@@ -287,12 +287,12 @@
       ]
     },
     {
-      id: "revolt", index: "04", name: "MÂU THUẪN & CHUYỂN HÓA", label: "THE FAULTLINE", centerZ: -72, zBack: -62, zFront: -82,
-      color: "#c95e62", accent: "#f1b07d", artwork: "revolt", artworkImage: "./assets/ch04-revolution-origin.webp",
+      id: "revolt", index: "04", name: "QUY LUẬT CẠNH TRANH", label: "LAW OF COMPETITION", centerZ: -72, zBack: -62, zFront: -82,
+      color: "#c95e62", accent: "#f1b07d", artwork: "revolt", artworkImage: "./assets/ktct-ch04-market-competition.webp",
       artworks: [
-        { image: "./assets/ch04-revolution-origin.webp", wall: "left", zOffset: 0, height: 3.45, maxWidth: 5.25 },
-        { image: "./assets/ch04-revolution-force.webp", wall: "right", zOffset: -5.4, height: 2.55, maxWidth: 4.25 },
-        { image: "./assets/ch04-revolution-method.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.25 }
+        { image: "./assets/ktct-ch04-market-competition.webp", wall: "left", zOffset: 0, height: 2.85, maxWidth: 4.8 },
+        { image: "./assets/ktct-ch04-tech-rd.webp", wall: "right", zOffset: -5.4, height: 2.75, maxWidth: 4.5 },
+        { image: "./assets/ktct-ch04-unfair-competition.webp", wall: "right", zOffset: 5.4, height: 2.8, maxWidth: 4.6 }
       ]
     }
   ];
@@ -308,14 +308,14 @@
     base: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "KINH TẾ THỊ TRƯỜNG", topic: "Nền kinh tế hàng hóa, các quy luật thị trường và học thuyết kinh tế chính trị" },
     class: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "GIAI CẤP & SỞ HỮU", topic: "Giai cấp, sở hữu và cơ sở kinh tế của quyền lực Nhà nước" },
     state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "ĐIỀU TIẾT VĨ MÔ", topic: "Vai trò quản lý của Nhà nước, ổn định tiền tệ và cân đối cung - cầu lành mạnh", special: true },
-    revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CÁCH MẠNG XÃ HỘI", topic: "Cách mạng xã hội, giành chính quyền và chuyển hóa lịch sử" }
+    revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CẠNH TRANH & THỊ TRƯỜNG", topic: "Bản chất quy luật cạnh tranh, động lực phát triển và tác động trong kinh tế thị trường" }
   });
 
   const gates = [
     { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "QUY LUẬT GIÁ TRỊ", title: "Cổng kiểm tra Chương 01", type: "GATE / 01", number: "01 / 04" },
     { id: "gate-state", x: 0, z: -36, radius: 2.5, kind: "gate", requiredEvidence: "class", target: "CUNG - CẦU & TIỀN TỆ", title: "Cổng mật mã Chương 02", type: "GATE / 02", number: "02 / 04" },
     { id: "gate-revolt", x: 0, z: -60, radius: 2.5, kind: "gate", requiredEvidence: "state", target: "QUY LUẬT CẠNH TRANH", title: "Cổng kiểm tra Chương 03", type: "GATE / 03", number: "03 / 04" },
-    { id: "gate-end", x: 0, z: -84, radius: 2.5, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
+    { id: "gate-end", x: 0, z: -84, radius: 2.5, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cổng tổng kết & Báo cáo thu hoạch", type: "EXIT / FIELD REPORT", number: "04 / 04" }
   ];
 
   const interactables = [

@@ -187,44 +187,58 @@ window.THE_STATE_CONTENT = [
   {
     id: "revolt",
     code: "04",
-    label: "THE FAULTLINE",
-    title: "Cách mạng xã hội: mâu thuẫn và chuyển hóa",
+    label: "LAW OF COMPETITION",
+    title: "Quy luật Cạnh tranh trong nền kinh tế thị trường",
     sections: [
       {
-        label: "01 / KHÁI NIỆM",
-        title: "Cách mạng xã hội thay đổi nền tảng lỗi thời",
-        lead: "Cách mạng xã hội thay thế một hình thái kinh tế - xã hội cũ bằng một hình thái cao hơn; vấn đề trung tâm là giành chính quyền.",
+        label: "01 / KHÁI NIỆM & HÌNH THỨC",
+        title: "Bản chất và các hình thức cạnh tranh kinh tế",
+        lead: "Quy luật cạnh tranh là quy luật kinh tế điều tiết khách quan mối quan hệ ganh đua kinh tế giữa các chủ thể trong sản xuất và trao đổi hàng hoá nhằm giành ưu thế và tối đa hóa lợi ích.",
         paragraphs: [
-          "Theo nghĩa rộng, đó là thay thế hình thái kinh tế - xã hội lỗi thời bằng hình thái cao hơn; theo nghĩa hẹp, lật đổ chế độ chính trị lỗi thời và lập chế độ tiến bộ hơn. Khác đảo chính, tiến hóa và cải cách, cách mạng làm đổi căn bản quan hệ xã hội; vấn đề trung tâm là giành chính quyền.",
-          "Nguồn gốc sâu xa là mâu thuẫn giữa lực lượng sản xuất đang phát triển và quan hệ sản xuất cũ bị giai cấp thống trị dùng Nhà nước để duy trì."
+          "Kinh tế thị trường càng phát triển thì cạnh tranh càng quyết liệt. Cạnh tranh trong nội bộ ngành diễn ra giữa các chủ thể cùng một ngành; họ ra sức cải tiến kỹ thuật, đổi mới công nghệ, tăng năng suất lao động để hạ thấp giá trị cá biệt, hình thành nên giá trị thị trường của hàng hóa.",
+          "Cạnh tranh giữa các ngành là sự cạnh tranh giữa các chủ thể thuộc các ngành sản xuất khác nhau nhằm tìm nơi đầu tư có lợi nhất. Biện pháp thực hiện là các doanh nghiệp tự do di chuyển nguồn lực và vốn đầu tư từ ngành này sang ngành khác, điều hòa tỷ suất lợi nhuận bình quân."
         ],
         images: [
-          { src: "./assets/ch04-revolution-origin.webp", alt: "Quần chúng trong một cuộc cách mạng lịch sử", topic: "Cách mạng xã hội: thay thế trật tự và chính quyền lỗi thời", caption: "Hình ảnh cách mạng minh họa sự chuyển hóa căn bản của quan hệ xã hội và vấn đề giành chính quyền." }
+          {
+            src: "./assets/ktct-ch04-market-competition.webp",
+            alt: "Hội chợ triển lãm thương mại quốc tế ngành dệt may và thiết bị công nghiệp",
+            topic: "Quy luật cạnh tranh: Ganh đua kinh tế trong nội bộ ngành và mở rộng thị trường",
+            caption: "Không gian triển lãm thương mại phản ánh sự ganh đua và hợp tác giữa các doanh nghiệp: các chủ thể giới thiệu công nghệ, mở rộng thị phần và tìm kiếm cơ hội đầu tư sinh lời tốt nhất. (Nguồn tư liệu: Triển lãm Quốc tế Dệt may & Da giày Việt Nam)"
+          }
         ]
       },
       {
-        label: "02 / LỰC LƯỢNG",
-        title: "Quần chúng là chủ thể của chuyển biến",
-        lead: "Cách mạng biến đổi kinh tế, chính trị, văn hóa và tư tưởng; quần chúng là nguồn sáng tạo và động lực trực tiếp.",
+        label: "02 / TÁC ĐỘNG TÍCH CỰC",
+        title: "Động lực phát triển kinh tế và tiến bộ xã hội",
+        lead: "Cạnh tranh lành mạnh đóng vai trò là động lực mạnh mẽ thúc đẩy lực lượng sản xuất, phân bổ hiệu quả nguồn lực và thỏa mãn nhu cầu xã hội.",
         paragraphs: [
-          "Chỉ cách mạng mới thay thế được quan hệ sản xuất cũ và hình thái kinh tế - xã hội cũ. Tính chất mỗi cuộc cách mạng do mâu thuẫn kinh tế và lực lượng xã hội quyết định.",
-          "Lực lượng tham gia gồm nhiều giai cấp và tầng lớp; động lực là những lực lượng gắn bó lợi ích với cách mạng. Giai cấp đại diện cho phương thức sản xuất mới giữ vai trò lãnh đạo; tài liệu liên hệ bốn cuộc cách mạng, năm hình thái kinh tế - xã hội và Cách mạng Tháng Tám 1945 ở Việt Nam."
+          "Để nâng cao năng lực cạnh tranh, doanh nghiệp không ngừng đầu tư nghiên cứu phát triển (R&D), áp dụng công nghệ mới và nâng cao trình độ tay nghề của người lao động. Cạnh tranh là cơ chế thị trường điều chỉnh phân bổ nguồn lực vào những chủ thể sử dụng hiệu quả hơn cả.",
+          "Vì mục đích lợi nhuận, người sản xuất buộc phải tạo ra khối lượng hàng hóa đa dạng, phong phú, nâng cao chất lượng và hạ giá thành để người tiêu dùng lựa chọn. Như P. Samuelson khẳng định: không một nhà lập kế hoạch nào có thể tìm ra giải pháp tối ưu hơn thị trường cạnh tranh."
         ],
         images: [
-          { src: "./assets/ch04-revolution-force.webp", alt: "Diễn giả và quần chúng tập hợp trong một biến chuyển cách mạng", topic: "Lực lượng cách mạng: quần chúng và giai cấp lãnh đạo", caption: "Diễn giả, cờ và đám đông gợi quan hệ giữa lực lượng quần chúng, động lực xã hội và vai trò lãnh đạo." },
-          { src: "./assets/ch04-mass-action.webp", alt: "Quần chúng hành động tập thể trong một cuộc cách mạng", topic: "Lực lượng cách mạng: hành động tập thể của quần chúng", caption: "Hành động tập thể minh họa quần chúng là chủ thể sáng tạo và động lực trực tiếp của biến đổi lịch sử." }
+          {
+            src: "./assets/ktct-ch04-tech-rd.webp",
+            alt: "Kỹ sư và chuyên gia nghiên cứu phát triển sản phẩm tại phòng Lab Masan Industrial",
+            topic: "Tác động tích cực: Nghiên cứu phát triển (R&D), nâng cao chất lượng sản phẩm",
+            caption: "Phòng nghiên cứu và kiểm định chất lượng sản phẩm minh họa tác động tích cực của cạnh tranh: doanh nghiệp buộc phải đầu tư khoa học công nghệ, chuẩn hóa chất lượng để đáp ứng nhu cầu khắt khe của xã hội. (Nguồn: Báo Thanh Niên thanhnien.vn)"
+          }
         ]
       },
       {
-        label: "03 / ĐIỀU KIỆN",
-        title: "Thời cơ, tổ chức và phương pháp",
-        lead: "Một cuộc cách mạng cần cả tình thế khách quan, nhân tố chủ quan và cách hành động phù hợp.",
+        label: "03 / TÁC ĐỘNG TIÊU CỰC",
+        title: "Cạnh tranh không lành mạnh và tổn hại phúc lợi",
+        lead: "Khi các chủ thể sử dụng thủ đoạn bất chính, cạnh tranh thiếu lành mạnh sẽ làm xói mòn môi trường kinh doanh và lãng phí nguồn lực xã hội.",
         paragraphs: [
-          "Tình thế cách mạng xuất hiện khi giai cấp thống trị khủng hoảng, người bị trị không muốn sống như cũ và quần chúng tích cực hành động. Thời cơ chỉ mở ra trong khoảng thời gian nhất định.",
-          "Nhân tố chủ quan gồm tổ chức, quyết tâm, phong trào công nhân, sự sẵn sàng của Đảng và ý chí quần chúng. Bạo lực cách mạng là phương tiện chứ không phải mục đích; phương pháp hòa bình cần được tranh thủ khi điều kiện đặc biệt cho phép."
+          "Cạnh tranh không lành mạnh biểu hiện qua việc làm hàng giả, hàng nhái, vi phạm sở hữu trí tuệ, gian lận thương mại, bán phá giá hoặc đầu cơ găm giữ nguồn lực mà không đưa vào sản xuất, gây lãng phí tài nguyên của xã hội.",
+          "Những thủ đoạn này làm xói mòn giá trị đạo đức, phá hoại niềm tin thị trường và làm tổn thất nghiêm trọng đến quyền lợi, sức khỏe và phúc lợi của nhân dân. Do đó, Nhà nước phải hoàn thiện pháp luật cạnh tranh và kiên quyết thanh tra, loại trừ các hành vi phi pháp."
         ],
         images: [
-          { src: "./assets/ch04-revolution-method.webp", alt: "Quần chúng và người diễn thuyết trong một cuộc tập hợp cách mạng", topic: "Điều kiện và phương pháp cách mạng: tổ chức hành động", caption: "Tập hợp có tổ chức gợi vai trò của phương pháp, thời cơ và sự sẵn sàng chủ quan trong hành động cách mạng." }
+          {
+            src: "./assets/ktct-ch04-unfair-competition.webp",
+            alt: "Lực lượng Quản lý thị trường và Công an kiểm tra, xử lý kho hàng giả nhãn hiệu",
+            topic: "Tác động tiêu cực: Hàng giả, cạnh tranh không lành mạnh làm tổn hại phúc lợi xã hội",
+            caption: "Lực lượng chức năng thu giữ hàng giả, hàng nhái nhãn hiệu phản ánh mặt trái của thị trường: cạnh tranh không lành mạnh cần bị loại trừ nghiêm minh nhằm bảo vệ doanh nghiệp chân chính và quyền lợi người tiêu dùng. (Nguồn báo chí: Báo Lao Động / Cục Quản lý thị trường)"
+          }
         ]
       }
     ]
