@@ -248,15 +248,23 @@
     </section>
 
     <section id="ending-screen" class="overlay ending-screen hidden" aria-labelledby="ending-title">
-      <div class="ending-content">
-        <div class="archive-seal small-seal" aria-hidden="true">04</div>
-        <p class="overline">EXHIBITION COMPLETE / FIELD REPORT</p>
-        <h2 id="ending-title">THE ROOM<br /><em>REMEMBERS.</em></h2>
-        <p id="ending-copy" class="ending-copy"></p>
-        <div class="ending-stats">
+      <div class="ending-content" style="max-width: 760px; width: 100%; max-height: 90vh; overflow-y: auto;">
+        <div class="archive-seal small-seal" aria-hidden="true">🎉</div>
+        <p class="overline" style="color: var(--gold); letter-spacing: 0.15em;">HOÀN THÀNH TRIỂN LÃM // BÁO CÁO THU HOẠCH</p>
+        <h2 id="ending-title" style="font-size: clamp(32px, 5vw, 50px); margin-bottom: 15px; color: #fff; line-height: 1.15;">
+          CHÚC MỪNG BẠN!<br /><em style="color: var(--gold); -webkit-text-stroke: 0; font-style: normal;">HOÀN THÀNH XUẤT SẮC</em>
+        </h2>
+        <div style="background: rgba(207, 168, 97, 0.12); border-left: 4px solid var(--gold); padding: 16px 20px; margin-bottom: 22px; border-radius: 6px;">
+          <p id="ending-copy" class="ending-copy" style="color: var(--paper); font-size: 16px; margin: 0; line-height: 1.6;">
+            💐 <strong>Cảm ơn bạn đã tham gia tham quan và trải nghiệm Triển lãm 3D: Kinh tế Chính trị Mác – Lênin!</strong><br />
+            Bạn đã xuất sắc hoàn thành trọn vẹn 4 căn phòng chuyên đề về Nền kinh tế thị trường, giải mã toàn bộ hồ sơ tư liệu và vượt qua các thử thách mở cổng. Chúc bạn gặt hái thật nhiều kiến thức bổ ích và đạt kết quả cao trong môn học!
+          </p>
+        </div>
+        <div class="ending-stats" style="margin: 20px 0;">
           <span><b id="ending-time">00:00</b><small>thời gian</small></span>
           <span><b id="ending-score">0</b><small>tổng điểm</small></span>
-          <span><b id="ending-evidence">4/4</b><small>chương</small></span>
+          <span><b id="ending-evidence">4/4</b><small>chương hoàn tất</small></span>
+          <span><b id="ending-stars">8/8</b><small>sao bí mật</small></span>
         </div>
         <div id="leaderboard-section" class="leaderboard-section">
           <div id="leaderboard-form-container" class="leaderboard-form">
@@ -267,15 +275,17 @@
           <div id="leaderboard-loading" class="hidden">Đang tải bảng xếp hạng...</div>
           <ul id="leaderboard-list" class="leaderboard-list hidden"></ul>
         </div>
-        <div class="ending-actions">
-          <button id="restart-button" class="primary-button" type="button"><span>QUAY VỀ MÀN HÌNH CHÍNH</span><b>↻</b></button>
-          <button id="theory-button" class="text-button" type="button">MỞ GHI CHÚ LÝ THUYẾT</button>
+        <div class="ending-actions" style="margin-top: 25px;">
+          <button id="restart-button" class="primary-button" type="button"><span>QUAY VỀ TRANG CHỦ</span><b>↻</b></button>
+          <button id="theory-button" class="text-button" type="button">GHI CHÚ ÔN TẬP NHANH</button>
           <button id="ending-exit-button" class="text-button danger-button" type="button">RỜI TRIỂN LÃM →</button>
         </div>
-        <div id="theory-note" class="theory-note hidden"><strong>READ THE ROOM</strong>
-          <p>Điều kiện vật chất tổ chức đời sống xã hội. Khi quyền kiểm soát tư liệu sản xuất bị phân hóa, giai cấp và
-            mâu thuẫn xuất hiện. Nhà nước hình thành như một thiết chế quyền lực trong bối cảnh đó; cách mạng xã hội là
-            bước biến đổi căn bản khi quan hệ cũ trở thành lực cản.</p>
+        <div id="theory-note" class="theory-note hidden" style="margin-top: 20px; padding: 18px; background: rgba(0,0,0,0.6); border: 1px solid var(--line); border-radius: 6px; font-size: 14px; line-height: 1.6;">
+          <strong style="color: var(--gold); display: block; margin-bottom: 8px;">📚 TỔNG HỢP KIẾN THỨC CỐT LÕI:</strong>
+          <p style="margin: 0 0 8px;">1. <strong>Nền kinh tế thị trường:</strong> Sản phẩm văn minh nhân loại, vận hành theo cơ chế thị trường; Nhà nước điều tiết để khắc phục thất bại thị trường.</p>
+          <p style="margin: 0 0 8px;">2. <strong>Quy luật Giá trị:</strong> Quy luật kinh tế cơ bản của sản xuất hàng hóa; sản xuất và trao đổi dựa trên hao phí lao động xã hội cần thiết; kích thích cải tiến kỹ thuật.</p>
+          <p style="margin: 0 0 8px;">3. <strong>Quy luật Cung – Cầu & Tiền tệ:</strong> Cung > Cầu → Giá < Giá trị; Khối lượng tiền cần thiết M = (P.Q)/V; phát hành thừa tiền dẫn tới lạm phát.</p>
+          <p style="margin: 0;">4. <strong>Quy luật Cạnh tranh:</strong> Động lực thúc đẩy lực lượng sản xuất; phân bổ linh hoạt nguồn lực; loại trừ cạnh tranh bất chính và hàng giả để bảo vệ phúc lợi xã hội.</p>
         </div>
       </div>
     </section>
@@ -310,7 +320,7 @@
         <p class="overline">SECURITY CLEARANCE / CIPHER LOCK</p>
         <h2 id="numpad-title" style="font-size: 32px; margin-bottom: 8px;">MÃ KHÓA BẢO TÀNG</h2>
         <p id="numpad-hint-text" class="quiz-question" style="font-size: 15px; margin-bottom: 24px; line-height: 1.4;">
-          Yêu cầu nhập mật mã 4 chữ số.<br />(Manh mối ẩn trong bảo tàng)</p>
+          💡 GỢI Ý MẬT MÃ:<br />Năm xuất bản Tập 1 bộ 'TƯ BẢN' của Karl Marx: <strong>1-8-6-7</strong></p>
         <div id="numpad-display" class="numpad-display">----</div>
         <div class="numpad-grid">
           <button class="numpad-btn" data-val="1">1</button>
@@ -328,8 +338,7 @@
         </div>
         <div id="numpad-feedback" class="quiz-feedback"></div>
         <button id="numpad-request-hint" class="text-button" type="button"
-          style="margin-top: 20px; color: var(--gold); background: transparent; border: 1px solid var(--gold); padding: 5px 10px; cursor: pointer;">XEM
-          GỢI Ý (-50 ĐIỂM)</button>
+          style="margin-top: 20px; color: var(--gold); background: transparent; border: 1px solid var(--gold); padding: 5px 10px; cursor: pointer;">💡 XEM LẠI GỢI Ý</button>
         <button id="numpad-close-button" class="text-button danger-button" type="button"
           style="margin-top: 10px; margin-left: auto; margin-right: auto; display: block;">BỎ QUA & ĐÓNG
           <kbd>ESC</kbd></button>
@@ -342,8 +351,7 @@
         <p class="overline">SECURITY CLEARANCE / TIMELINE RECONSTRUCTION</p>
         <h2 id="timeline-title">SẮP XẾP LỊCH SỬ</h2>
         <p class="quiz-question" style="font-size: 15px; margin-bottom: 24px; line-height: 1.4;">
-          Cánh cửa sẽ mở khi bạn sắp xếp 5 hình thái kinh tế - xã hội này theo đúng tiến trình lịch sử (từ xa xưa nhất
-          đến tương lai). Kéo thả để đổi vị trí.
+          Thử thách mở cổng.
         </p>
 
         <ul id="timeline-list" class="timeline-list">
@@ -360,14 +368,13 @@
 
     <section id="memory-ui" class="overlay memory-ui hidden" aria-labelledby="memory-title">
       <div class="quiz-content"
-        style="width: 92vw; max-width: 1600px; max-height: 92vh; display: flex; flex-direction: column; padding: 40px; overflow-y: auto; position: relative;">
+        style="width: 92vw; max-width: 1100px; max-height: 92vh; display: flex; flex-direction: column; padding: 30px; overflow-y: auto; position: relative;">
         <div class="archive-seal small-seal" aria-hidden="true">IV</div>
         <p class="overline">FINAL CLEARANCE / MEMORY MATCH</p>
-        <h2 id="memory-title">GHÉP CẶP KIẾN THỨC</h2>
-        <p class="quiz-question" style="font-size: 15px; margin-bottom: 24px; line-height: 1.4;">
-          Tìm và lật các cặp thẻ tương ứng (Hình ảnh ↔ Tên gọi/Khái niệm) để mở cánh cửa cuối cùng.<br />
-          Số lượt đã lật: <strong id="memory-moves" style="color: var(--gold);">0</strong> <strong
-            style="color: rgba(255,255,255,0.5);">/ 20</strong>
+        <h2 id="memory-title">GHÉP CẶP CÁC QUY LUẬT KINH TẾ</h2>
+        <p class="quiz-question" style="font-size: 15px; margin-bottom: 20px; line-height: 1.4;">
+          Tìm và lật 4 cặp thẻ tương ứng (Hình ảnh ↔ Quy luật kinh tế) để mở cánh cửa cuối cùng.<br />
+          Số lượt đã lật: <strong id="memory-moves" style="color: var(--gold);">0</strong> (Thử thách thư giãn — không giới hạn lượt lật)
         </p>
 
         <div id="memory-grid" class="memory-grid">

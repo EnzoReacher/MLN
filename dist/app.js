@@ -154,79 +154,49 @@
   const QUIZZES = {
     "gate-class": [
       {
-        question: "1/4: Nền kinh tế thị trường được hiểu một cách chính xác là gì?",
+        question: "1/2: Nền kinh tế thị trường được hiểu một cách chính xác là gì?",
         options: [
-          "Nền kinh tế hoàn toàn do Nhà nước chỉ huy phân bổ hiện vật",
           "Nền kinh tế hàng hóa phát triển cao, vận hành theo cơ chế thị trường",
+          "Nền kinh tế hoàn toàn do Nhà nước chỉ huy phân bổ hiện vật",
           "Nền kinh tế tự cấp tự túc khép kín của từng hộ gia đình",
-          "Nền kinh tế chỉ trao đổi sản phẩm dư thừa không thông qua tiền tệ"
+          "Nền kinh tế chỉ trao đổi sản phẩm dư thừa không qua tiền tệ"
         ],
-        correct: 1
+        correct: 0
       },
       {
-        question: "2/4: Động lực trực tiếp của các chủ thể sản xuất kinh doanh trong nền KTTT là gì?",
+        question: "2/2: Động lực trực tiếp mạnh mẽ nhất của các doanh nghiệp trong nền KTTT là gì?",
         options: [
-          "Lợi nhuận và các lợi ích kinh tế - xã hội",
+          "Lợi nhuận và các lợi ích kinh tế - xã hội chính đáng",
           "Sự bao cấp tuyệt đối từ ngân sách nhà nước",
           "Chỉ nhằm mục tiêu quảng bá danh tiếng cá nhân",
           "Chỉ phân phát miễn phí hàng hóa cho cộng đồng"
         ],
         correct: 0
-      },
-      {
-        question: "3/4: Khuyết tật nào của kinh tế thị trường mà tự nó KHÔNG THỂ tự khắc phục được?",
-        options: [
-          "Cạn kiệt tài nguyên, suy thoái môi trường và phân hóa giàu nghèo sâu sắc",
-          "Năng suất lao động xã hội tăng quá nhanh",
-          "Chủng loại hàng hóa và dịch vụ ngày càng phong phú",
-          "Kích thích sự sáng tạo và đổi mới của các chủ thể kinh doanh"
-        ],
-        correct: 0
-      },
-      {
-        question: "4/4: Vì sao trong thực tế luôn cần sự can thiệp và điều tiết của Nhà nước?",
-        options: [
-          "Để triệt tiêu hoàn toàn quyền tự do kinh doanh của người dân",
-          "Để sửa chữa những thất bại của thị trường và bảo đảm ổn định kinh tế vĩ mô",
-          "Để áp đặt chế độ bao cấp tuyệt đối như thời kỳ kinh tế tự nhiên",
-          "Để xóa bỏ các quy luật kinh tế khách quan của thị trường"
-        ],
-        correct: 1
       }
     ],
     "gate-state": {
-      question: "Đặc trưng cơ bản của Nhà nước là gì?",
-      options: ["Quản lý dân cư theo lãnh thổ", "Dựa vào quan hệ huyết thống", "Tự nguyện nộp thuế", "Chỉ có chức năng bảo vệ"],
+      question: "Mật mã 4 số năm xuất bản Tập 1 bộ sách Tư bản của Karl Marx là gì?",
+      options: ["1867", "1848", "1917", "1945"],
       correct: 0
     },
     "gate-revolt": [
       {
-        question: "Theo quy luật cung – cầu, khi cung lớn hơn cầu thì quan hệ giữa giá cả và giá trị sẽ như thế nào?",
+        question: "1/2: Trong kinh doanh, khi nguồn CUNG vượt quá CẦU (thừa hàng), giá cả thị trường sẽ biến động ra sao?",
         options: [
-          "Giá cả thấp hơn giá trị",
-          "Giá cả cao hơn giá trị",
-          "Giá cả bằng giá trị",
-          "Giá cả tăng cao độc lập với giá trị"
+          "Giá cả có xu hướng giảm xuống thấp hơn giá trị để kích cầu tiêu dùng",
+          "Giá cả tự động tăng phi mã bất chấp lượng hàng tồn kho",
+          "Giá cả luôn luôn giữ nguyên bất biến tuyệt đối",
+          "Hàng hóa tự động biến mất khỏi thị trường"
         ],
         correct: 0
       },
       {
-        question: "Theo quy luật lưu thông tiền tệ (M = P.Q / V), lượng tiền cần thiết (M) có mối quan hệ gì với tổng giá cả (P.Q) và tốc độ lưu thông (V)?",
+        question: "2/2: Theo quy luật lưu thông tiền tệ, nếu phát hành lượng tiền giấy vượt quá nhu cầu thực tế của lưu thông thì gây ra hậu quả gì?",
         options: [
-          "Tỷ lệ thuận với tổng giá cả hàng hóa và tỷ lệ nghịch với tốc độ lưu thông tiền tệ",
-          "Tỷ lệ nghịch với tổng giá cả hàng hóa và tỷ lệ thuận với tốc độ lưu thông tiền tệ",
-          "Tỷ lệ thuận với cả tổng giá cả hàng hóa và tốc độ lưu thông tiền tệ",
-          "Không phụ thuộc vào lưu thông hàng hóa mà do quy định chủ quan của nhà nước"
-        ],
-        correct: 0
-      },
-      {
-        question: "Hậu quả tất yếu khi tiền giấy được in và phát hành vượt quá yêu cầu của lưu thông hàng hóa là gì?",
-        options: [
-          "Đồng tiền mất giá trị, giá cả hàng hóa leo thang dẫn tới lạm phát",
-          "Sức mua của người tiêu dùng tăng mạnh và thúc đẩy tăng trưởng vượt bậc",
-          "Làm giảm chi phí sản xuất và cân bằng lại cung cầu tức thì",
-          "Không có tác động gì vì tiền giấy lưu hành theo luật định"
+          "Đồng tiền mất giá trị, giá cả hàng hóa tăng cao dẫn tới lạm phát",
+          "Tăng vọt sức mua thực tế của toàn xã hội",
+          "Làm giảm ngay lập tức mọi chi phí sản xuất trong nền kinh tế",
+          "Không ảnh hưởng gì đến giá trị đồng tiền"
         ],
         correct: 0
       }
@@ -966,7 +936,7 @@
     updateUi();
 
     clearInterval(quizTimerId);
-    quizTimeLeft = 10;
+    quizTimeLeft = 25;
     if (quizTimerDisplay) quizTimerDisplay.textContent = `${quizTimeLeft}s`;
     quizTimerDisplay.style.color = "var(--gold)";
 
@@ -985,7 +955,9 @@
 
   function handleQuizAnswer(selectedIndex) {
     if (!state.quizOpen || !state.currentQuizGate) return;
-    const quizDataEntry = QUIZZES[state.currentQuizGate.id];
+    const currentGate = state.currentQuizGate;
+    const isFinalGate = currentGate?.final || currentGate?.id === "gate-end";
+    const quizDataEntry = QUIZZES[currentGate.id];
     const quizData = Array.isArray(quizDataEntry) ? quizDataEntry[state.quizIndex] : quizDataEntry;
     const isArray = Array.isArray(quizDataEntry);
     const isCorrect = selectedIndex === quizData.correct;
@@ -1011,35 +983,41 @@
           renderQuizQuestion();
         }, 1500);
       } else {
-        quizFeedback.textContent = "Chính xác! Cổng đã được mở.";
+        quizFeedback.textContent = isFinalGate ? "Chính xác! Đang chuẩn bị báo cáo thu hoạch..." : "Chính xác! Cổng đã được mở.";
         quizFeedback.className = "quiz-feedback success";
 
         setTimeout(() => {
-          state.passedGates.add(state.currentQuizGate.id);
-          state.player.z = state.currentQuizGate.z - 2.4;
+          state.passedGates.add(currentGate.id);
+          state.player.z = currentGate.z - 2.4;
           updateGateMeshes();
           closeQuiz();
+          if (isFinalGate) {
+            showEnding();
+          }
         }, 1500);
       }
     } else {
       state.quizPoints = Math.max(0, state.quizPoints - 20);
 
       if (isArray && state.quizIndex < quizDataEntry.length - 1) {
-        quizFeedback.textContent = selectedIndex === -1 ? "Hết giờ! Bạn đã mất cơ hội ở câu này." : "Sai rồi! Chuyển sang câu tiếp theo.";
+        quizFeedback.textContent = selectedIndex === -1 ? "Hết giờ! Chuyển sang câu tiếp theo." : "Chưa chính xác! Chuyển sang câu tiếp theo.";
         quizFeedback.className = "quiz-feedback error";
         setTimeout(() => {
           state.quizIndex++;
           renderQuizQuestion();
-        }, 2000);
+        }, 1800);
       } else {
-        quizFeedback.textContent = selectedIndex === -1 ? "Hết giờ! Cổng mở nhưng không có điểm thưởng." : "Sai rồi! Cổng vẫn mở nhưng không có điểm thưởng.";
+        quizFeedback.textContent = isFinalGate ? "Hoàn tất câu hỏi vận dụng! Đang chuẩn bị báo cáo..." : (selectedIndex === -1 ? "Hết giờ! Cổng vẫn mở." : "Chưa đúng! Cổng vẫn mở.");
         quizFeedback.className = "quiz-feedback error";
         setTimeout(() => {
-          state.passedGates.add(state.currentQuizGate.id);
-          state.player.z = state.currentQuizGate.z - 2.4;
+          state.passedGates.add(currentGate.id);
+          state.player.z = currentGate.z - 2.4;
           updateGateMeshes();
           closeQuiz();
-        }, 2000);
+          if (isFinalGate) {
+            showEnding();
+          }
+        }, 1800);
       }
     }
   }
@@ -1047,6 +1025,7 @@
   function closeQuiz() {
     state.quizOpen = false;
     state.currentQuizGate = null;
+    clearInterval(quizTimerId);
     quizUi.classList.add("hidden");
     updateUi();
   }
@@ -1059,7 +1038,7 @@
     numpadDisplay.textContent = "----";
     numpadFeedback.textContent = "";
     numpadFeedback.className = "quiz-feedback";
-    if (numpadHintText) numpadHintText.innerHTML = "Yêu cầu nhập mật mã 4 chữ số.<br/>(Manh mối ẩn trong bảo tàng)";
+    if (numpadHintText) numpadHintText.innerHTML = "💡 GỢI Ý MẬT MÃ:<br/>Năm xuất bản Tập 1 bộ 'TƯ BẢN' của Karl Marx: <strong>1-8-6-7</strong>";
     if (numpadRequestHint) numpadRequestHint.classList.remove("hidden");
     document.exitPointerLock?.();
     numpadUi.classList.remove("hidden");
@@ -1090,8 +1069,7 @@
 
   if (numpadRequestHint) {
     numpadRequestHint.addEventListener("click", () => {
-      state.quizPoints = Math.max(0, state.quizPoints - 50);
-      numpadHintText.innerHTML = "GỢI Ý:<br/>Mật mã là năm xuất bản Tập 1 bộ sách kinh điển 'TƯ BẢN' của Karl Marx: 1-8-6-7";
+      numpadHintText.innerHTML = "💡 GỢI Ý MẬT MÃ:<br/>Năm xuất bản Tập 1 bộ sách 'TƯ BẢN' của Karl Marx: <strong>1-8-6-7</strong>";
       numpadRequestHint.classList.add("hidden");
       updateUi();
     });
@@ -2164,7 +2142,6 @@
         const sin = Math.sin(state.look.yaw);
         const cos = Math.cos(state.look.yaw);
         move(strafe * cos - forward * sin, -strafe * sin - forward * cos, dt);
-        checkRoom3Timeline();
       }
       state.uiAccumulator += dt;
       if (state.uiAccumulator >= PERFORMANCE.uiInterval) {
@@ -2176,104 +2153,20 @@
     scheduleLoop();
   }
 
-  const TIMELINE_DATA = [
-    { id: "csnt", text: "Chưa có thặng dư, chưa có giai cấp. Mọi thứ là của chung." },
-    { id: "chnl", text: "Chủ nhân có toàn quyền sở hữu cả tư liệu sản xuất và người lao động." },
-    { id: "pk", text: "Nông nô bị trói buộc vào ruộng đất của lãnh chúa." },
-    { id: "tbcn", text: "Giai cấp vô sản bị bóc lột giá trị thặng dư bởi giới chủ." },
-    { id: "cscn", text: "Nhà nước tự tiêu vong, mọi người làm theo năng lực hưởng theo nhu cầu." }
-  ];
-  const CORRECT_TIMELINE = ["csnt", "chnl", "pk", "tbcn", "cscn"];
+  const TIMELINE_DATA = [];
+  const CORRECT_TIMELINE = [];
 
   function checkRoom3Timeline() {
-    if (state.player.z <= -56.5 && !state.passedGates.has("gate-revolt") && !state.timelineOpen) {
-      if (!state.evidence.has("state")) return; // Require Room 3 evidence before triggering
-      // Bounce player back so they don't get stuck in the trigger loop
-      state.player.z = -56.0;
-      openTimelineUI();
-    }
+    // Disabled in favor of standard Gate 3 quiz
   }
 
   function openTimelineUI() {
-    state.timelineOpen = true;
-    document.getElementById("timeline-ui")?.classList.remove("hidden");
-    if (document.pointerLockElement) document.exitPointerLock();
-
-    const list = document.getElementById("timeline-list");
-    list.innerHTML = "";
-
-    // Shuffle
-    const shuffled = [...TIMELINE_DATA].sort(() => Math.random() - 0.5);
-    shuffled.forEach(item => {
-      const li = document.createElement("li");
-      li.className = "timeline-item";
-      li.draggable = true;
-      li.dataset.id = item.id;
-      li.innerHTML = `<span class="drag-handle">≡</span><span class="timeline-item-content">${item.text}</span>`;
-
-      li.addEventListener("dragstart", (e) => {
-        li.classList.add("dragging");
-      });
-      li.addEventListener("dragend", () => {
-        li.classList.remove("dragging");
-      });
-      list.appendChild(li);
-    });
-
-    list.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      const afterElement = getDragAfterElement(list, e.clientY);
-      const draggable = document.querySelector(".timeline-item.dragging");
-      if (afterElement == null) {
-        list.appendChild(draggable);
-      } else {
-        list.insertBefore(draggable, afterElement);
-      }
-    });
+    // Disabled
   }
 
   function getDragAfterElement(container, y) {
-    const draggableElements = [...container.querySelectorAll('.timeline-item:not(.dragging)')];
-    return draggableElements.reduce((closest, child) => {
-      const box = child.getBoundingClientRect();
-      const offset = y - box.top - box.height / 2;
-      if (offset < 0 && offset > closest.offset) {
-        return { offset: offset, element: child };
-      } else {
-        return closest;
-      }
-    }, { offset: Number.NEGATIVE_INFINITY }).element;
+    return null;
   }
-
-  document.getElementById("timeline-submit")?.addEventListener("click", () => {
-    const currentOrder = [...document.querySelectorAll(".timeline-item")].map(li => li.dataset.id);
-    const feedback = document.getElementById("timeline-feedback");
-
-    const isCorrect = currentOrder.every((id, index) => id === CORRECT_TIMELINE[index]);
-
-    if (isCorrect) {
-      showToast("CHÍNH XÁC! CỬA ĐÃ MỞ.", 3000);
-      state.quizPoints += 100;
-      state.passedGates.add("gate-revolt");
-      updateGateMeshes();
-      closeTimelineUI();
-    } else {
-      feedback.textContent = "SAI RỒI BÉ ƠI! CỐ GẮNG NHỚ LẠI LẦN NỮA NHÁ! (-50 ĐIỂM)";
-      feedback.className = "quiz-feedback error";
-      state.quizPoints = Math.max(0, state.quizPoints - 50);
-
-      const flash = document.createElement("div");
-      flash.style.position = "fixed";
-      flash.style.inset = "0";
-      flash.style.backgroundColor = "rgba(189, 92, 93, 0.4)";
-      flash.style.zIndex = "9999";
-      flash.style.pointerEvents = "none";
-      flash.style.transition = "opacity 0.5s ease-out";
-      document.body.appendChild(flash);
-      setTimeout(() => { flash.style.opacity = "0"; }, 100);
-      setTimeout(() => { document.body.removeChild(flash); }, 600);
-    }
-  });
 
   function closeTimelineUI() {
     state.timelineOpen = false;
@@ -2285,22 +2178,16 @@
 
   document.getElementById("timeline-close-button")?.addEventListener("click", closeTimelineUI);
 
-  // --- MEMORY MATCH LOGIC ---
+  // --- MEMORY MATCH LOGIC (4 QUY LUẬT KINH TẾ) ---
   const MEMORY_DATA = [
-    { pairId: 1, type: "image", src: "assets/ch03-marx.webp" },
-    { pairId: 1, type: "text", text: "C. Mác" },
-    { pairId: 2, type: "image", src: "assets/ch01-lenin.webp" },
-    { pairId: 2, type: "text", text: "V.I. Lênin" },
-    { pairId: 3, type: "image", src: "assets/ch02-slave-state.webp" },
-    { pairId: 3, type: "text", text: "Nhà nước Chủ nô" },
-    { pairId: 4, type: "image", src: "assets/ch02-feudal-state.webp" },
-    { pairId: 4, type: "text", text: "Nhà nước Phong kiến" },
-    { pairId: 5, type: "image", src: "assets/ch02-bourgeois-transition.webp" },
-    { pairId: 5, type: "text", text: "Nhà nước Tư sản" },
-    { pairId: 6, type: "image", src: "assets/ch01-state-institutions.webp" },
-    { pairId: 6, type: "text", text: "Mâu thuẫn giai cấp" },
-    { pairId: 7, type: "image", src: "assets/ch04-revolution-force.webp" },
-    { pairId: 7, type: "text", text: "Quần chúng nhân dân" },
+    { pairId: 1, type: "image", src: "./assets/ktct-ch01-market-concept.webp" },
+    { pairId: 1, type: "text", text: "Kinh tế thị trường" },
+    { pairId: 2, type: "image", src: "./assets/ktct-ch02-law-of-value.webp" },
+    { pairId: 2, type: "text", text: "Quy luật Giá trị" },
+    { pairId: 3, type: "image", src: "./assets/ktct-ch03-supply-demand.webp" },
+    { pairId: 3, type: "text", text: "Quy luật Cung – Cầu" },
+    { pairId: 4, type: "image", src: "./assets/ktct-ch04-tech-rd.webp" },
+    { pairId: 4, type: "text", text: "Quy luật Cạnh tranh" }
   ];
 
   let memoryMoves = 0;
@@ -2340,8 +2227,10 @@
         front.innerHTML = `<img src="${item.src}" style="width:100%; height:100%; object-fit:contain; background:rgba(0,0,0,0.5); border-radius:6px; opacity: 1;" alt="Card Image" draggable="false" />`;
       } else {
         front.textContent = item.text;
-        front.style.fontSize = "18px";
+        front.style.fontSize = "17px";
         front.style.fontWeight = "bold";
+        front.style.textAlign = "center";
+        front.style.padding = "8px";
       }
 
       card.appendChild(back);
@@ -2361,7 +2250,8 @@
 
     if (flippedCards.length === 2) {
       memoryMoves++;
-      document.getElementById("memory-moves").textContent = memoryMoves;
+      const movesEl = document.getElementById("memory-moves");
+      if (movesEl) movesEl.textContent = memoryMoves;
       checkMatch();
     }
   }
@@ -2380,9 +2270,15 @@
       if (matchedPairs === MEMORY_DATA.length / 2) {
         state.quizPoints += 200; // Bonus for finishing memory game
         setTimeout(() => {
-          showToast("CHÚC MỪNG! BẠN ĐÃ MỞ KHÓA THÀNH CÔNG.", 3000);
+          showToast("XUẤT SẮC! CÂU HỎI VẬN DỤNG KINH TẾ SỐ CUỐI CÙNG:", 3000);
           closeMemoryGame();
-          showEnding();
+          // Trigger the final application quiz
+          const finalGate = gates.find(g => g.id === "gate-end");
+          if (finalGate) {
+            openQuiz(finalGate);
+          } else {
+            showEnding();
+          }
         }, 1000);
       }
     } else {
@@ -2391,19 +2287,14 @@
         card2.classList.remove("flipped");
         flippedCards = [];
         isMemoryLocked = false;
-
-        if (memoryMoves >= 20) {
-          showToast("BẠN ĐÃ HẾT 20 LƯỢT LẬT! HÃY THỬ LẠI.", 4000);
-          setTimeout(openMemoryGame, 500);
-        }
-      }, 1200);
+      }, 1000);
     }
   }
 
   function closeMemoryGame() {
     state.memoryOpen = false;
     document.getElementById("memory-ui")?.classList.add("hidden");
-    canvas.requestPointerLock();
+    if (state.running && !state.quizOpen) canvas.requestPointerLock?.();
   }
 
   document.getElementById("memory-close-button")?.addEventListener("click", closeMemoryGame);
@@ -2435,6 +2326,8 @@
     endingScore.textContent = totalScore;
 
     document.getElementById("ending-evidence").textContent = `${state.evidence.size}/${rooms.length}`;
+    const endingStarsEl = document.getElementById("ending-stars");
+    if (endingStarsEl) endingStarsEl.textContent = `${state.collectedStars.size}/8`;
 
     // Reset Leaderboard UI state
     playerNameInput.value = playerName !== "Anonymous" ? playerName : "";
