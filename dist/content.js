@@ -10,43 +10,58 @@ window.THE_STATE_CONTENT = [
   {
     id: "base",
     code: "01",
-    label: "THE ORIGIN",
-    title: "Nguồn gốc, bản chất và đặc trưng của Nhà nước",
+    label: "THE MARKET ECONOMY",
+    title: "Nền kinh tế thị trường và các đặc trưng cơ bản",
     sections: [
       {
-        label: "01 / NGUỒN GỐC",
-        title: "Nhà nước không xuất hiện ngay từ đầu",
-        lead: "Nhà nước chỉ xuất hiện khi sự phát triển của lực lượng sản xuất làm xã hội phân hóa thành những giai cấp có lợi ích đối lập.",
+        label: "01 / KHÁI NIỆM & ĐẶC TRƯNG",
+        title: "Bản chất và đặc trưng của kinh tế thị trường",
+        lead: "Nền kinh tế thị trường là nền kinh tế hàng hóa phát triển cao, vận hành theo cơ chế thị trường; mọi quan hệ sản xuất và trao đổi đều chịu sự điều tiết của các quy luật thị trường.",
         paragraphs: [
-          "Trong xã hội cộng sản nguyên thủy, thị tộc và bộ lạc tự tổ chức đời sống; chưa có giai cấp đối kháng và chưa có bộ máy Nhà nước tách khỏi cộng đồng.",
-          "Khi lực lượng sản xuất phát triển, sản phẩm dư thừa và tư hữu xuất hiện, xã hội phân hóa và đấu tranh giai cấp nảy sinh. Nguy cơ tan rã đó làm Nhà nước trở thành một tất yếu lịch sử."
+          "Sự hình thành kinh tế thị trường là khách quan trong lịch sử: từ kinh tế tự nhiên tự túc phát triển lên kinh tế hàng hóa, rồi trở thành kinh tế thị trường – một sản phẩm tiến bộ của văn minh nhân loại.",
+          "Các đặc trưng phổ biến gồm: đa dạng các chủ thể kinh tế và hình thức sở hữu; thị trường đóng vai trò quyết định phân bổ nguồn lực xã hội; giá cả hình thành tự do theo nguyên tắc thị trường; cạnh tranh vừa là môi trường vừa là động lực thúc đẩy sản xuất kinh doanh."
         ],
         images: [
-          { src: "./assets/ch02-feudal-state.webp", alt: "Một triều đình phong kiến phân tầng trong lịch sử", topic: "Nguồn gốc Nhà nước: đối chiếu xã hội phân tầng sau khi tư hữu và giai cấp xuất hiện", caption: "Ví dụ về một trật tự Nhà nước phân tầng sau khi xã hội đã xuất hiện sở hữu và giai cấp; dùng để đối chiếu với cộng đồng nguyên thủy." }
+          {
+            src: "./assets/ktct-ch01-market-concept.webp",
+            alt: "Không gian chợ truyền thống trao đổi hàng hóa tại Việt Nam",
+            topic: "Kinh tế thị trường: Sản xuất và trao đổi hàng hóa thông qua thị trường",
+            caption: "Chợ truyền thống minh họa sự vận hành tự nhiên của kinh tế hàng hóa: người bán, người mua thỏa thuận giá cả và trao đổi theo tín hiệu thị trường. (Nguồn tư liệu: Giao thương hàng hóa Việt Nam)"
+          }
         ]
       },
       {
-        label: "02 / BẢN CHẤT",
-        title: "Nhà nước là sản phẩm của mâu thuẫn giai cấp",
-        lead: "Nhà nước phản ánh những mâu thuẫn xã hội cụ thể: hình thức có thể mang lợi ích chung, nhưng bản chất gắn với tương quan giai cấp.",
+        label: "02 / KHUYẾT TẬT THỊ TRƯỜNG",
+        title: "Những khuyết tật vốn có của nền kinh tế thị trường",
+        lead: "Bên cạnh các ưu thế kích thích sáng tạo và thỏa mãn nhu cầu, kinh tế thị trường có những khuyết tật nội tại mà tự nó không thể khắc phục được.",
         paragraphs: [
-          "Theo tài liệu, Nhà nước là sản phẩm và biểu hiện của những mâu thuẫn giai cấp không thể điều hòa. Giai cấp thống trị về kinh tế thường nắm quyền lực chính trị.",
-          "Nhà nước vừa bảo vệ một trật tự giai cấp, vừa tổ chức những nhu cầu chung. Vì vậy, không có một Nhà nước hoàn toàn đứng trên mọi giai cấp; muốn hiểu nó phải nhìn cả quyền lực và cơ sở kinh tế."
+          "Do các chủ thể luôn đặt mục tiêu tối đa hóa lợi nhuận, nền kinh tế thị trường không tự khắc phục được xu hướng làm cạn kiệt tài nguyên không thể tái tạo, gây suy thoái môi trường tự nhiên và xói mòn đạo đức xã hội.",
+          "Cơ chế thị trường luôn tiềm ẩn nguy cơ khủng hoảng chu kỳ do mất cân đối cung – cầu, đồng thời dẫn đến hiện tượng phân hóa giàu nghèo sâu sắc. Thị trường cũng né tránh các lĩnh vực hạ tầng thiết yếu có vốn lớn và thu hồi chậm."
         ],
         images: [
-          { src: "./assets/ch02-bourgeois-transition.webp", alt: "Đám đông trong một biến chuyển tư sản lịch sử", topic: "Bản chất Nhà nước: mâu thuẫn giai cấp và biến chuyển quyền lực", caption: "Biến chuyển tư sản cho thấy mâu thuẫn xã hội có thể làm thay đổi quan hệ quyền lực và hình thức Nhà nước." }
+          {
+            src: "./assets/ktct-ch01-market-failure.webp",
+            alt: "Rác thải công nghiệp và khói bụi xả từ nhà máy sản xuất",
+            topic: "Khuyết tật kinh tế thị trường: Tác động môi trường và thất bại thị trường",
+            caption: "Hình ảnh bãi thải và khói bụi công nghiệp phản ánh mặt trái của thị trường khi mục tiêu tối đa hóa lợi nhuận dẫn đến hủy hoại môi trường và cạn kiệt tài nguyên. (Nguồn tư liệu: Môi trường và Phát triển)"
+          }
         ]
       },
       {
-        label: "03 / ĐẶC TRƯNG",
-        title: "Lãnh thổ, bộ máy và thuế khóa",
-        lead: "Quyền lực Nhà nước được tổ chức trên một lãnh thổ, bằng một bộ máy chuyên nghiệp và nguồn thu riêng.",
+        label: "03 / ĐIỀU TIẾT CỦA NHÀ NƯỚC",
+        title: "Vai trò của Nhà nước và nền kinh tế hỗn hợp",
+        lead: "Trong thực tế không tồn tại nền kinh tế thị trường thuần túy; luôn cần sự can thiệp của Nhà nước để sửa chữa những thất bại của cơ chế thị trường.",
         paragraphs: [
-          "Nhà nước quản lý dân cư trong một lãnh thổ xác định, khác với tổ chức dựa trên quan hệ thân tộc của cộng đồng nguyên thủy.",
-          "Bộ máy quyền lực chuyên nghiệp có khả năng cưỡng chế và được duy trì bằng hệ thống thuế khóa. Đó là nền tảng vật chất của quyền lực Nhà nước."
+          "Nhà nước là chủ thể thực hiện chức năng quản lý vĩ mô, khắc phục các khuyết tật của thị trường, kiến tạo hành lang pháp lý, đảm bảo an sinh xã hội và sự ổn định của toàn bộ nền kinh tế.",
+          "Sự kết hợp giữa cơ chế thị trường và sự điều tiết của Nhà nước hình thành nên mô hình kinh tế thị trường hỗn hợp. Nhà nước không triệt tiêu thị trường mà định hướng, thúc đẩy các yếu tố tích cực vì lợi ích quốc gia."
         ],
         images: [
-          { src: "./assets/ch01-state-institutions.webp", alt: "Các công trình đại diện cho thiết chế nhà nước", topic: "Đặc trưng Nhà nước: lãnh thổ, dân cư và bộ máy quyền lực", caption: "Các thiết chế công và công trình quyền lực minh họa Nhà nước được tổ chức trên lãnh thổ bằng bộ máy riêng." }
+          {
+            src: "./assets/ktct-ch01-state-regulation.webp",
+            alt: "Phiên họp Ban Chỉ đạo Chính phủ về quản lý, điều hành kinh tế vĩ mô",
+            topic: "Chủ thể Nhà nước: Quản lý, điều tiết và ổn định kinh tế vĩ mô",
+            caption: "Thủ tướng Chính phủ chủ trì phiên họp điều hành kinh tế vĩ mô, thể hiện vai trò chủ thể Nhà nước trong việc điều tiết, khắc phục khuyết tật thị trường và giữ vững ổn định kinh tế. (Nguồn: Cổng Thông tin điện tử Chính phủ chinhphu.vn)"
+          }
         ]
       }
     ]

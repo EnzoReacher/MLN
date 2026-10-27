@@ -154,23 +154,43 @@
   const QUIZZES = {
     "gate-class": [
       {
-        question: "1/4: Theo tài liệu, Nhà nước xuất hiện khi nào?",
-        options: ["Ngay từ khi có xã hội loài người", "Khi các bộ lạc tự nguyện sáp nhập", "Khi LLSX phát triển, xuất hiện tư hữu và phân hóa giai cấp", "Khi con người cần chung tay chống thiên tai"],
-        correct: 2
+        question: "1/4: Nền kinh tế thị trường được hiểu một cách chính xác là gì?",
+        options: [
+          "Nền kinh tế hoàn toàn do Nhà nước chỉ huy phân bổ hiện vật",
+          "Nền kinh tế hàng hóa phát triển cao, vận hành theo cơ chế thị trường",
+          "Nền kinh tế tự cấp tự túc khép kín của từng hộ gia đình",
+          "Nền kinh tế chỉ trao đổi sản phẩm dư thừa không thông qua tiền tệ"
+        ],
+        correct: 1
       },
       {
-        question: "2/4: Theo quan điểm Mác - Lênin, bản chất của Nhà nước là gì?",
-        options: ["Sản phẩm của mâu thuẫn giai cấp không thể điều hòa", "Cơ quan trung lập bảo vệ lợi ích của mọi tầng lớp", "Công cụ tự nhiên duy trì sự bình đẳng", "Thiết chế siêu nhiên đứng ngoài xã hội"],
+        question: "2/4: Động lực trực tiếp của các chủ thể sản xuất kinh doanh trong nền KTTT là gì?",
+        options: [
+          "Lợi nhuận và các lợi ích kinh tế - xã hội",
+          "Sự bao cấp tuyệt đối từ ngân sách nhà nước",
+          "Chỉ nhằm mục tiêu quảng bá danh tiếng cá nhân",
+          "Chỉ phân phát miễn phí hàng hóa cho cộng đồng"
+        ],
         correct: 0
       },
       {
-        question: "3/4: Một trong những đặc trưng cơ bản phân biệt Nhà nước với tổ chức nguyên thủy là gì?",
-        options: ["Quản lý dân cư theo huyết thống", "Mọi thành viên đều có quyền tự trị", "Không thu thuế dưới bất kỳ hình thức nào", "Thiết lập quyền lực công cộng đặc biệt"],
-        correct: 3
+        question: "3/4: Khuyết tật nào của kinh tế thị trường mà tự nó KHÔNG THỂ tự khắc phục được?",
+        options: [
+          "Cạn kiệt tài nguyên, suy thoái môi trường và phân hóa giàu nghèo sâu sắc",
+          "Năng suất lao động xã hội tăng quá nhanh",
+          "Chủng loại hàng hóa và dịch vụ ngày càng phong phú",
+          "Kích thích sự sáng tạo và đổi mới của các chủ thể kinh doanh"
+        ],
+        correct: 0
       },
       {
-        question: "4/4: Bên cạnh việc bảo vệ trật tự giai cấp, Nhà nước còn phải làm gì?",
-        options: ["Khuyến khích mâu thuẫn giai cấp", "Tổ chức và giải quyết những nhu cầu chung của xã hội", "Xóa bỏ ngay lập tức chế độ tư hữu", "Nhượng bộ hoàn toàn giai cấp bị trị"],
+        question: "4/4: Vì sao trong thực tế luôn cần sự can thiệp và điều tiết của Nhà nước?",
+        options: [
+          "Để triệt tiêu hoàn toàn quyền tự do kinh doanh của người dân",
+          "Để sửa chữa những thất bại của thị trường và bảo đảm ổn định kinh tế vĩ mô",
+          "Để áp đặt chế độ bao cấp tuyệt đối như thời kỳ kinh tế tự nhiên",
+          "Để xóa bỏ các quy luật kinh tế khách quan của thị trường"
+        ],
         correct: 1
       }
     ],
@@ -213,12 +233,12 @@
 
   const rooms = [
     {
-      id: "base", index: "01", name: "ĐIỀU KIỆN VẬT CHẤT", label: "THE BASE", centerZ: 0, zBack: 10, zFront: -10,
-      color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ch01-engels.webp",
+      id: "base", index: "01", name: "KINH TẾ THỊ TRƯỜNG", label: "MARKET ECONOMY", centerZ: 0, zBack: 10, zFront: -10,
+      color: "#c67b53", accent: "#e1b46d", artwork: "production", artworkImage: "./assets/ktct-ch01-market-concept.webp",
       artworks: [
-        { image: "./assets/ch02-feudal-state.webp", wall: "left", zOffset: 0, height: 2.85, maxWidth: 4.8 },
-        { image: "./assets/ch02-bourgeois-transition.webp", wall: "right", zOffset: -5.4, height: 2.9, maxWidth: 4.7 },
-        { image: "./assets/ch01-state-institutions.webp", wall: "right", zOffset: 5.4, height: 2.65, maxWidth: 4.85 }
+        { image: "./assets/ktct-ch01-market-concept.webp", wall: "left", zOffset: 0, height: 2.85, maxWidth: 4.8 },
+        { image: "./assets/ktct-ch01-market-failure.webp", wall: "right", zOffset: -5.4, height: 2.9, maxWidth: 4.7 },
+        { image: "./assets/ktct-ch01-state-regulation.webp", wall: "right", zOffset: 5.4, height: 2.65, maxWidth: 4.85 }
       ]
     },
     {
@@ -258,14 +278,14 @@
   };
 
   const ROOM_HONORS = Object.freeze({
-    base: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "NGUỒN GỐC NHÀ NƯỚC", topic: "Nguồn gốc Nhà nước, lực lượng sản xuất và đối kháng giai cấp" },
-    class: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "GIAI CẤP & SỞ HỮU", topic: "Giai cấp, sở hữu và cơ sở kinh tế của quyền lực Nhà nước" },
+    base: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "KINH TẾ THỊ TRƯỜNG", topic: "Nền kinh tế hàng hóa, các quy luật thị trường và học thuyết kinh tế chính trị" },
+    class: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "GIAI CẤP & SỞ HỮU", topic: "Giai cấp, sở hữu và cơ sở kinh tế của quyền lực Nhà nước" },
     state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "NHÀ NƯỚC VIỆT NAM", topic: "Nhà nước Việt Nam, quyền làm chủ của nhân dân và định hướng xã hội chủ nghĩa", special: true },
     revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CÁCH MẠNG XÃ HỘI", topic: "Cách mạng xã hội, giành chính quyền và chuyển hóa lịch sử" }
   });
 
   const gates = [
-    { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "GIAI CẤP & SỞ HỮU", title: "Cổng chương 02", type: "GATE / 02", number: "02 / 04" },
+    { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "QUY LUẬT GIÁ TRỊ", title: "Cổng kiểm tra Chương 01", type: "GATE / 01", number: "01 / 04" },
     { id: "gate-state", x: 0, z: -36, radius: 2.5, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
     { id: "gate-revolt", x: 0, z: -60, radius: 2.5, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
     { id: "gate-end", x: 0, z: -84, radius: 2.5, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
