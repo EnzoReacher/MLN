@@ -128,46 +128,58 @@ window.THE_STATE_CONTENT = [
   {
     id: "state",
     code: "03",
-    label: "THE NEW STATE",
-    title: "Nhà nước xã hội chủ nghĩa và Việt Nam",
+    label: "SUPPLY, DEMAND & MONEY",
+    title: "Quy luật Cung – Cầu và Quy luật Lưu thông tiền tệ",
     sections: [
       {
-        label: "01 / KIỂU MỚI",
-        title: "Nhà nước xã hội chủ nghĩa trong thời kỳ quá độ",
-        lead: "Nhà nước xã hội chủ nghĩa thuộc về thời kỳ quá độ, khi xã hội chuyển biến từ chủ nghĩa tư bản sang chủ nghĩa cộng sản.",
+        label: "01 / QUY LUẬT CUNG - CẦU",
+        title: "Bản chất và cơ chế tác động của Quy luật Cung – Cầu",
+        lead: "Quy luật cung – cầu là quy luật kinh tế điều tiết quan hệ giữa bên bán (cung) và bên mua (cầu) hàng hóa trên thị trường, đòi hỏi cung – cầu phải có sự thống nhất.",
         paragraphs: [
-          "Theo tài liệu, đây là một thời kỳ quá độ chính trị; Nhà nước kiểu mới tương ứng là chuyên chính cách mạng của giai cấp vô sản, do giai cấp công nhân và nhân dân lao động giành chính quyền để xóa bỏ quan hệ bóc lột dựa trên tư hữu về tư liệu sản xuất.",
-          "Nhà nước mới vừa chống sự phản kháng của lực lượng cũ, vừa tổ chức - xây dựng những điều kiện kinh tế - xã hội cho trật tự mới. Hai nhiệm vụ đó giải thích tính tất yếu của Nhà nước trong thời kỳ quá độ."
+          "Trên thị trường, cung – cầu có mối quan hệ hữu cơ với nhau, thường xuyên tác động lẫn nhau và ảnh hưởng trực tiếp đến giá cả: nếu cung lớn hơn cầu thì giá cả thấp hơn giá trị; nếu cung nhỏ hơn cầu thì giá cả cao hơn giá trị; nếu cung bằng cầu thì giá cả bằng giá trị.",
+          "Quy luật cung – cầu có tác dụng điều tiết quan hệ giữa sản xuất và lưu thông hàng hoá; làm thay đổi cơ cấu và quy mô thị trường, ảnh hưởng tới giá cả. Ở đâu có thị trường thì ở đó quy luật cung – cầu tồn tại và hoạt động khách quan. Nhà nước vận dụng quy luật này qua các chính sách giá cả, thuế, tín dụng để duy trì cân đối cung – cầu lành mạnh và hợp lý."
         ],
         images: [
-          { src: "./assets/ch03-state-rally.webp", alt: "Quần chúng tập trung trước một công trình công cộng trong biến chuyển lịch sử", topic: "Nhà nước xã hội chủ nghĩa: quần chúng và quyền lực trong thời kỳ chuyển biến", caption: "Quần chúng tập hợp trước thiết chế công gợi vấn đề giành, tổ chức và thực hiện quyền lực trong một thời kỳ chuyển biến." },
-          { src: "./assets/ch03-soviet-state.webp", alt: "Biểu tượng Nhà nước Xô viết", topic: "Nhà nước xã hội chủ nghĩa: kinh nghiệm lịch sử Xô viết", caption: "Biểu tượng Xô viết đặt phần lý luận về Nhà nước kiểu mới vào một kinh nghiệm lịch sử cụ thể." }
+          {
+            src: "./assets/ktct-ch03-supply-demand.webp",
+            alt: "Người tiêu dùng mua sắm nông sản và hàng hóa tại siêu thị Co.opmart",
+            topic: "Quy luật Cung – Cầu: Quan hệ giữa bên bán, bên mua và giá cả thị trường",
+            caption: "Hoạt động mua sắm tại siêu thị phản ánh trực quan sự vận động của cung – cầu: giá cả và lượng cung ứng hàng hóa được điều chỉnh theo nhu cầu tiêu dùng thực tế của thị trường. (Nguồn tư liệu: Hệ thống siêu thị Co.opmart)"
+          }
         ]
       },
       {
-        label: "02 / ĐẶC ĐIỂM",
-        title: "Của dân, do dân, vì dân",
-        lead: "Nhà nước xã hội chủ nghĩa kết hợp tổ chức - xây dựng với bảo vệ thành quả cách mạng.",
+        label: "02 / CUNG - CẦU THỜI SỐ HÓA",
+        title: "Biểu hiện của Quy luật Cung – Cầu trong nền kinh tế số",
+        lead: "Kinh tế số không làm mất đi quy luật cung – cầu truyền thống, mà làm cho cách thức vận hành của quy luật này trở nên linh hoạt, nhạy bén và đa dạng hơn.",
         paragraphs: [
-          "Tài liệu nêu ba đặc điểm: Nhà nước của dân, do dân, vì dân; thực hiện đồng thời tổ chức - xây dựng và trấn áp; gắn nhiệm vụ dân tộc với nhiệm vụ quốc tế.",
-          "Đây là một ‘nhà nước nửa nhà nước’: khi đối kháng giai cấp mất đi, bộ máy đứng trên xã hội không còn lý do tồn tại và sẽ tự tiêu vong."
+          "Nguyên lý cung – cầu vẫn giữ nguyên giá trị cốt lõi: khi nhu cầu đi lại hoặc dịch vụ tăng vọt vào giờ cao điểm, thời tiết xấu hoặc ngày lễ mà nguồn cung xe bị hạn chế, cước phí dịch vụ tự động điều chỉnh tăng để kích thích thêm tài xế tham gia cung ứng.",
+          "Điểm khác biệt căn bản là các nền tảng kinh tế số ứng dụng dữ liệu lớn (Big Data) và thuật toán tự động để theo dõi biến động cung – cầu theo thời gian thực (real-time), điều chỉnh giá cước linh hoạt và kết nối bên bán với bên mua nhanh chóng, tối ưu hóa nguồn lực xã hội."
         ],
         images: [
-          { src: "./assets/ch03-ho-chi-minh.webp", alt: "Hồ Chí Minh đọc và viết tài liệu", topic: "Nhà nước Việt Nam: giải phóng dân tộc gắn với xây dựng xã hội mới", caption: "Hồ Chí Minh làm việc với tài liệu—tư liệu gợi mối liên hệ giữa lãnh đạo cách mạng, giải phóng dân tộc và xây dựng Nhà nước." },
-          { src: "./assets/ch03-vietnam-socialism.webp", alt: "Minh họa nhân dân Việt Nam và biểu tượng cách mạng", topic: "Nhà nước xã hội chủ nghĩa: của dân, do dân, vì dân", caption: "Hình ảnh nhân dân và biểu tượng chính trị minh họa mục tiêu Nhà nước của dân, do dân, vì dân và nhiệm vụ tổ chức - xây dựng." }
+          {
+            src: "./assets/ktct-ch03-digital-demand.webp",
+            alt: "Phương tiện giao thông và tài xế công nghệ di chuyển trong giờ cao điểm",
+            topic: "Kinh tế số: Biểu hiện linh hoạt của quy luật cung – cầu thời đại công nghệ",
+            caption: "Hình ảnh người tham gia giao thông và tài xế xe công nghệ phản ánh sự thích ứng của quy luật cung – cầu: thuật toán số tự động điều tiết giá cước và nguồn cung xe theo biến động nhu cầu thời gian thực. (Nguồn ảnh báo chí: Báo Dân Trí dantri.com.vn)"
+          }
         ]
       },
       {
-        label: "03 / VIỆT NAM",
-        title: "Nhà nước Cộng hòa xã hội chủ nghĩa Việt Nam",
-        lead: "Ở Việt Nam, xây dựng Nhà nước xã hội chủ nghĩa là một quá trình lâu dài gắn với phát triển thực tế.",
+        label: "03 / LƯU THÔNG TIỀN TỆ",
+        title: "Quy luật lưu thông tiền tệ và nguyên lý kiểm soát lạm phát",
+        lead: "Quy luật lưu thông tiền tệ yêu cầu việc lưu thông tiền tệ phải căn cứ trên yêu cầu khách quan của lưu thông hàng hóa và dịch vụ.",
         paragraphs: [
-          "Nhà nước là trụ cột của hệ thống chính trị, thực hiện quyền làm chủ của nhân dân dưới sự lãnh đạo của Đảng Cộng sản Việt Nam.",
-          "Nền tảng được tài liệu nhấn mạnh là Nhà nước pháp quyền của dân, do dân, vì dân và liên minh công nhân - nông dân - trí thức, gắn với phát triển kinh tế - xã hội theo định hướng xã hội chủ nghĩa."
+          "Khối lượng tiền cần thiết cho lưu thông hàng hóa ở mỗi thời kỳ được xác định theo nguyên lý: M = (P.Q) / V (tỷ lệ thuận với tổng giá cả hàng hóa P.Q và tỷ lệ nghịch với tốc độ lưu thông bình quân V). Khi thanh toán không dùng tiền mặt phát triển: M = [P.Q - (G1 + G2) + G3] / V.",
+          "Khi tiền giấy được phát hành quá nhiều vượt quá yêu cầu của lưu thông hàng hóa, đồng tiền sẽ bị mất giá trị, giá cả hàng hóa tăng vọt dẫn tới lạm phát. Bởi vậy, Nhà nước không thể in tiền tùy tiện mà phải tuân thủ nghiêm ngặt quy luật lưu thông tiền tệ để giữ vững ổn định kinh tế vĩ mô."
         ],
         images: [
-          { src: "./assets/ch03-vietnam-state.webp", alt: "Không gian nghị trường và đại biểu Việt Nam", topic: "Việt Nam: Nhà nước pháp quyền và tổ chức quyền lực", caption: "Nghị trường và đại biểu minh họa không gian tổ chức quyền lực của Nhà nước pháp quyền Việt Nam." },
-          { src: "./assets/ch03-public-power.webp", alt: "Quần chúng tập trung trước một công trình công cộng ở Việt Nam", topic: "Việt Nam: nhân dân thực hiện quyền làm chủ", caption: "Quần chúng trong không gian công cộng gợi vai trò của nhân dân trong việc thực hiện quyền làm chủ." }
+          {
+            src: "./assets/ktct-ch03-money-circulation.webp",
+            alt: "Các cọc tiền polymer mệnh giá 500.000 đồng của Ngân hàng Nhà nước Việt Nam",
+            topic: "Quy luật lưu thông tiền tệ: Khối lượng tiền cần thiết và kiểm soát lạm phát",
+            caption: "Tiền polymer Việt Nam minh họa quy luật lưu thông tiền tệ: Ngân hàng Nhà nước điều tiết lượng tiền cung ứng phù hợp với quy mô hàng hóa để bảo đảm giá trị đồng tiền và kiểm soát lạm phát. (Nguồn tư liệu: Tài chính - Ngân hàng Việt Nam)"
+          }
         ]
       }
     ]

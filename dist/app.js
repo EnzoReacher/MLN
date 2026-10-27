@@ -199,11 +199,38 @@
       options: ["Quản lý dân cư theo lãnh thổ", "Dựa vào quan hệ huyết thống", "Tự nguyện nộp thuế", "Chỉ có chức năng bảo vệ"],
       correct: 0
     },
-    "gate-revolt": {
-      question: "Đặc điểm cốt lõi của Nhà nước XHCN là gì?",
-      options: ["Nhà nước của thiểu số", "Đứng trên mọi giai cấp", "Của dân, do dân, vì dân", "Chỉ có chức năng thống trị"],
-      correct: 2
-    },
+    "gate-revolt": [
+      {
+        question: "Theo quy luật cung – cầu, khi cung lớn hơn cầu thì quan hệ giữa giá cả và giá trị sẽ như thế nào?",
+        options: [
+          "Giá cả thấp hơn giá trị",
+          "Giá cả cao hơn giá trị",
+          "Giá cả bằng giá trị",
+          "Giá cả tăng cao độc lập với giá trị"
+        ],
+        correct: 0
+      },
+      {
+        question: "Theo quy luật lưu thông tiền tệ (M = P.Q / V), lượng tiền cần thiết (M) có mối quan hệ gì với tổng giá cả (P.Q) và tốc độ lưu thông (V)?",
+        options: [
+          "Tỷ lệ thuận với tổng giá cả hàng hóa và tỷ lệ nghịch với tốc độ lưu thông tiền tệ",
+          "Tỷ lệ nghịch với tổng giá cả hàng hóa và tỷ lệ thuận với tốc độ lưu thông tiền tệ",
+          "Tỷ lệ thuận với cả tổng giá cả hàng hóa và tốc độ lưu thông tiền tệ",
+          "Không phụ thuộc vào lưu thông hàng hóa mà do quy định chủ quan của nhà nước"
+        ],
+        correct: 0
+      },
+      {
+        question: "Hậu quả tất yếu khi tiền giấy được in và phát hành vượt quá yêu cầu của lưu thông hàng hóa là gì?",
+        options: [
+          "Đồng tiền mất giá trị, giá cả hàng hóa leo thang dẫn tới lạm phát",
+          "Sức mua của người tiêu dùng tăng mạnh và thúc đẩy tăng trưởng vượt bậc",
+          "Làm giảm chi phí sản xuất và cân bằng lại cung cầu tức thì",
+          "Không có tác động gì vì tiền giấy lưu hành theo luật định"
+        ],
+        correct: 0
+      }
+    ],
     "gate-end": {
       question: "Vận dụng: Kinh tế số có còn tuân theo quy luật cung – cầu truyền thống?",
       options: [
@@ -251,12 +278,12 @@
       ]
     },
     {
-      id: "state", index: "03", name: "NHÀ NƯỚC & QUYỀN LỰC", label: "THE STATE", centerZ: -48, zBack: -38, zFront: -58,
-      color: "#b9c0b3", accent: "#e6d9bd", artwork: "state", artworkImage: "./assets/ch03-state-rally.webp",
+      id: "state", index: "03", name: "CUNG - CẦU & TIỀN TỆ", label: "SUPPLY, DEMAND & MONEY", centerZ: -48, zBack: -38, zFront: -58,
+      color: "#2a75d3", accent: "#7ec8f8", artwork: "state", artworkImage: "./assets/ktct-ch03-supply-demand.webp",
       artworks: [
-        { image: "./assets/ch03-state-rally.webp", wall: "left", zOffset: 0, height: 2.70, maxWidth: 5.10 },
-        { image: "./assets/ch03-vietnam-socialism.webp", wall: "right", zOffset: -5.4, height: 2.8, maxWidth: 4.65 },
-        { image: "./assets/ch03-vietnam-state.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.4 }
+        { image: "./assets/ktct-ch03-supply-demand.webp", wall: "left", zOffset: 0, height: 2.70, maxWidth: 5.10 },
+        { image: "./assets/ktct-ch03-digital-demand.webp", wall: "right", zOffset: -5.4, height: 2.8, maxWidth: 4.65 },
+        { image: "./assets/ktct-ch03-money-circulation.webp", wall: "right", zOffset: 5.4, height: 2.55, maxWidth: 4.4 }
       ]
     },
     {
@@ -280,14 +307,14 @@
   const ROOM_HONORS = Object.freeze({
     base: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "KINH TẾ THỊ TRƯỜNG", topic: "Nền kinh tế hàng hóa, các quy luật thị trường và học thuyết kinh tế chính trị" },
     class: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "GIAI CẤP & SỞ HỮU", topic: "Giai cấp, sở hữu và cơ sở kinh tế của quyền lực Nhà nước" },
-    state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "NHÀ NƯỚC VIỆT NAM", topic: "Nhà nước Việt Nam, quyền làm chủ của nhân dân và định hướng xã hội chủ nghĩa", special: true },
+    state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "ĐIỀU TIẾT VĨ MÔ", topic: "Vai trò quản lý của Nhà nước, ổn định tiền tệ và cân đối cung - cầu lành mạnh", special: true },
     revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CÁCH MẠNG XÃ HỘI", topic: "Cách mạng xã hội, giành chính quyền và chuyển hóa lịch sử" }
   });
 
   const gates = [
     { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "QUY LUẬT GIÁ TRỊ", title: "Cổng kiểm tra Chương 01", type: "GATE / 01", number: "01 / 04" },
     { id: "gate-state", x: 0, z: -36, radius: 2.5, kind: "gate", requiredEvidence: "class", target: "CUNG - CẦU & TIỀN TỆ", title: "Cổng mật mã Chương 02", type: "GATE / 02", number: "02 / 04" },
-    { id: "gate-revolt", x: 0, z: -60, radius: 2.5, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
+    { id: "gate-revolt", x: 0, z: -60, radius: 2.5, kind: "gate", requiredEvidence: "state", target: "QUY LUẬT CẠNH TRANH", title: "Cổng kiểm tra Chương 03", type: "GATE / 03", number: "03 / 04" },
     { id: "gate-end", x: 0, z: -84, radius: 2.5, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
   ];
 
