@@ -242,12 +242,12 @@
       ]
     },
     {
-      id: "class", index: "02", name: "GIAI CẤP & SỞ HỮU", label: "THE SPLIT", centerZ: -24, zBack: -14, zFront: -34,
-      color: "#d6a75e", accent: "#f0d394", artwork: "class", artworkImage: "./assets/ch02-state-functions.webp",
+      id: "class", index: "02", name: "QUY LUẬT GIÁ TRỊ", label: "LAW OF VALUE", centerZ: -24, zBack: -14, zFront: -34,
+      color: "#d6a75e", accent: "#f0d394", artwork: "class", artworkImage: "./assets/ktct-ch02-law-of-value.webp",
       artworks: [
-        { image: "./assets/ch02-state-functions.webp", wall: "left", zOffset: 0, height: 1.7, maxWidth: 5.3 },
-        { image: "./assets/ch02-state-form.webp", wall: "right", zOffset: -5.4, height: 2.55, maxWidth: 4.25 },
-        { image: "./assets/ch02-slave-state.webp", wall: "right", zOffset: 5.4, height: 2.8, maxWidth: 4.35 }
+        { image: "./assets/ktct-ch02-law-of-value.webp", wall: "left", zOffset: 0, height: 2.85, maxWidth: 4.8 },
+        { image: "./assets/ktct-ch02-value-regulation.webp", wall: "right", zOffset: -5.4, height: 2.75, maxWidth: 4.5 },
+        { image: "./assets/ktct-ch02-tech-innovation.webp", wall: "right", zOffset: 5.4, height: 2.8, maxWidth: 4.6 }
       ]
     },
     {
@@ -286,7 +286,7 @@
 
   const gates = [
     { id: "gate-class", x: 0, z: -12, radius: 2.5, kind: "gate", requiredEvidence: "base", target: "QUY LUẬT GIÁ TRỊ", title: "Cổng kiểm tra Chương 01", type: "GATE / 01", number: "01 / 04" },
-    { id: "gate-state", x: 0, z: -36, radius: 2.5, kind: "gate", requiredEvidence: "class", target: "NHÀ NƯỚC & QUYỀN LỰC", title: "Cổng chương 03", type: "GATE / 03", number: "03 / 04" },
+    { id: "gate-state", x: 0, z: -36, radius: 2.5, kind: "gate", requiredEvidence: "class", target: "CUNG - CẦU & TIỀN TỆ", title: "Cổng mật mã Chương 02", type: "GATE / 02", number: "02 / 04" },
     { id: "gate-revolt", x: 0, z: -60, radius: 2.5, kind: "gate", requiredEvidence: "state", target: "MÂU THUẪN & CHUYỂN HÓA", title: "Cổng chương 04", type: "GATE / 04", number: "04 / 04" },
     { id: "gate-end", x: 0, z: -84, radius: 2.5, kind: "gate", requiredEvidence: "revolt", final: true, title: "Cánh cửa cuối", type: "EXIT / FIELD REPORT", number: "END" }
   ];
@@ -1063,8 +1063,8 @@
 
   if (numpadRequestHint) {
     numpadRequestHint.addEventListener("click", () => {
-      state.quizPoints = Math.max(0, state.quizPoints - 300);
-      numpadHintText.innerHTML = "GỢI Ý:<br/>Các con số xuất hiện trong tài liệu của phòng này. Hãy ghép chúng theo thứ tự từ Tranh 1 đến Tranh 3.";
+      state.quizPoints = Math.max(0, state.quizPoints - 50);
+      numpadHintText.innerHTML = "GỢI Ý:<br/>Mật mã là năm xuất bản Tập 1 bộ sách kinh điển 'TƯ BẢN' của Karl Marx: 1-8-6-7";
       numpadRequestHint.classList.add("hidden");
       updateUi();
     });
@@ -1077,7 +1077,7 @@
         numpadFeedback.className = "quiz-feedback error";
         return;
       }
-      if (numpadInput === "2153") {
+      if (numpadInput === "1867" || numpadInput === "2153") {
         numpadFeedback.textContent = "Mã khóa chính xác! Cửa đã mở.";
         numpadFeedback.className = "quiz-feedback success";
         state.quizPoints += 100;

@@ -69,44 +69,58 @@ window.THE_STATE_CONTENT = [
   {
     id: "class",
     code: "02",
-    label: "THE FORMS",
-    title: "Chức năng, kiểu và hình thức Nhà nước",
+    label: "THE LAW OF VALUE",
+    title: "Quy luật giá trị — Quy luật kinh tế cơ bản",
     sections: [
       {
-        label: "01 / CHỨC NĂNG",
-        title: "Thống trị chính trị và tổ chức đời sống chung",
-        lead: "Chức năng Nhà nước luôn tồn tại hai mặt gắn liền với nhau: bảo vệ trật tự quyền lực và xử lý những nhu cầu chung của cộng đồng.",
-        contentOnly: true,
+        label: "01 / NỘI DUNG & YÊU CẦU",
+        title: "Quy luật kinh tế cơ bản của sản xuất hàng hóa",
+        lead: "Quy luật giá trị là quy luật kinh tế cơ bản của sản xuất hàng hóa: ở đâu có sản xuất và trao đổi hàng hóa thì ở đó có sự hoạt động của quy luật giá trị.",
         paragraphs: [
-          "Chức năng thống trị chính trị bảo vệ địa vị của giai cấp cầm quyền. Chức năng xã hội tổ chức đời sống chung trong những điều kiện lịch sử cụ thể, nhưng không xóa đi quan hệ giai cấp.",
-          "Đối nội là duy trì trật tự kinh tế, chính trị và xã hội; đối ngoại là bảo vệ lãnh thổ và lợi ích của Nhà nước. Hai mặt này phải được đọc cùng cơ sở quyền lực của từng thời kỳ."
+          "Quy luật giá trị yêu cầu việc sản xuất và trao đổi hàng hóa phải tiến hành trên cơ sở hao phí lao động xã hội cần thiết. Người sản xuất muốn được xã hội thừa nhận thì lượng giá trị cá biệt của hàng hóa phải nhỏ hơn hoặc bằng hao phí lao động xã hội cần thiết.",
+          "Trong lưu thông, việc trao đổi phải thực hiện theo nguyên tắc ngang giá, lấy giá trị xã hội làm cơ sở. Cơ chế hoạt động của quy luật giá trị biểu hiện thông qua sự lên xuống của giá cả thị trường xoay quanh trục giá trị hàng hóa dưới tác động của cung – cầu."
         ],
         images: [
-          { src: "./assets/ch02-state-functions.webp", alt: "Bảng minh họa hoạt động đối nội, đối ngoại và hợp tác công", topic: "Chức năng Nhà nước: đối nội, đối ngoại và tổ chức nhu cầu chung", caption: "Quản lý nội bộ, đại diện đối ngoại và phối hợp công—ba mặt để đọc chức năng Nhà nước trong điều kiện lịch sử cụ thể." }
+          {
+            src: "./assets/ktct-ch02-law-of-value.webp",
+            alt: "Dây chuyền sản xuất may mặc công nghiệp tại Việt Nam",
+            topic: "Quy luật giá trị: Sản xuất dựa trên hao phí lao động xã hội cần thiết",
+            caption: "Dây chuyền may công nghiệp minh họa yêu cầu của quy luật giá trị: doanh nghiệp và người lao động phải liên tục tối ưu hóa thời gian lao động để giá trị cá biệt không vượt quá mức xã hội cần thiết. (Nguồn tư liệu: Sản xuất may mặc Việt Nam)"
+          }
         ]
       },
       {
-        label: "02 / KHÁI NIỆM",
-        title: "Kiểu Nhà nước khác với hình thức Nhà nước",
-        lead: "Một khái niệm hỏi Nhà nước thuộc về giai cấp nào; khái niệm kia hỏi quyền lực được tổ chức ra sao.",
+        label: "02 / ĐIỀU TIẾT KINH TẾ",
+        title: "Điều tiết sản xuất và lưu thông hàng hóa",
+        lead: "Thông qua mệnh lệnh của giá cả thị trường, quy luật giá trị tự phát phân bổ tư liệu sản xuất và sức lao động giữa các ngành kinh tế.",
         paragraphs: [
-          "Kiểu Nhà nước gắn với giai cấp thống trị, cơ sở kinh tế và hình thái kinh tế - xã hội; mọi hình thức đa dạng cuối cùng đều quy về một bản chất.",
-          "Hình thức Nhà nước là cách tổ chức và thực hiện quyền lực. Những Nhà nước cùng một kiểu vẫn có thể mang các hình thức khác nhau, nên không thể chỉ nhìn tên gọi hay thiết chế bề ngoài."
+          "Trong sản xuất, sự biến động của giá cả là tín hiệu giúp người sản xuất nhận biết tình hình cung – cầu: nếu giá cả lớn hơn hoặc bằng giá trị thì mở rộng sản xuất; nguồn lực và lao động sẽ tự phát dịch chuyển vào ngành có giá cả cao, lợi nhuận tốt.",
+          "Trong lưu thông, quy luật giá trị điều tiết hàng hóa từ nơi có giá thấp (cung lớn hơn cầu) đến nơi có giá cao (cung nhỏ hơn cầu), góp phần cân bằng cung – cầu giữa các vùng miền và điều chỉnh sức mua của thị trường."
         ],
         images: [
-          { src: "./assets/ch02-state-form.webp", alt: "Không gian nghị viện và hội nghị lập hiến", topic: "Hình thức Nhà nước: cách tổ chức và thực hiện quyền lực", caption: "Hội nghị lập hiến minh họa một hình thức tổ chức và thực hiện quyền lực; hình thức không tự quyết định bản chất giai cấp." }
+          {
+            src: "./assets/ktct-ch02-value-regulation.webp",
+            alt: "Ứng dụng công nghệ đo đạc thông minh trên đồng ruộng nông nghiệp",
+            topic: "Tác động quy luật giá trị: Điều tiết sản xuất và lưu thông hàng hóa",
+            caption: "Người sản xuất ứng dụng công nghệ kiểm soát mùa vụ theo tín hiệu thị trường: quy luật giá trị điều tiết người nông dân chuyển đổi sản xuất và phân bổ nông sản đến nơi có nhu cầu cao. (Nguồn tư liệu: Nông nghiệp công nghệ cao)"
+          }
         ]
       },
       {
-        label: "03 / LỊCH SỬ",
-        title: "Các kiểu Nhà nước trong lịch sử",
-        lead: "Chiếm hữu nô lệ, phong kiến và tư sản là những kiểu Nhà nước gắn với các cơ sở kinh tế khác nhau.",
+        label: "03 / ĐỔI MỚI & PHÂN HÓA",
+        title: "Kích thích cải tiến kỹ thuật và phân hóa xã hội",
+        lead: "Để đứng vững trong cạnh tranh, người sản xuất buộc phải áp dụng công nghệ mới để hạ giá trị cá biệt, đồng thời dẫn tới sự phân hóa giàu – nghèo tự nhiên.",
         paragraphs: [
-          "Trong tiến trình năm hình thái kinh tế - xã hội, lịch sử đã ghi nhận ba kiểu Nhà nước bóc lột cơ bản: Nhà nước chiếm hữu nô lệ, Nhà nước phong kiến và Nhà nước tư sản.",
-          "Quân chủ, cộng hòa, tập quyền hay phân quyền là những hình thức có thể thay đổi. Muốn hiểu bản chất, phải nhìn cả quan hệ kinh tế và giai cấp phía sau hình thức đó."
+          "Vì hàng hóa trao đổi theo giá trị xã hội, người có giá trị cá biệt thấp hơn giá trị xã hội sẽ thu được nhiều lợi nhuận hơn. Để không bị đào thái, các chủ thể phải cải tiến kỹ thuật, tự động hóa, tăng năng suất và hạ giá thành sản phẩm.",
+          "Quá trình này mang tính hai mặt: vừa thúc đẩy lực lượng sản xuất phát triển mạnh mẽ, đào thải cái lạc hậu; vừa tất yếu dẫn đến phân hóa những người sản xuất – người nhạy bén trở nên giàu có, người yếu kém công nghệ thua lỗ, phá sản."
         ],
         images: [
-          { src: "./assets/ch02-slave-state.webp", alt: "Tranh minh họa người nô lệ bị áp bức trong xã hội cổ đại", topic: "Kiểu Nhà nước: cơ sở kinh tế của chế độ chiếm hữu nô lệ", caption: "Hình ảnh xã hội chiếm hữu nô lệ—một ví dụ cụ thể để so sánh các kiểu Nhà nước theo cơ sở kinh tế." }
+          {
+            src: "./assets/ktct-ch02-tech-innovation.webp",
+            alt: "Dây chuyền robot tự động hóa trong nhà máy sản xuất ô tô hiện đại",
+            topic: "Cải tiến kỹ thuật: Tăng năng suất lao động và phân hóa người sản xuất",
+            caption: "Dây chuyền robot tự động hóa phản ánh áp lực của quy luật giá trị: doanh nghiệp buộc phải đầu tư công nghệ tiên tiến để giảm hao phí lao động cá biệt, giành ưu thế cạnh tranh trên thị trường. (Nguồn tư liệu: Công nghiệp chế tạo hiện đại)"
+          }
         ]
       }
     ]
