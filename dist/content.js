@@ -1,10 +1,7 @@
 /*
- * THE STATE / Chapter VII content
- *
- * Source: "Triết học - Chương 7: Nhà nước và Cách mạng xã hội" supplied by
- * the group. The copy is intentionally concise for an in-gallery reading
- * experience; each image carries an explicit Chapter 7 concept tag so visual
- * evidence and educational content stay aligned.
+ * KINH TẾ CHÍNH TRỊ MÁC – LÊNIN
+ * Chuyên đề: Nền kinh tế thị trường và một số quy luật chủ yếu của nền kinh tế thị trường
+ * Nguồn: Giáo trình Kinh tế chính trị Mác – Lênin (Bộ GD&ĐT)
  */
 window.THE_STATE_CONTENT = [
   {

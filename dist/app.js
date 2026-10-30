@@ -1,4 +1,4 @@
-/* THE STATE / Exhibition 01 — lightweight 3D gallery game. */
+/* KINH TẾ CHÍNH TRỊ MÁC – LÊNIN: Nền kinh tế thị trường & Các quy luật kinh tế — 3D Gallery Game */
 (() => {
   "use strict";
 
@@ -214,16 +214,16 @@
   };
 
   const STARS_POSITIONS = [
-    // Room 1: Điều kiện vật chất (centerZ = 0)
+    // Room 1: Nền kinh tế thị trường (centerZ = 0)
     { id: "star-1", x: -4.2, z: -4.5, y: 0.16, room: "base", hint: "Dưới gầm ghế băng ngắm tranh" },
     { id: "star-2", x: -6.4, z: 8.25, y: 0.28, room: "base", hint: "Góc khuất chậu cây cảnh" },
-    // Room 2: Giai cấp & Sở hữu (centerZ = -24)
+    // Room 2: Quy luật Giá trị (centerZ = -24)
     { id: "star-3", x: -6.4, z: -15.75, y: 0.28, room: "class", hint: "Góc khuất chậu cây cảnh" },
     { id: "star-4", x: 3.8, z: -27.2, y: 0.16, room: "class", hint: "Dưới gầm ghế băng ngắm tranh" },
-    // Room 3: Nhà nước & Quyền lực (centerZ = -48)
+    // Room 3: Quy luật Cung - Cầu & Tiền tệ (centerZ = -48)
     { id: "star-5", x: -6.4, z: -39.75, y: 0.28, room: "state", hint: "Góc khuất chậu cây cảnh" },
     { id: "star-6", x: 5.2, z: -40.5, y: 0.28, room: "state", hint: "Khuất sau bệ tượng đồng điêu khắc" },
-    // Room 4: Mâu thuẫn & Chuyển hóa (centerZ = -72)
+    // Room 4: Quy luật Cạnh tranh (centerZ = -72)
     { id: "star-7", x: 0, z: -72.8, y: 0.15, room: "revolt", hint: "Nằm sát đất phía sau đế bức tranh" },
     { id: "star-8", x: -3.8, z: -75.8, y: 0.16, room: "revolt", hint: "Dưới gầm ghế băng ngắm tranh" }
   ];
@@ -276,7 +276,7 @@
 
   const ROOM_HONORS = Object.freeze({
     base: { image: "./assets/ch03-marx.webp", name: "Karl Marx", role: "KINH TẾ THỊ TRƯỜNG", topic: "Nền kinh tế hàng hóa, các quy luật thị trường và học thuyết kinh tế chính trị" },
-    class: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "GIAI CẤP & SỞ HỮU", topic: "Giai cấp, sở hữu và cơ sở kinh tế của quyền lực Nhà nước" },
+    class: { image: "./assets/ch01-engels.webp", name: "Friedrich Engels", role: "QUY LUẬT GIÁ TRỊ", topic: "Hao phí lao động xã hội cần thiết, sản xuất hàng hóa và trục xoay giá cả" },
     state: { image: "./assets/ch03-ho-chi-minh-hero.webp", name: "Hồ Chí Minh", role: "ĐIỀU TIẾT VĨ MÔ", topic: "Vai trò quản lý của Nhà nước, ổn định tiền tệ và cân đối cung - cầu lành mạnh", special: true },
     revolt: { image: "./assets/ch01-lenin.webp", name: "Vladimir Ilyich Lenin", role: "CẠNH TRANH & THỊ TRƯỜNG", topic: "Bản chất quy luật cạnh tranh, động lực phát triển và tác động trong kinh tế thị trường" }
   });
@@ -1341,7 +1341,7 @@
         artworkMaterial.map = texture;
         artworkMaterial.needsUpdate = true;
         fitArtworkToFrame(texture);
-      }, undefined, (error) => console.warn(`THE STATE artwork fallback: ${room.id}-${index + 1}`, error));
+      }, undefined, (error) => console.warn(`KTCT artwork fallback: ${room.id}-${index + 1}`, error));
     }
   }
 
@@ -1460,7 +1460,7 @@
         texture.anisotropy = 1;
         portraitMaterial.map = texture;
         portraitMaterial.needsUpdate = true;
-      }, undefined, (error) => console.warn(`THE STATE honor portrait fallback: ${room.id}`, error));
+      }, undefined, (error) => console.warn(`KTCT honor portrait fallback: ${room.id}`, error));
     }
     worldGroup.add(group);
   }
@@ -2088,7 +2088,7 @@
     } catch (error) {
       renderer = null;
       reportRuntimeError("Trình duyệt không khởi tạo được WebGL cho không gian này. Hãy thử tải lại hoặc dùng Chrome/Brave với WebGL được bật.");
-      console.warn("THE STATE WebGL fallback:", error);
+      console.warn("KTCT WebGL fallback:", error);
     }
   }
 

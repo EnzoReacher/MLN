@@ -1,4 +1,4 @@
-// dist/sync.js - THE STATE Exhibition Real-Time Room & Leaderboard Sync
+// dist/sync.js - Kinh tế chính trị Mác – Lênin Exhibition Real-Time Room & Leaderboard Sync
 (function (global) {
   const BC_NAME = "mln_exhibition_sync_v2";
   const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(BC_NAME) : null;
