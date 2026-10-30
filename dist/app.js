@@ -249,7 +249,7 @@
     },
     {
       id: "state", index: "03", name: "CUNG - CẦU & TIỀN TỆ", label: "SUPPLY, DEMAND & MONEY", centerZ: -48, zBack: -38, zFront: -58,
-      color: "#2a75d3", accent: "#7ec8f8", artwork: "state", artworkImage: "./assets/ktct-ch03-supply-demand.webp",
+      color: "#c4824d", accent: "#e8c386", artwork: "state", artworkImage: "./assets/ktct-ch03-supply-demand.webp",
       artworks: [
         { image: "./assets/ktct-ch03-supply-demand.webp", wall: "left", zOffset: 0, height: 2.70, maxWidth: 5.10 },
         { image: "./assets/ktct-ch03-digital-demand.webp", wall: "right", zOffset: -5.4, height: 2.8, maxWidth: 4.65 },
