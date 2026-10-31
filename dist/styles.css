@@ -262,6 +262,7 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
 .quiz-option-button { display: flex; align-items: center; gap: 15px; width: 100%; padding: 14px 20px; border: 1px solid rgba(244, 236, 223, .2); background: rgba(0, 0, 0, .2); color: var(--paper); cursor: pointer; text-align: left; font-size: 17px; transition: .2s; }
 .quiz-option-button:hover:not(:disabled) { border-color: var(--gold); background: rgba(214, 174, 108, .1); transform: translateX(5px); }
 .quiz-option-button:disabled { opacity: .5; cursor: not-allowed; }
+.quiz-option-button.correct:disabled, .quiz-option-button.wrong:disabled { opacity: 1; }
 .quiz-option-letter { display: grid; place-items: center; width: 32px; height: 32px; flex-shrink: 0; background: var(--bg); border: 1px solid var(--muted); font: 700 14px var(--mono); color: var(--muted); transition: .2s; }
 .quiz-option-button:hover:not(:disabled) .quiz-option-letter { border-color: var(--gold); color: var(--gold); }
 .quiz-option-button.correct { border-color: #7ab591; background: rgba(122, 181, 145, .15); }

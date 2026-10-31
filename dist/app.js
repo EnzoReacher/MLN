@@ -62,6 +62,44 @@
     } catch (e) { }
   }
 
+  function playCorrectSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.setValueAtTime(880.00, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.48);
+    } catch (e) { }
+  }
+
+  function playWrongSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.setValueAtTime(146.83, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.22, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.42);
+    } catch (e) { }
+  }
+
   const quizUi = document.getElementById("quiz-ui");
   const quizTitle = document.getElementById("quiz-title");
   const quizQuestion = document.getElementById("quiz-question");
@@ -155,6 +193,9 @@
     "gate-class": [
       {
         question: "1/2: Nền kinh tế thị trường được hiểu một cách chính xác là gì?",
+        level: "DỄ",
+        penalty: 20,
+        reward: 100,
         options: [
           "Nền kinh tế hàng hóa phát triển cao, vận hành theo cơ chế thị trường",
           "Nền kinh tế hoàn toàn do Nhà nước chỉ huy phân bổ hiện vật",
@@ -165,6 +206,9 @@
       },
       {
         question: "2/2: Động lực trực tiếp mạnh mẽ nhất của các doanh nghiệp trong nền KTTT là gì?",
+        level: "TRUNG BÌNH",
+        penalty: 30,
+        reward: 100,
         options: [
           "Lợi nhuận và các lợi ích kinh tế - xã hội chính đáng",
           "Sự bao cấp tuyệt đối từ ngân sách nhà nước",
@@ -176,12 +220,18 @@
     ],
     "gate-state": {
       question: "Mật mã 4 số năm xuất bản Tập 1 bộ sách Tư bản của Karl Marx là gì?",
+      level: "MẬT MÃ",
+      penalty: 30,
+      reward: 100,
       options: ["1867", "1848", "1917", "1945"],
       correct: 0
     },
     "gate-revolt": [
       {
         question: "1/2: Trong kinh doanh, khi nguồn CUNG vượt quá CẦU (thừa hàng), giá cả thị trường sẽ biến động ra sao?",
+        level: "TRUNG BÌNH",
+        penalty: 40,
+        reward: 100,
         options: [
           "Giá cả có xu hướng giảm xuống thấp hơn giá trị để kích cầu tiêu dùng",
           "Giá cả tự động tăng phi mã bất chấp lượng hàng tồn kho",
@@ -192,6 +242,9 @@
       },
       {
         question: "2/2: Theo quy luật lưu thông tiền tệ, nếu phát hành lượng tiền giấy vượt quá nhu cầu thực tế của lưu thông thì gây ra hậu quả gì?",
+        level: "KHÓ",
+        penalty: 50,
+        reward: 120,
         options: [
           "Đồng tiền mất giá trị, giá cả hàng hóa tăng cao dẫn tới lạm phát",
           "Tăng vọt sức mua thực tế của toàn xã hội",
@@ -203,6 +256,9 @@
     ],
     "gate-end": {
       question: "Vận dụng: Kinh tế số có còn tuân theo quy luật cung – cầu truyền thống?",
+      level: "VẬN DỤNG CAO",
+      penalty: 70,
+      reward: 150,
       options: [
         "Vẫn tuân theo bản chất, nhưng biểu hiện linh hoạt và tốc độ phản ứng nhanh hơn nhờ dữ liệu và thuật toán số",
         "Không còn tuân theo, vì kinh tế số đã xóa bỏ hoàn toàn mối quan hệ cung – cầu của thị trường truyền thống",
@@ -359,6 +415,7 @@
     startTime: 0,
     endTime: 0,
     starsCollected: 0,
+    collectedStars: new Set(),
     quizPoints: 0,
     quizAttempts: 0,
     quizOpen: false,
@@ -372,6 +429,7 @@
   let clock = null;
   let textureLoader = null;
   let gateMeshes = new Map();
+  let currentShuffledOptions = [];
 
   function normaliseImage(image) {
     if (typeof image === "string") return { src: image, alt: "Ảnh tư liệu", topic: "", caption: "" };
@@ -432,6 +490,15 @@
     if (x < -6.1 || x > 6.1 || z > GALLERY.maxZ || z < GALLERY.minZ) return false;
     for (const gate of gates) {
       if (!gatePassed(gate) && state.player.z > gate.z + 0.85 && z < gate.z + 0.85) return false;
+    }
+    for (const room of rooms) {
+      const hZ = room.centerZ + 0.65;
+      const special = ROOM_HONORS[room.id]?.special === true;
+      const hw = special ? 2.05 : 1.80;
+      const hd = special ? 1.35 : 1.20;
+      if (Math.abs(x) < hw && Math.abs(z - hZ) < hd) {
+        return false;
+      }
     }
     return true;
   }
@@ -570,9 +637,12 @@
 
     // Gamification resets
     state.starsCollected = 0;
+    if (state.collectedStars) state.collectedStars.clear();
+    else state.collectedStars = new Set();
     state.quizPoints = 0;
     state.quizAttempts = 0;
     state.quizOpen = false;
+    currentShuffledOptions = [];
     state.currentQuizGate = null;
 
     // Reset stars in scene
@@ -849,12 +919,14 @@
       state.starsCollected++;
       state.quizPoints += 100;
       item.collected = true;
+      if (!state.collectedStars) state.collectedStars = new Set();
+      state.collectedStars.add(item.id);
       const starDef = STARS_POSITIONS.find(s => s.id === item.id);
       if (starDef) starDef.collected = true;
       const mesh = worldGroup.getObjectByName(`mesh-${item.id}`);
       if (mesh) mesh.visible = false;
       playStarSound();
-      showToast(`✦ BẠN ĐÃ TÌM THẤY 1 NGÔI SAO ĐỎ! (+100 ĐIỂM)`);
+      showToast(`✦ BẠN ĐÃ THU THẬP 1 NGÔI SAO ĐỎ! (+100 ĐIỂM DỰ TRỮ)`);
       updateUi();
       return;
     }
@@ -919,14 +991,32 @@
     const quizDataEntry = QUIZZES[state.currentQuizGate.id];
     const quizData = Array.isArray(quizDataEntry) ? quizDataEntry[state.quizIndex] : quizDataEntry;
 
-    quizQuestion.textContent = quizData.question;
+    // Build array of option objects with their correct status
+    const opts = quizData.options.map((text, idx) => ({
+      text,
+      isCorrect: idx === quizData.correct
+    }));
+
+    // Fisher-Yates shuffle options so answer is never always A
+    for (let i = opts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [opts[i], opts[j]] = [opts[j], opts[i]];
+    }
+    currentShuffledOptions = opts;
+
+    const level = quizData.level || "CƠ BẢN";
+    const penalty = quizData.penalty || 30;
+    const reward = quizData.reward || 100;
+
+    quizQuestion.innerHTML = `<span>${quizData.question}</span><br/><span style="display:inline-block; margin-top:10px; font-size:12px; font-family:var(--mono); color:var(--gold); background:rgba(207,168,97,0.15); border:1px solid rgba(207,168,97,0.35); padding:4px 12px; border-radius:4px;">📊 ĐỘ KHÓ: <strong>${level}</strong> | Đúng <strong>+${reward}đ</strong> | Sai trừ <strong>-${penalty}đ</strong></span>`;
+
     const optionButtons = quizOptions.querySelectorAll(".quiz-option-button");
     optionButtons.forEach((btn, idx) => {
       btn.className = "quiz-option-button";
       btn.disabled = false;
       const textSpan = btn.querySelector(".quiz-option-text");
-      if (textSpan && quizData.options[idx]) {
-        textSpan.textContent = quizData.options[idx];
+      if (textSpan && currentShuffledOptions[idx]) {
+        textSpan.textContent = currentShuffledOptions[idx].text;
       }
     });
 
@@ -944,7 +1034,7 @@
       quizTimeLeft--;
       if (quizTimerDisplay) {
         quizTimerDisplay.textContent = `${quizTimeLeft}s`;
-        if (quizTimeLeft <= 3) quizTimerDisplay.style.color = "var(--accent)";
+        if (quizTimeLeft <= 5) quizTimerDisplay.style.color = "var(--red)";
       }
       if (quizTimeLeft <= 0) {
         clearInterval(quizTimerId);
@@ -960,21 +1050,37 @@
     const quizDataEntry = QUIZZES[currentGate.id];
     const quizData = Array.isArray(quizDataEntry) ? quizDataEntry[state.quizIndex] : quizDataEntry;
     const isArray = Array.isArray(quizDataEntry);
-    const isCorrect = selectedIndex === quizData.correct;
+
+    const isCorrect = selectedIndex >= 0 && currentShuffledOptions[selectedIndex]?.isCorrect === true;
+    const penalty = quizData.penalty || 30;
+    const reward = quizData.reward || 100;
 
     clearInterval(quizTimerId);
     const optionButtons = quizOptions.querySelectorAll(".quiz-option-button");
 
     if (selectedIndex >= 0) {
       const selectedBtn = optionButtons[selectedIndex];
-      if (isCorrect) selectedBtn.classList.add("correct");
-      else selectedBtn.classList.add("wrong");
+      if (isCorrect) {
+        selectedBtn.classList.add("correct");
+      } else {
+        selectedBtn.classList.add("wrong");
+      }
+    }
+
+    // Always highlight the correct answer in green so the player learns
+    const correctBtnIndex = currentShuffledOptions.findIndex(o => o.isCorrect);
+    if (!isCorrect && correctBtnIndex >= 0 && optionButtons[correctBtnIndex]) {
+      optionButtons[correctBtnIndex].classList.add("correct");
     }
 
     optionButtons.forEach(btn => btn.disabled = true);
 
     if (isCorrect) {
-      state.quizPoints += 100;
+      state.quizPoints += reward;
+      updateUi();
+      playCorrectSound();
+      showToast(`✦ CHÍNH XÁC! (+${reward} ĐIỂM)`);
+
       if (isArray && state.quizIndex < quizDataEntry.length - 1) {
         quizFeedback.textContent = "Chính xác! Chuẩn bị câu tiếp theo...";
         quizFeedback.className = "quiz-feedback success";
@@ -997,17 +1103,24 @@
         }, 1500);
       }
     } else {
-      state.quizPoints = Math.max(0, state.quizPoints - 20);
+      state.quizPoints = Math.max(0, state.quizPoints - penalty);
+      updateUi();
+      playWrongSound();
+
+      const reason = selectedIndex === -1 ? "Hết giờ!" : "Chưa chính xác!";
+      showToast(`⚠️ ${reason.toUpperCase()} (-${penalty} ĐIỂM)`);
 
       if (isArray && state.quizIndex < quizDataEntry.length - 1) {
-        quizFeedback.textContent = selectedIndex === -1 ? "Hết giờ! Chuyển sang câu tiếp theo." : "Chưa chính xác! Chuyển sang câu tiếp theo.";
+        quizFeedback.textContent = `${reason} (Bị trừ ${penalty} điểm). Đáp án đúng là màu xanh. Chuẩn bị câu tiếp theo...`;
         quizFeedback.className = "quiz-feedback error";
         setTimeout(() => {
           state.quizIndex++;
           renderQuizQuestion();
-        }, 1800);
+        }, 2200);
       } else {
-        quizFeedback.textContent = isFinalGate ? "Hoàn tất câu hỏi vận dụng! Đang chuẩn bị báo cáo..." : (selectedIndex === -1 ? "Hết giờ! Cổng vẫn mở." : "Chưa đúng! Cổng vẫn mở.");
+        quizFeedback.textContent = isFinalGate 
+          ? `${reason} (Bị trừ ${penalty} điểm). Đang chuẩn bị báo cáo...`
+          : `${reason} (Bị trừ ${penalty} điểm). Cổng vẫn mở, hãy rút kinh nghiệm!`;
         quizFeedback.className = "quiz-feedback error";
         setTimeout(() => {
           state.passedGates.add(currentGate.id);
@@ -1017,7 +1130,7 @@
           if (isFinalGate) {
             showEnding();
           }
-        }, 1800);
+        }, 2200);
       }
     }
   }
@@ -1083,9 +1196,12 @@
         return;
       }
       if (numpadInput === "1867" || numpadInput === "2153") {
-        numpadFeedback.textContent = "Mã khóa chính xác! Cửa đã mở.";
+        numpadFeedback.textContent = "Mã khóa chính xác! (+100 điểm) Cửa đã mở.";
         numpadFeedback.className = "quiz-feedback success";
         state.quizPoints += 100;
+        playCorrectSound();
+        showToast("✦ MẬT MÃ CHÍNH XÁC! (+100 ĐIỂM)");
+        updateUi();
         setTimeout(() => {
           state.passedGates.add(state.currentQuizGate.id);
           state.player.z = state.currentQuizGate.z - 2.4;
@@ -1093,8 +1209,13 @@
           closeNumpad();
         }, 1500);
       } else {
-        numpadFeedback.textContent = "Mã sai. Hãy kiểm tra lại manh mối.";
+        const numpadPenalty = 30;
+        state.quizPoints = Math.max(0, state.quizPoints - numpadPenalty);
+        playWrongSound();
+        updateUi();
+        numpadFeedback.textContent = `Mã sai! Bị trừ ${numpadPenalty} điểm. Hãy kiểm tra gợi ý.`;
         numpadFeedback.className = "quiz-feedback wrong";
+        showToast(`⚠️ MÃ KHÓA SAI! (-${numpadPenalty} ĐIỂM)`);
         numpadInput = "";
         updateNumpadDisplay();
       }
@@ -1798,38 +1919,101 @@
   }
 
   function addStanchions(room) {
+    const honor = ROOM_HONORS[room.id];
+    if (!honor) return;
+    const special = honor.special === true;
+
     const group = new THREE.Group();
-    group.position.set(0, 0, room.centerZ);
+    // Center directly on the honor pedestal
+    group.position.set(0, 0, room.centerZ + 0.65);
 
-    const postMaterial = new THREE.MeshLambertMaterial({ color: 0xc49f52 });
-    const ropeMaterial = new THREE.MeshLambertMaterial({ color: 0xa82020 });
+    // Enclosing dimensions around the plinth and portrait on all 4 sides with comfortable clearance
+    const hw = special ? 2.05 : 1.80; // half-width in X
+    const hd = special ? 1.35 : 1.20; // half-depth in Z
 
-    const postGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.8, 8);
+    const postMaterial = new THREE.MeshLambertMaterial({ color: 0xd4af37 }); // gold brass
+    const ropeMaterial = new THREE.MeshLambertMaterial({ color: 0x9e1b22 }); // royal crimson velvet
+
+    // 4 Corner Posts
     const postPositions = [
-      { x: -1.8, z: 0.6 }, { x: 1.8, z: 0.6 },
-      { x: -1.8, z: -0.8 }, { x: 1.8, z: -0.8 }
+      { x: -hw, z: hd },  // Front-Left
+      { x: hw,  z: hd },  // Front-Right
+      { x: hw,  z: -hd }, // Back-Right
+      { x: -hw, z: -hd }  // Back-Left
     ];
 
+    const baseGeo = new THREE.CylinderGeometry(0.12, 0.14, 0.04, 16);
+    const collarGeo = new THREE.CylinderGeometry(0.045, 0.07, 0.03, 12);
+    const poleGeo = new THREE.CylinderGeometry(0.026, 0.026, 0.78, 12);
+    const capRingGeo = new THREE.CylinderGeometry(0.045, 0.035, 0.03, 12);
+    const finialGeo = new THREE.SphereGeometry(0.042, 12, 8);
+
     postPositions.forEach(pos => {
-      const post = new THREE.Mesh(postGeo, postMaterial);
-      post.position.set(pos.x, 0.4, pos.z);
-      group.add(post);
+      const postGroup = new THREE.Group();
+      postGroup.position.set(pos.x, 0, pos.z);
+
+      // Base plate
+      const baseMesh = new THREE.Mesh(baseGeo, postMaterial);
+      baseMesh.position.y = 0.02;
+      postGroup.add(baseMesh);
+
+      // Base collar
+      const collarMesh = new THREE.Mesh(collarGeo, postMaterial);
+      collarMesh.position.y = 0.055;
+      postGroup.add(collarMesh);
+
+      // Upright brass pole
+      const poleMesh = new THREE.Mesh(poleGeo, postMaterial);
+      poleMesh.position.y = 0.46;
+      postGroup.add(poleMesh);
+
+      // Top cap ring
+      const capRingMesh = new THREE.Mesh(capRingGeo, postMaterial);
+      capRingMesh.position.y = 0.86;
+      postGroup.add(capRingMesh);
+
+      // Sphere finial on top
+      const finialMesh = new THREE.Mesh(finialGeo, postMaterial);
+      finialMesh.position.y = 0.895;
+      postGroup.add(finialMesh);
+
+      group.add(postGroup);
     });
 
-    const frontRope = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 3.6, 6), ropeMaterial);
-    frontRope.rotation.z = Math.PI / 2;
-    frontRope.position.set(0, 0.75, 0.6);
-    group.add(frontRope);
+    // Helper to create a sagging velvet rope between two points
+    function makeVelvetRope(p1, p2) {
+      const ropeGroup = new THREE.Group();
+      const midX = (p1.x + p2.x) / 2;
+      const midZ = (p1.z + p2.z) / 2;
+      // Slight elegant catenary dip of 8cm in the middle
+      const curve = new THREE.QuadraticBezierCurve3(
+        new THREE.Vector3(p1.x, 0.75, p1.z),
+        new THREE.Vector3(midX, 0.67, midZ),
+        new THREE.Vector3(p2.x, 0.75, p2.z)
+      );
+      const ropeGeo = new THREE.TubeGeometry(curve, 14, 0.022, 8, false);
+      const ropeMesh = new THREE.Mesh(ropeGeo, ropeMaterial);
+      ropeGroup.add(ropeMesh);
 
-    const leftRope = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.4, 6), ropeMaterial);
-    leftRope.rotation.x = Math.PI / 2;
-    leftRope.position.set(-1.8, 0.75, -0.1);
-    group.add(leftRope);
+      // Brass hook clasp rings at both endpoints
+      [p1, p2].forEach(p => {
+        const clasp = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.04, 8), postMaterial);
+        clasp.position.set(p.x, 0.75, p.z);
+        ropeGroup.add(clasp);
+      });
 
-    const rightRope = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 1.4, 6), ropeMaterial);
-    rightRope.rotation.x = Math.PI / 2;
-    rightRope.position.set(1.8, 0.75, -0.1);
-    group.add(rightRope);
+      return ropeGroup;
+    }
+
+    // 4 Velvet Ropes connecting all 4 sides around the portrait:
+    // 1. Front: (-hw, hd) to (hw, hd)
+    group.add(makeVelvetRope({ x: -hw, z: hd }, { x: hw, z: hd }));
+    // 2. Right: (hw, hd) to (hw, -hd)
+    group.add(makeVelvetRope({ x: hw, z: hd }, { x: hw, z: -hd }));
+    // 3. Back: (hw, -hd) to (-hw, -hd)
+    group.add(makeVelvetRope({ x: hw, z: -hd }, { x: -hw, z: -hd }));
+    // 4. Left: (-hw, -hd) to (-hw, hd)
+    group.add(makeVelvetRope({ x: -hw, z: -hd }, { x: -hw, z: hd }));
 
     group.name = `stanchions-${room.id}`;
     worldGroup.add(group);
@@ -2327,7 +2511,7 @@
 
     document.getElementById("ending-evidence").textContent = `${state.evidence.size}/${rooms.length}`;
     const endingStarsEl = document.getElementById("ending-stars");
-    if (endingStarsEl) endingStarsEl.textContent = `${state.collectedStars.size}/8`;
+    if (endingStarsEl) endingStarsEl.textContent = `${state.starsCollected}/8`;
 
     // Reset Leaderboard UI state
     playerNameInput.value = playerName !== "Anonymous" ? playerName : "";
