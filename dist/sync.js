@@ -1,6 +1,9 @@
 // dist/sync.js - Kinh tế chính trị Mác – Lênin Exhibition Real-Time Room & Leaderboard Sync
 (function (global) {
   const BC_NAME = "mln_exhibition_sync_v2";
+  const KVDB_BUCKET = "ADkjsg26cP3urgwo94ctcg";
+  const KVDB_BASE = "https://kvdb.io/" + KVDB_BUCKET + "/";
+
   const channel = typeof BroadcastChannel !== "undefined" ? new BroadcastChannel(BC_NAME) : null;
   const subscribers = new Set();
 
@@ -28,6 +31,27 @@
     });
   }
 
+  // Safe fetch helper with AbortController timeout to guarantee UI never freezes
+  async function safeFetch(url, options = {}, timeoutMs = 2500) {
+    if (typeof fetch === "undefined") return null;
+    try {
+      const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+      let timer = null;
+      if (controller) {
+        timer = setTimeout(() => {
+          try { controller.abort(); } catch (_) {}
+        }, timeoutMs);
+      }
+      const opts = { ...options, cache: "no-store" };
+      if (controller) opts.signal = controller.signal;
+      const res = await fetch(url, opts);
+      if (timer) clearTimeout(timer);
+      return res;
+    } catch (_) {
+      return null;
+    }
+  }
+
   const RoomSync = {
     subscribe(callback) {
       subscribers.add(callback);
@@ -40,13 +64,26 @@
       }
     },
 
-    // Save or update room
+    // Save or update room (Admin created room or player joined)
     async saveRoom(room) {
       if (!room || !room.code) return false;
       const code = String(room.code).trim();
       room.code = code;
 
-      // Ensure timestamp is strictly higher than any existing state
+      // Dedup players by trimmed name
+      if (Array.isArray(room.players)) {
+        const seen = new Set();
+        const clean = [];
+        room.players.forEach(p => {
+          if (p && p.name && !seen.has(p.name.trim())) {
+            seen.add(p.name.trim());
+            clean.push(p);
+          }
+        });
+        room.players = clean;
+      }
+
+      // Ensure timestamp is strictly increasing
       let maxExistingTs = 0;
       try {
         const raw = localStorage.getItem("mln_room_" + code);
@@ -58,31 +95,43 @@
 
       room.updatedAt = Math.max(Date.now(), maxExistingTs + 100);
 
-      // 1. LocalStorage
+      // 1. Instantly save to LocalStorage (0ms)
       try {
         localStorage.setItem("mln_room_" + code, JSON.stringify(room));
         if (room.status !== "ENDED") {
-          localStorage.setItem("mln_active_room", JSON.stringify({ code: code, updatedAt: room.updatedAt }));
+          localStorage.setItem("mln_active_room", JSON.stringify({ code: code, status: room.status, updatedAt: room.updatedAt }));
         }
       } catch (_) {}
 
-      // 2. BroadcastChannel
+      // 2. Broadcast to other tabs immediately
       this.broadcast({ type: "ROOM_UPDATE", room });
 
-      // 3. Cloud Relay (ntfy.sh - no 429 rate limit, retains latest message)
-      try {
-        await fetch("https://ntfy.sh/mln_state_room_" + code, {
+      // 3. Fast Cloud Relay via kvdb.io (cross-device: phone <-> laptop)
+      const payload = JSON.stringify(room);
+      const cloudPromises = [
+        safeFetch(KVDB_BASE + "mln_room_" + code, {
           method: "POST",
-          headers: { "X-Cache": "yes", "Title": "ROOM_UPDATE" },
-          body: JSON.stringify(room)
-        });
-        if (room.status !== "ENDED") {
-          await fetch("https://ntfy.sh/mln_state_active_room", {
+          headers: { "Content-Type": "application/json" },
+          body: payload
+        }, 2000)
+      ];
+
+      if (room.status !== "ENDED") {
+        cloudPromises.push(
+          safeFetch(KVDB_BASE + "mln_active_room", {
             method: "POST",
-            headers: { "X-Cache": "yes", "Title": "ACTIVE_ROOM" },
-            body: JSON.stringify({ code: code, updatedAt: room.updatedAt })
-          });
-        }
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: code, status: room.status, updatedAt: room.updatedAt })
+          }, 2000)
+        );
+      }
+
+      // Wait up to 500ms for network, then resolve so UI is always buttery smooth
+      try {
+        await Promise.race([
+          Promise.allSettled(cloudPromises),
+          new Promise(r => setTimeout(r, 500))
+        ]);
       } catch (_) {}
 
       return true;
@@ -100,37 +149,20 @@
         if (raw) localRoom = JSON.parse(raw);
       } catch (_) {}
 
-      // 2. Check Cloud Relay
+      // 2. Fetch from Cloud Relay
       try {
-        const res = await fetch("https://ntfy.sh/mln_state_room_" + code + "/json?poll=1", { cache: "no-store" });
-        if (res.ok) {
-          const text = (await res.text()).trim();
-          if (text) {
-            const lines = text.split("\n").filter(Boolean);
-            let cloudRoom = null;
-            let maxTs = 0;
-            for (const line of lines) {
-              try {
-                const item = JSON.parse(line);
-                const parsed = typeof item.message === "string" ? JSON.parse(item.message) : item.message;
-                if (parsed && String(parsed.code).trim() === code) {
-                  const ts = Number(parsed.updatedAt) || Number(parsed.createdAt) || (Number(item.time) * 1000) || 0;
-                  if (ts >= maxTs) {
-                    maxTs = ts;
-                    cloudRoom = parsed;
-                  }
-                }
-              } catch (_) {}
-            }
+        const res = await safeFetch(KVDB_BASE + "mln_room_" + code, { method: "GET" }, 2000);
+        if (res && res.ok) {
+          const cloudRoom = await res.json();
+          if (cloudRoom && String(cloudRoom.code).trim() === code) {
+            const cloudTs = Number(cloudRoom.updatedAt) || Number(cloudRoom.createdAt) || 0;
+            const localTs = localRoom ? (Number(localRoom.updatedAt) || Number(localRoom.createdAt) || 0) : 0;
 
-            if (cloudRoom) {
-              const localTs = localRoom ? (Number(localRoom.updatedAt) || Number(localRoom.createdAt) || 0) : 0;
-              if (!localRoom || maxTs >= localTs) {
-                try { localStorage.setItem("mln_room_" + code, JSON.stringify(cloudRoom)); } catch (_) {}
-                return cloudRoom;
-              } else {
-                return localRoom;
-              }
+            if (!localRoom || cloudTs >= localTs) {
+              try { localStorage.setItem("mln_room_" + code, JSON.stringify(cloudRoom)); } catch (_) {}
+              return cloudRoom;
+            } else {
+              return localRoom;
             }
           }
         }
@@ -141,12 +173,16 @@
 
     // Get active room (used when Admin opens dashboard)
     async getActiveRoom() {
-      // 1. Check LocalStorage
+      // 1. Check LocalStorage first
       let activeCode = null;
       try {
         const raw = localStorage.getItem("mln_active_room");
-        if (raw) activeCode = JSON.parse(raw).code;
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.status !== "ENDED") activeCode = parsed.code;
+        }
       } catch (_) {}
+
       if (activeCode) {
         const r = await this.getRoom(activeCode);
         if (r && r.status !== "ENDED") return r;
@@ -154,29 +190,14 @@
 
       // 2. Check Cloud Relay
       try {
-        const res = await fetch("https://ntfy.sh/mln_state_active_room/json?poll=1", { cache: "no-store" });
-        if (res.ok) {
-          const text = (await res.text()).trim();
-          if (text) {
-            const lines = text.split("\n").filter(Boolean);
-            let cloudActive = null;
-            let maxTs = 0;
-            for (const line of lines) {
-              try {
-                const item = JSON.parse(line);
-                const parsed = typeof item.message === "string" ? JSON.parse(item.message) : item.message;
-                if (parsed) {
-                  const ts = Number(parsed.updatedAt) || (Number(item.time) * 1000) || 0;
-                  if (ts >= maxTs) {
-                    maxTs = ts;
-                    cloudActive = parsed;
-                  }
-                }
-              } catch (_) {}
-            }
-            if (cloudActive && cloudActive.code) {
-              const r = await this.getRoom(cloudActive.code);
-              if (r && r.status !== "ENDED") return r;
+        const res = await safeFetch(KVDB_BASE + "mln_active_room", { method: "GET" }, 2000);
+        if (res && res.ok) {
+          const activeObj = await res.json();
+          if (activeObj && activeObj.code && activeObj.status !== "ENDED") {
+            const r = await this.getRoom(activeObj.code);
+            if (r && r.status !== "ENDED") {
+              try { localStorage.setItem("mln_active_room", JSON.stringify(activeObj)); } catch (_) {}
+              return r;
             }
           }
         }
@@ -189,16 +210,8 @@
     async closeRoom(code) {
       if (!code) return;
       code = String(code).trim();
-      let maxExistingTs = 0;
-      try {
-        const raw = localStorage.getItem("mln_room_" + code);
-        if (raw) {
-          const ex = JSON.parse(raw);
-          maxExistingTs = Math.max(Number(ex.updatedAt) || 0, Number(ex.createdAt) || 0);
-        }
-      } catch (_) {}
 
-      const endedRoom = { code, status: "ENDED", updatedAt: Math.max(Date.now(), maxExistingTs + 100) };
+      const endedRoom = { code, status: "ENDED", updatedAt: Date.now() };
 
       try {
         localStorage.removeItem("mln_active_room");
@@ -208,81 +221,98 @@
       this.broadcast({ type: "ROOM_CLOSED", code, room: endedRoom });
 
       try {
-        await fetch("https://ntfy.sh/mln_state_room_" + code, {
+        safeFetch(KVDB_BASE + "mln_room_" + code, {
           method: "POST",
-          headers: { "X-Cache": "yes", "Title": "ROOM_CLOSED" },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(endedRoom)
-        });
-        await fetch("https://ntfy.sh/mln_state_active_room", {
+        }, 2000);
+
+        safeFetch(KVDB_BASE + "mln_active_room", {
           method: "POST",
-          headers: { "X-Cache": "yes", "Title": "ACTIVE_ROOM_CLOSED" },
-          body: JSON.stringify({ code: null, status: "ENDED", updatedAt: endedRoom.updatedAt })
-        });
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code: null, status: "ENDED", updatedAt: Date.now() })
+        }, 2000);
       } catch (_) {}
     },
 
     // Retrieve leaderboard
     async getLeaderboard() {
       let localBoard = [];
+      let localTs = 0;
       try {
         const raw = localStorage.getItem("mln_leaderboard");
         if (raw) localBoard = JSON.parse(raw);
+        localTs = Number(localStorage.getItem("mln_leaderboard_ts")) || 0;
       } catch (_) {}
 
       try {
-        const res = await fetch("https://ntfy.sh/mln_state_leaderboard/json?poll=1", { cache: "no-store" });
-        if (res.ok) {
-          const text = (await res.text()).trim();
-          if (text) {
-            const lines = text.split("\n").filter(Boolean);
-            const last = JSON.parse(lines[lines.length - 1]);
-            const cloudBoard = typeof last.message === "string" ? JSON.parse(last.message) : last.message;
-            if (Array.isArray(cloudBoard)) {
-              if (cloudBoard.length >= localBoard.length) {
-                try { localStorage.setItem("mln_leaderboard", JSON.stringify(cloudBoard)); } catch (_) {}
-                return cloudBoard;
-              }
-            }
+        const res = await safeFetch(KVDB_BASE + "mln_leaderboard", { method: "GET" }, 2000);
+        if (res && res.ok) {
+          const rawCloud = await res.json();
+          let cloudBoard = [];
+          let cloudTs = 0;
+
+          if (Array.isArray(rawCloud)) {
+            cloudBoard = rawCloud;
+            cloudTs = cloudBoard.length > 0 ? 1 : 0;
+          } else if (rawCloud && typeof rawCloud === "object" && Array.isArray(rawCloud.list)) {
+            cloudBoard = rawCloud.list;
+            cloudTs = Number(rawCloud.updatedAt) || 0;
+          }
+
+          if (cloudTs >= localTs) {
+            try {
+              localStorage.setItem("mln_leaderboard", JSON.stringify(cloudBoard));
+              localStorage.setItem("mln_leaderboard_ts", String(cloudTs));
+            } catch (_) {}
+            return cloudBoard;
           }
         }
       } catch (_) {}
 
-      return localBoard;
+      return Array.isArray(localBoard) ? localBoard : [];
     },
 
     // Save leaderboard
     async saveLeaderboard(board) {
       if (!Array.isArray(board)) return;
+      const ts = Date.now();
+      const payload = { list: board, updatedAt: ts };
 
       try {
         localStorage.setItem("mln_leaderboard", JSON.stringify(board));
+        localStorage.setItem("mln_leaderboard_ts", String(ts));
       } catch (_) {}
 
-      this.broadcast({ type: "LEADERBOARD_UPDATE", leaderboard: board });
+      this.broadcast({ type: "LEADERBOARD_UPDATE", leaderboard: board, updatedAt: ts });
 
       try {
-        await fetch("https://ntfy.sh/mln_state_leaderboard", {
+        safeFetch(KVDB_BASE + "mln_leaderboard", {
           method: "POST",
-          headers: { "X-Cache": "yes" },
-          body: JSON.stringify(board)
-        });
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }, 2000);
       } catch (_) {}
     },
 
     // Clear leaderboard
     async clearLeaderboard() {
+      const ts = Date.now() + 100;
+      const payload = { list: [], updatedAt: ts };
+
       try {
         localStorage.setItem("mln_leaderboard", "[]");
+        localStorage.setItem("mln_leaderboard_ts", String(ts));
       } catch (_) {}
 
-      this.broadcast({ type: "LEADERBOARD_UPDATE", leaderboard: [] });
+      this.broadcast({ type: "LEADERBOARD_UPDATE", leaderboard: [], updatedAt: ts });
 
       try {
-        await fetch("https://ntfy.sh/mln_state_leaderboard", {
+        await safeFetch(KVDB_BASE + "mln_leaderboard", {
           method: "POST",
-          headers: { "X-Cache": "yes" },
-          body: "[]"
-        });
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }, 2000);
       } catch (_) {}
     }
   };

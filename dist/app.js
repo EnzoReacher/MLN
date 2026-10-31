@@ -1300,6 +1300,18 @@
         }
 
         await window.RoomSync.saveLeaderboard(list);
+
+        if (currentRoomCode) {
+          const room = await window.RoomSync.getRoom(currentRoomCode);
+          if (room && Array.isArray(room.players)) {
+            const playerInRoom = room.players.find(p => p.name === playerName);
+            if (playerInRoom) {
+              playerInRoom.score = state.quizPoints;
+              playerInRoom.time = timeToUse;
+              window.RoomSync.saveRoom(room);
+            }
+          }
+        }
       } catch (_) {}
     }
   }
@@ -2547,7 +2559,10 @@
     quitScreen.classList.remove("hidden");
   }
 
+  let isEnteringGame = false;
+
   function returnToTitle() {
+    isEnteringGame = false;
     if (window.syncIntervalId) {
       clearInterval(window.syncIntervalId);
       window.syncIntervalId = null;
@@ -2847,7 +2862,21 @@
       }
 
       if (room.status === "PLAYING") {
-        showRoomError(`Phòng [${codeVal}] đã bắt đầu chơi rồi! Hãy liên hệ Admin để reset hoặc tạo phòng mới.`);
+        if (!Array.isArray(room.players)) room.players = [];
+        const existing = room.players.find(p => p.name === nameVal);
+        if (!existing) {
+          room.players.push({
+            name: nameVal,
+            joinedAt: Date.now(),
+            score: 0
+          });
+          if (window.RoomSync) window.RoomSync.saveRoom(room);
+        }
+        playerName = nameVal;
+        currentRoomCode = codeVal;
+        titleScreen.classList.add("hidden");
+        showToast(`Phòng [${codeVal}] đang diễn ra! Đưa bạn vào triển lãm ngay...`, 3000);
+        start();
         return;
       }
       if (room.status === "ENDED") {
@@ -2957,6 +2986,8 @@
   }
 
   function triggerGameStart() {
+    if (isEnteringGame) return;
+    isEnteringGame = true;
     if (lobbyPollInterval) {
       clearInterval(lobbyPollInterval);
       lobbyPollInterval = null;
@@ -2969,10 +3000,11 @@
       waitingLobby?.classList.add("hidden");
       showToast(`Chào mừng ${playerName} bước vào triển lãm!`, 4000);
       start();
-    }, 1000);
+    }, 800);
   }
 
   function leaveLobby() {
+    isEnteringGame = false;
     if (lobbyPollInterval) {
       clearInterval(lobbyPollInterval);
       lobbyPollInterval = null;
@@ -2982,8 +3014,18 @@
     returnToTitle();
   }
 
-  // Join Room Button
+  // Join Room Button & Keyboard shortcuts
   document.getElementById("enter-exhibition-button")?.addEventListener("click", joinRoomLobby);
+  document.getElementById("start-name-input")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      document.getElementById("start-room-input")?.focus();
+    }
+  });
+  document.getElementById("start-room-input")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      joinRoomLobby();
+    }
+  });
 
   // Back to Menu Button
   backToMenuButton?.addEventListener("click", () => {

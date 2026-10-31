@@ -761,7 +761,7 @@
           const tr = document.createElement("tr");
           const tagHtml = room.status === "WAITING"
             ? `<span class="player-tag-ready">SẴN SÀNG</span>`
-            : `<span class="player-tag-playing">ĐANG THI ĐẤU</span>`;
+            : `<span class="player-tag-playing">${p.score !== undefined ? p.score + " pts" : "ĐANG THI ĐẤU"}</span>`;
 
           tr.innerHTML = `
             <td style="color: var(--gold); font-weight: bold;">#${idx + 1}</td>
