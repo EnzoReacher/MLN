@@ -533,3 +533,96 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
   border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
+/* --- FLOATING POINTS & SCREEN SHAKE FX --- */
+#floating-fx-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.floating-text-item {
+  font-family: var(--sans, 'Cinzel', sans-serif);
+  font-size: clamp(22px, 3.8vw, 34px);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: floatUpAndFade 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.floating-text-item.gold {
+  color: #f7d070;
+  text-shadow: 0 0 20px rgba(247, 208, 112, 0.8), 0 2px 10px rgba(0, 0, 0, 0.95);
+}
+
+.floating-text-item.green {
+  color: #72d572;
+  text-shadow: 0 0 20px rgba(114, 213, 114, 0.85), 0 2px 10px rgba(0, 0, 0, 0.95);
+}
+
+.floating-text-item.red {
+  color: #ff6b6b;
+  text-shadow: 0 0 20px rgba(255, 107, 107, 0.85), 0 2px 10px rgba(0, 0, 0, 0.95);
+}
+
+.floating-text-item.unlock {
+  font-size: clamp(24px, 4.2vw, 38px);
+  color: #ffffff;
+  text-shadow: 0 0 25px rgba(214, 174, 108, 0.95), 0 4px 14px rgba(0, 0, 0, 0.95);
+  border-top: 1px solid rgba(214, 174, 108, 0.65);
+  border-bottom: 1px solid rgba(214, 174, 108, 0.65);
+  padding: 8px 24px;
+  background: rgba(18, 14, 11, 0.82);
+  backdrop-filter: blur(6px);
+  border-radius: 4px;
+}
+
+@keyframes floatUpAndFade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 15px) scale(0.85);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -20px) scale(1.06);
+  }
+  45% {
+    transform: translate(-50%, -45px) scale(1.0);
+  }
+  75% {
+    opacity: 0.95;
+    transform: translate(-50%, -75px) scale(0.98);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -105px) scale(0.92);
+  }
+}
+
+/* Screen shake animation for canvas */
+@keyframes canvasShake {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -2px); }
+  60% { transform: translate(-2px, -3px); }
+  80% { transform: translate(2px, 3px); }
+  100% { transform: translate(0, 0); }
+}
+
+.screen-shake-anim {
+  animation: canvasShake 0.45s ease-in-out;
+}
+
+

@@ -100,6 +100,87 @@
     } catch (e) { }
   }
 
+  function playGateFanfareSound() {
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const now = ctx.currentTime;
+
+      // 1. Mechanical gate rumble (Low frequency drone)
+      const rumble = ctx.createOscillator();
+      const rumbleGain = ctx.createGain();
+      rumble.type = "sawtooth";
+      rumble.frequency.setValueAtTime(65, now);
+      rumble.frequency.exponentialRampToValueAtTime(35, now + 0.85);
+      rumbleGain.gain.setValueAtTime(0.3, now);
+      rumbleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+      rumble.connect(rumbleGain);
+      rumbleGain.connect(ctx.destination);
+      rumble.start(now);
+      rumble.stop(now + 0.95);
+
+      // 2. Brass / Chime fanfare arpeggio (C4, E4, G4, C5, E5)
+      const notes = [
+        { f: 261.63, t: 0.08, d: 0.35 },
+        { f: 329.63, t: 0.18, d: 0.35 },
+        { f: 392.00, t: 0.28, d: 0.40 },
+        { f: 523.25, t: 0.38, d: 0.70 },
+        { f: 659.25, t: 0.48, d: 0.90 }
+      ];
+
+      notes.forEach(({ f, t, d }) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(f, now + t);
+        gain.gain.setValueAtTime(0.2, now + t);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + t + d);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + t);
+        osc.stop(now + t + d + 0.05);
+      });
+    } catch (e) { }
+  }
+
+  function showFloatingText(text, type = "gold") {
+    if (!text) return;
+    let container = document.getElementById("floating-fx-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "floating-fx-container";
+      document.body.appendChild(container);
+    }
+    const item = document.createElement("div");
+    item.className = `floating-text-item ${type}`;
+    item.textContent = text;
+    container.appendChild(item);
+    setTimeout(() => {
+      if (item.parentNode) item.remove();
+    }, 1300);
+  }
+
+  let shakeTime = 0;
+  let shakeIntensity = 0.04;
+
+  function triggerScreenShake(duration = 500, intensity = 0.04) {
+    shakeTime = duration / 1000;
+    shakeIntensity = intensity;
+    if (canvas) {
+      canvas.classList.remove("screen-shake-anim");
+      void canvas.offsetWidth;
+      canvas.classList.add("screen-shake-anim");
+      setTimeout(() => canvas.classList.remove("screen-shake-anim"), duration);
+    }
+  }
+
+  function triggerGateUnlockEffect() {
+    triggerScreenShake(550, 0.04);
+    playGateFanfareSound();
+    showFloatingText("MỞ KHÓA THÀNH CÔNG!", "unlock");
+  }
+
   const quizUi = document.getElementById("quiz-ui");
   const quizTitle = document.getElementById("quiz-title");
   const quizQuestion = document.getElementById("quiz-question");
@@ -184,7 +265,7 @@
     && ["1", "true", "yes"].includes(new URLSearchParams(window.location.search).get("test")?.toLowerCase());
   const TEST_BOUNDS = { halfWidth: 20, minZ: -105, maxZ: 24 };
   const keys = new Set();
-  const PLAYER = { height: 1.65, speed: 5.2 };
+  const PLAYER = { height: 1.65, speed: 5.2, sprintSpeed: 9.1 };
   const PERFORMANCE = { maxPixelRatio: 1.25, uiInterval: .05 };
   const GALLERY = { halfWidth: 7, roomHeight: 5.5, minZ: -88, maxZ: 9 };
   const KVDB_BUCKET = "ADkjsg26cP3urgwo94ctcg";
@@ -393,7 +474,7 @@
     frameRequested: false,
     lastTime: 0,
     time: 0,
-    player: { x: 0, z: 7 },
+    player: { x: 0, z: 7, y: 0, vy: 0 },
     look: { yaw: 0, pitch: 0 },
     timelineOpen: false,
     memoryOpen: false,
@@ -503,9 +584,9 @@
     return true;
   }
 
-  function move(dx, dz, dt) {
+  function move(dx, dz, dt, speedMultiplier = 1) {
     const length = Math.hypot(dx, dz) || 1;
-    const amount = PLAYER.speed * dt;
+    const amount = PLAYER.speed * speedMultiplier * dt;
     const nextX = state.player.x + (dx / length) * amount;
     const nextZ = state.player.z + (dz / length) * amount;
     if (canMove(nextX, nextZ)) {
@@ -619,7 +700,7 @@
     state.running = true;
     state.lastTime = performance.now();
     state.time = 0;
-    state.player = { x: 0, z: 7 };
+    state.player = { x: 0, z: 7, y: 0, vy: 0 };
     state.look = { yaw: 0, pitch: 0 };
     state.evidence.clear();
     state.passedGates.clear();
@@ -686,6 +767,7 @@
     theoryNote.classList.add("hidden");
     initThreeGallery();
     scheduleLoop();
+    resumeGameControls();
   }
 
   function toggleNoclip() {
@@ -710,7 +792,6 @@
   function openDialogue(item) {
     const lockedGate = item.kind === "gate" && !gateUnlocked(item);
     state.dialogueOpen = true;
-    document.exitPointerLock?.();
     dialogue.classList.remove("hidden");
     dialogueTitle.textContent = lockedGate ? "Cổng đang khóa" : item.title;
     dialogueBody.textContent = lockedGate
@@ -719,7 +800,7 @@
     dialogueType.textContent = lockedGate ? "GATE / LOCKED" : item.type;
     dialogueNumber.textContent = item.number;
     dialogueClose.classList.remove("hidden");
-    dialogueClose.textContent = "ĐÓNG HỒ SƠ";
+    dialogueClose.textContent = "ĐÓNG HỒ SƠ [E / CLICK]";
     updateUi();
   }
 
@@ -727,6 +808,7 @@
     state.dialogueOpen = false;
     dialogue.classList.add("hidden");
     updateUi();
+    resumeGameControls();
   }
 
   function activeChapter() { return state.viewerChapter ? contentById.get(state.viewerChapter) : null; }
@@ -833,7 +915,7 @@
     renderViewerImage(section);
 
     const isPrimary = state.viewerArtworkIndex === 0;
-    setViewerButtonLabel(isPrimary ? "GHI NHẬN & ĐÓNG" : "ĐÓNG TRANH");
+    setViewerButtonLabel(isPrimary ? "GHI NHẬN & ĐÓNG [E / CLICK]" : "ĐÓNG TRANH [E / CLICK]");
     viewerNote.textContent = isPrimary
       ? "Đây là tranh chính của phòng. Đọc hồ sơ này rồi ghi nhận để mở cổng tiếp theo."
       : "Hồ sơ bổ sung của riêng bức tranh này. Đóng lại để tiếp tục tham quan phòng.";
@@ -854,10 +936,17 @@
     state.viewerArtworkIndex = clamp(Number.isInteger(sectionIndex) ? sectionIndex : 0, 0, chapter.sections.length - 1);
     state.viewerPage = state.viewerArtworkIndex;
     state.viewerImage = 0;
-    document.exitPointerLock?.();
     contentViewer.classList.remove("hidden");
     renderViewer();
     return true;
+  }
+
+  function resumeGameControls() {
+    if (state.running && !state.dialogueOpen && !state.viewerOpen && !state.quizOpen && !state.memoryOpen && !state.timelineOpen && !state.leaderboardOpen) {
+      try {
+        canvas?.requestPointerLock?.();
+      } catch (_) {}
+    }
   }
 
   function closeContentViewer() {
@@ -869,6 +958,7 @@
     contentViewer.classList.add("hidden");
     closeLightbox();
     updateUi();
+    resumeGameControls();
   }
 
   function completeChapter(chapterId) {
@@ -908,6 +998,7 @@
   function closeLightbox() {
     imageLightbox.classList.add("hidden");
     lightboxImage.src = "";
+    resumeGameControls();
   }
 
   function interact() {
@@ -927,6 +1018,7 @@
       if (mesh) mesh.visible = false;
       playStarSound();
       showToast(`✦ BẠN ĐÃ THU THẬP 1 NGÔI SAO ĐỎ! (+100 ĐIỂM DỰ TRỮ)`);
+      showFloatingText("+100 ĐIỂM", "gold");
       updateUi();
       return;
     }
@@ -968,6 +1060,7 @@
       state.passedGates.add(gate.id);
       state.player.z = gate.z - 2.4;
       updateGateMeshes();
+      triggerGateUnlockEffect();
       updateUi();
       return;
     }
@@ -1080,6 +1173,7 @@
       updateUi();
       playCorrectSound();
       showToast(`✦ CHÍNH XÁC! (+${reward} ĐIỂM)`);
+      showFloatingText(`CHÍNH XÁC! +${reward} ĐIỂM`, "green");
 
       if (isArray && state.quizIndex < quizDataEntry.length - 1) {
         quizFeedback.textContent = "Chính xác! Chuẩn bị câu tiếp theo...";
@@ -1097,6 +1191,7 @@
           state.player.z = currentGate.z - 2.4;
           updateGateMeshes();
           closeQuiz();
+          triggerGateUnlockEffect();
           if (isFinalGate) {
             showEnding();
           }
@@ -1109,6 +1204,7 @@
 
       const reason = selectedIndex === -1 ? "Hết giờ!" : "Chưa chính xác!";
       showToast(`⚠️ ${reason.toUpperCase()} (-${penalty} ĐIỂM)`);
+      showFloatingText(`-${penalty} ĐIỂM`, "red");
 
       if (isArray && state.quizIndex < quizDataEntry.length - 1) {
         quizFeedback.textContent = `${reason} (Bị trừ ${penalty} điểm). Đáp án đúng là màu xanh. Chuẩn bị câu tiếp theo...`;
@@ -1127,6 +1223,7 @@
           state.player.z = currentGate.z - 2.4;
           updateGateMeshes();
           closeQuiz();
+          triggerGateUnlockEffect();
           if (isFinalGate) {
             showEnding();
           }
@@ -1141,6 +1238,7 @@
     clearInterval(quizTimerId);
     quizUi.classList.add("hidden");
     updateUi();
+    resumeGameControls();
   }
 
   function openNumpad(gate) {
@@ -1201,12 +1299,14 @@
         state.quizPoints += 100;
         playCorrectSound();
         showToast("✦ MẬT MÃ CHÍNH XÁC! (+100 ĐIỂM)");
+        showFloatingText("CHÍNH XÁC! +100 ĐIỂM", "green");
         updateUi();
         setTimeout(() => {
           state.passedGates.add(state.currentQuizGate.id);
           state.player.z = state.currentQuizGate.z - 2.4;
           updateGateMeshes();
           closeNumpad();
+          triggerGateUnlockEffect();
         }, 1500);
       } else {
         const numpadPenalty = 30;
@@ -1215,7 +1315,8 @@
         updateUi();
         numpadFeedback.textContent = `Mã sai! Bị trừ ${numpadPenalty} điểm. Hãy kiểm tra gợi ý.`;
         numpadFeedback.className = "quiz-feedback wrong";
-        showToast(`⚠️ MÃ KHÓA SAI! (-${numpadPenalty} ĐIỂM)`);
+        showToast(`MÃ KHÓA SAI! (-${numpadPenalty} ĐIỂM)`);
+        showFloatingText(`-${numpadPenalty} ĐIỂM`, "red");
         numpadInput = "";
         updateNumpadDisplay();
       }
@@ -1231,6 +1332,7 @@
     state.currentQuizGate = null;
     numpadUi.classList.add("hidden");
     updateUi();
+    resumeGameControls();
   }
 
   function fetchLeaderboard() {
@@ -2290,7 +2392,14 @@
 
   function updateCamera() {
     if (!camera) return;
-    camera.position.set(state.player.x, PLAYER.height, state.player.z);
+    let shakeX = 0;
+    let shakeY = 0;
+    if (shakeTime > 0) {
+      shakeX = (Math.random() - 0.5) * shakeIntensity;
+      shakeY = (Math.random() - 0.5) * shakeIntensity;
+    }
+    const py = Number.isFinite(state.player.y) ? state.player.y : 0;
+    camera.position.set(state.player.x + shakeX, PLAYER.height + py + shakeY, state.player.z);
     camera.rotation.set(state.look.pitch, state.look.yaw, 0);
   }
 
@@ -2327,22 +2436,62 @@
     const dt = Math.min((timestamp - state.lastTime) / 1000, .05);
     state.lastTime = timestamp;
     state.time += dt;
-    if (!state.dialogueOpen && !state.viewerOpen && !state.timelineOpen && !state.memoryOpen) {
+
+    if (shakeTime > 0) {
+      shakeTime = Math.max(0, shakeTime - dt);
+    }
+
+    // Vertical jump physics (continuous)
+    if ((state.player.y || 0) > 0 || (state.player.vy || 0) !== 0) {
+      state.player.vy = (state.player.vy || 0) - 15.0 * dt;
+      state.player.y = (state.player.y || 0) + state.player.vy * dt;
+      if (state.player.y <= 0) {
+        state.player.y = 0;
+        state.player.vy = 0;
+      }
+    }
+
+    if (!state.dialogueOpen && !state.viewerOpen && !state.timelineOpen && !state.memoryOpen && !state.quizOpen) {
       let forward = 0;
       let strafe = 0;
       if (keys.has("w") || keys.has("arrowup")) forward += 1;
       if (keys.has("s") || keys.has("arrowdown")) forward -= 1;
       if (keys.has("a") || keys.has("arrowleft")) strafe -= 1;
       if (keys.has("d") || keys.has("arrowright")) strafe += 1;
+
+      // Sprint: Shift key (dual check: shiftHeld + keys.has("shift"))
+      const isSprinting = (shiftHeld || keys.has("shift") || keys.has("shiftleft") || keys.has("shiftright")) && (forward !== 0 || strafe !== 0);
+      const speedMult = isSprinting ? 2.0 : 1.0;
+
+      // Jump: Space key fallback
+      if ((keys.has(" ") || keys.has("space") || keys.has("spacebar")) && (state.player.y || 0) <= 0.03) {
+        state.player.vy = 6.2;
+        state.player.y = 0.08;
+      }
+
+      // Dynamic FOV rush effect
+      if (camera) {
+        const targetFov = isSprinting ? 84 : 72;
+        if (Math.abs(camera.fov - targetFov) > 0.05) {
+          camera.fov += (targetFov - camera.fov) * Math.min(1, dt * 10);
+          camera.updateProjectionMatrix();
+        }
+      }
+
       if (forward || strafe) {
         const sin = Math.sin(state.look.yaw);
         const cos = Math.cos(state.look.yaw);
-        move(strafe * cos - forward * sin, -strafe * sin - forward * cos, dt);
+        move(strafe * cos - forward * sin, -strafe * sin - forward * cos, dt, speedMult);
       }
       state.uiAccumulator += dt;
       if (state.uiAccumulator >= PERFORMANCE.uiInterval) {
         state.uiAccumulator = 0;
         updateUi();
+      }
+    } else {
+      if (camera && Math.abs(camera.fov - 72) > 0.05) {
+        camera.fov += (72 - camera.fov) * Math.min(1, dt * 10);
+        camera.updateProjectionMatrix();
       }
     }
     renderFrame();
@@ -2369,7 +2518,7 @@
     document.getElementById("timeline-ui")?.classList.add("hidden");
     const feedback = document.getElementById("timeline-feedback");
     if (feedback) feedback.textContent = "";
-    if (state.running) canvas.requestPointerLock?.();
+    resumeGameControls();
   }
 
   document.getElementById("timeline-close-button")?.addEventListener("click", closeTimelineUI);
@@ -2462,9 +2611,14 @@
       matchedPairs++;
       flippedCards = [];
       isMemoryLocked = false;
+      playCorrectSound();
 
       if (matchedPairs === MEMORY_DATA.length / 2) {
         state.quizPoints += 200; // Bonus for finishing memory game
+        updateUi();
+        playGateFanfareSound();
+        triggerScreenShake(500, 0.03);
+        showFloatingText("CHÍNH XÁC! +200 ĐIỂM", "green");
         setTimeout(() => {
           showToast("XUẤT SẮC! CÂU HỎI VẬN DỤNG KINH TẾ SỐ CUỐI CÙNG:", 3000);
           closeMemoryGame();
@@ -2475,7 +2629,7 @@
           } else {
             showEnding();
           }
-        }, 1000);
+        }, 1200);
       }
     } else {
       setTimeout(() => {
@@ -2490,7 +2644,7 @@
   function closeMemoryGame() {
     state.memoryOpen = false;
     document.getElementById("memory-ui")?.classList.add("hidden");
-    if (state.running && !state.quizOpen) canvas.requestPointerLock?.();
+    resumeGameControls();
   }
 
   document.getElementById("memory-close-button")?.addEventListener("click", closeMemoryGame);
@@ -2613,7 +2767,7 @@
       }, 3000);
     } else {
       ui.classList.add("hidden");
-      if (state.running) canvas.requestPointerLock?.();
+      resumeGameControls();
       if (window.liveLeaderboardInterval) clearInterval(window.liveLeaderboardInterval);
     }
   }
@@ -2680,17 +2834,61 @@
   const codeToKey = {
     "KeyW": "w", "KeyA": "a", "KeyS": "s", "KeyD": "d", "KeyE": "e", "KeyQ": "q", "KeyN": "n",
     "ArrowUp": "arrowup", "ArrowDown": "arrowdown", "ArrowLeft": "arrowleft", "ArrowRight": "arrowright",
-    "Escape": "escape", "Enter": "enter", "Space": " "
+    "Escape": "escape", "Enter": "enter", "Space": " ",
+    "ShiftLeft": "shift", "ShiftRight": "shift"
   };
+
+  let shiftHeld = false;
 
   function handleKeyDown(event) {
     if (document.activeElement && document.activeElement.tagName === "INPUT") return;
 
-    // Ưu tiên dùng event.code để tránh lỗi kẹt phím do Unikey/Vietkey
-    let key = codeToKey[event.code] || event.key.toLowerCase();
-    
-    const handledKeys = ["w", "a", "s", "d", "n", "q", "arrowup", "arrowdown", "arrowleft", "arrowright", "e", "escape", "enter", " "];
+    const code = event.code || "";
+    const keyRaw = (event.key || "").toLowerCase();
+    const kc = event.keyCode || event.which;
+
+    // 1. Shift detection: hardware keyCode 16, event.shiftKey, code, or key
+    if (event.shiftKey || kc === 16 || code === "ShiftLeft" || code === "ShiftRight" || keyRaw === "shift") {
+      shiftHeld = true;
+      keys.add("shift");
+    }
+
+    // 2. Space jumping: hardware keyCode 32, code === "Space", key === " "
+    const isSpaceKey = kc === 32 || code === "Space" || keyRaw === " " || keyRaw === "spacebar";
+    if (isSpaceKey) {
+      keys.add(" ");
+      event.preventDefault();
+      // Instantly launch jump if player is grounded
+      if ((state.player.y || 0) <= 0.05 && !state.dialogueOpen && !state.viewerOpen && !state.quizOpen && !state.memoryOpen) {
+        state.player.vy = 6.2;
+        state.player.y = 0.08;
+      }
+    }
+
+    // 3. Movement keys: support keyCode, code, and Vietnamese Telex input characters!
+    let key = codeToKey[code] || keyRaw;
+    if (kc === 87 || code === "KeyW" || keyRaw === "w" || keyRaw === "ư") key = "w";
+    else if (kc === 65 || code === "KeyA" || keyRaw === "a" || keyRaw === "â" || keyRaw === "ă") key = "a";
+    else if (kc === 83 || code === "KeyS" || keyRaw === "s") key = "s";
+    else if (kc === 68 || code === "KeyD" || keyRaw === "d" || keyRaw === "đ") key = "d";
+    else if (kc === 69 || code === "KeyE" || keyRaw === "e") key = "e";
+    else if (kc === 81 || code === "KeyQ" || keyRaw === "q") key = "q";
+    else if (kc === 38 || code === "ArrowUp") key = "arrowup";
+    else if (kc === 40 || code === "ArrowDown") key = "arrowdown";
+    else if (kc === 37 || code === "ArrowLeft") key = "arrowleft";
+    else if (kc === 39 || code === "ArrowRight") key = "arrowright";
+    else if (kc === 27 || code === "Escape") key = "escape";
+    else if (kc === 13 || code === "Enter") key = "enter";
+
+    const handledKeys = ["w", "a", "s", "d", "n", "q", "arrowup", "arrowdown", "arrowleft", "arrowright", "e", "escape", "enter"];
     if (handledKeys.includes(key)) event.preventDefault();
+
+    // Auto-resume pointer lock on any gameplay movement if pointer lock was lost
+    if (state.running && !state.dialogueOpen && !state.viewerOpen && !state.quizOpen && !state.memoryOpen && !state.timelineOpen && !state.leaderboardOpen) {
+      if (document.pointerLockElement !== canvas) {
+        resumeGameControls();
+      }
+    }
 
     if (key === "q" && state.running) {
       toggleLeaderboard();
@@ -2709,8 +2907,7 @@
       return;
     }
     if (state.viewerOpen) {
-      if (key === "escape") closeContentViewer();
-      else if (key === "enter" || key === " ") nextViewerPage();
+      if (key === "escape" || key === "e" || key === "enter" || key === " ") closeContentViewer();
       else if (key === "arrowleft") cycleImage(-1);
       else if (key === "arrowright") cycleImage(1);
       return;
@@ -2737,18 +2934,42 @@
     }
     if (key === "e") interact();
     else if (key === "escape") document.exitPointerLock?.();
-    else keys.add(key);
+    else if (!isSpaceKey) keys.add(key);
   }
 
   function handleKeyUp(event) { 
-    let key = codeToKey[event.code] || event.key.toLowerCase();
+    const code = event.code || "";
+    const keyRaw = (event.key || "").toLowerCase();
+    const kc = event.keyCode || event.which;
+
+    let key = codeToKey[code] || keyRaw;
+    if (kc === 87 || code === "KeyW" || keyRaw === "w" || keyRaw === "ư") key = "w";
+    else if (kc === 65 || code === "KeyA" || keyRaw === "a" || keyRaw === "â" || keyRaw === "ă") key = "a";
+    else if (kc === 83 || code === "KeyS" || keyRaw === "s") key = "s";
+    else if (kc === 68 || code === "KeyD" || keyRaw === "d" || keyRaw === "đ") key = "d";
+    else if (kc === 38 || code === "ArrowUp") key = "arrowup";
+    else if (kc === 40 || code === "ArrowDown") key = "arrowdown";
+    else if (kc === 37 || code === "ArrowLeft") key = "arrowleft";
+    else if (kc === 39 || code === "ArrowRight") key = "arrowright";
+
     keys.delete(key); 
+    if (kc === 16 || code === "ShiftLeft" || code === "ShiftRight" || keyRaw === "shift" || !event.shiftKey) {
+      shiftHeld = false;
+      keys.delete("shift");
+    }
+    if (kc === 32 || code === "Space" || keyRaw === " " || keyRaw === "spacebar") {
+      keys.delete(" ");
+    }
   }
 
   function handleMouseMove(event) {
-    if (!state.running || state.dialogueOpen || state.viewerOpen || document.pointerLockElement !== canvas) return;
-    state.look.yaw -= event.movementX * .0024;
-    state.look.pitch = clamp(state.look.pitch - event.movementY * .0021, -1.25, 1.25);
+    if (!state.running || state.dialogueOpen || state.viewerOpen || state.quizOpen || state.memoryOpen || state.timelineOpen || state.leaderboardOpen) return;
+    const dx = typeof event.movementX === "number" ? event.movementX : 0;
+    const dy = typeof event.movementY === "number" ? event.movementY : 0;
+    if (dx !== 0 || dy !== 0) {
+      state.look.yaw -= dx * .0024;
+      state.look.pitch = clamp(state.look.pitch - dy * .0021, -1.25, 1.25);
+    }
   }
 
   function resize() {
@@ -2761,7 +2982,22 @@
   }
 
   canvas.addEventListener("click", () => {
-    if (state.running && !state.dialogueOpen && !state.viewerOpen && !state.timelineOpen && !state.memoryOpen) canvas.requestPointerLock?.();
+    resumeGameControls();
+  });
+  window.addEventListener("click", (e) => {
+    if (state.viewerOpen) {
+      closeContentViewer();
+      return;
+    }
+    if (state.dialogueOpen) {
+      closeDialogue();
+      return;
+    }
+    if (state.running && !state.quizOpen && !state.memoryOpen && !state.timelineOpen && !state.leaderboardOpen) {
+      if (!e.target?.closest?.("button") && !e.target?.closest?.("input") && !e.target?.closest?.(".ui-layer")) {
+        resumeGameControls();
+      }
+    }
   });
   canvas.addEventListener("webglcontextlost", (event) => {
     event.preventDefault();
@@ -2772,7 +3008,10 @@
   window.addEventListener("resize", resize);
   window.addEventListener("keydown", handleKeyDown);
   window.addEventListener("keyup", handleKeyUp);
-  window.addEventListener("blur", () => keys.clear());
+  window.addEventListener("blur", () => {
+    shiftHeld = false;
+    keys.clear();
+  });
 
   // Gamification Events
   quizCloseButton?.addEventListener("click", () => {
@@ -2804,6 +3043,7 @@
   });
   document.getElementById("close-guide-button")?.addEventListener("click", () => {
     document.getElementById("guide-modal")?.classList.add("hidden");
+    resumeGameControls();
   });
 
   // Start flow logic & Multiplayer Lobby integration
