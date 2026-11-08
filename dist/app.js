@@ -196,6 +196,7 @@
   const numpadFeedback = document.getElementById("numpad-feedback");
   const numpadCloseButton = document.getElementById("numpad-close-button");
   const numpadHintText = document.getElementById("numpad-hint-text");
+  const numpadHintBox = document.getElementById("numpad-hint-box");
   const numpadRequestHint = document.getElementById("numpad-request-hint");
   let numpadInput = "";
 
@@ -500,7 +501,8 @@
     quizPoints: 0,
     quizAttempts: 0,
     quizOpen: false,
-    currentQuizGate: null
+    currentQuizGate: null,
+    numpadHintUsed: false
   };
 
   let renderer = null;
@@ -723,6 +725,7 @@
     state.quizPoints = 0;
     state.quizAttempts = 0;
     state.quizOpen = false;
+    state.numpadHintUsed = false;
     currentShuffledOptions = [];
     state.currentQuizGate = null;
 
@@ -1249,8 +1252,36 @@
     numpadDisplay.textContent = "----";
     numpadFeedback.textContent = "";
     numpadFeedback.className = "quiz-feedback";
-    if (numpadHintText) numpadHintText.innerHTML = "💡 GỢI Ý MẬT MÃ:<br/>Năm xuất bản Tập 1 bộ 'TƯ BẢN' của Karl Marx: <strong>1-8-6-7</strong>";
-    if (numpadRequestHint) numpadRequestHint.classList.remove("hidden");
+
+    if (numpadHintText) {
+      numpadHintText.innerHTML = "CÂU ĐỐ MẬT MÃ LỊCH SỬ:<br/>Năm xuất bản Tập 1 bộ tác phẩm kinh điển 'TƯ BẢN' (Das Kapital) của Karl Marx là năm nào?";
+    }
+
+    if (state.numpadHintUsed) {
+      if (numpadHintBox) {
+        numpadHintBox.classList.remove("hidden");
+        numpadHintBox.innerHTML = "GỢI Ý MẬT MÃ: Năm Các Mác xuất bản bộ 'Tư bản' là: <strong>1-8-6-7</strong>";
+      }
+      if (numpadRequestHint) {
+        numpadRequestHint.textContent = "ĐÃ MỞ GỢI Ý (ĐÁP ÁN: 1867)";
+        numpadRequestHint.disabled = true;
+        numpadRequestHint.style.opacity = "0.6";
+        numpadRequestHint.style.cursor = "default";
+      }
+    } else {
+      if (numpadHintBox) {
+        numpadHintBox.classList.add("hidden");
+        numpadHintBox.innerHTML = "";
+      }
+      if (numpadRequestHint) {
+        numpadRequestHint.textContent = "GỢI Ý ĐÁP ÁN (-20 ĐIỂM)";
+        numpadRequestHint.disabled = false;
+        numpadRequestHint.style.opacity = "1";
+        numpadRequestHint.style.cursor = "pointer";
+        numpadRequestHint.classList.remove("hidden");
+      }
+    }
+
     document.exitPointerLock?.();
     numpadUi.classList.remove("hidden");
     updateUi();
@@ -1280,9 +1311,24 @@
 
   if (numpadRequestHint) {
     numpadRequestHint.addEventListener("click", () => {
-      numpadHintText.innerHTML = "💡 GỢI Ý MẬT MÃ:<br/>Năm xuất bản Tập 1 bộ sách 'TƯ BẢN' của Karl Marx: <strong>1-8-6-7</strong>";
-      numpadRequestHint.classList.add("hidden");
+      if (state.numpadHintUsed) return;
+      const hintCost = 20;
+      state.quizPoints = Math.max(0, state.quizPoints - hintCost);
+      state.numpadHintUsed = true;
+
+      playWrongSound();
+      showToast(`ĐÃ DÙNG GỢI Ý! (-${hintCost} ĐIỂM)`);
+      showFloatingText(`-${hintCost} ĐIỂM`, "red");
       updateUi();
+
+      if (numpadHintBox) {
+        numpadHintBox.classList.remove("hidden");
+        numpadHintBox.innerHTML = "GỢI Ý MẬT MÃ: Năm Các Mác xuất bản bộ 'Tư bản' là: <strong>1-8-6-7</strong>";
+      }
+      numpadRequestHint.textContent = "ĐÃ MỞ GỢI Ý (ĐÁP ÁN: 1867)";
+      numpadRequestHint.disabled = true;
+      numpadRequestHint.style.opacity = "0.6";
+      numpadRequestHint.style.cursor = "default";
     });
   }
 
@@ -1313,7 +1359,7 @@
         state.quizPoints = Math.max(0, state.quizPoints - numpadPenalty);
         playWrongSound();
         updateUi();
-        numpadFeedback.textContent = `Mã sai! Bị trừ ${numpadPenalty} điểm. Hãy kiểm tra gợi ý.`;
+        numpadFeedback.textContent = `Mã sai! Bị trừ ${numpadPenalty} điểm. Bạn có thể dùng nút Gợi ý bên dưới.`;
         numpadFeedback.className = "quiz-feedback wrong";
         showToast(`MÃ KHÓA SAI! (-${numpadPenalty} ĐIỂM)`);
         showFloatingText(`-${numpadPenalty} ĐIỂM`, "red");
@@ -2917,6 +2963,29 @@
       return;
     }
     if (state.quizOpen) {
+      if (numpadUi && !numpadUi.classList.contains("hidden")) {
+        if (key === "escape") {
+          closeNumpad();
+          return;
+        }
+        if (key >= "0" && key <= "9") {
+          if (numpadInput.length < 4) {
+            numpadInput += key;
+            updateNumpadDisplay();
+          }
+          return;
+        }
+        if (key === "backspace" || key === "delete") {
+          numpadInput = numpadInput.slice(0, -1);
+          updateNumpadDisplay();
+          numpadFeedback.textContent = "";
+          return;
+        }
+        if (key === "enter") {
+          numpadSubmit?.click();
+          return;
+        }
+      }
       if (key === "escape" && state.quizAttempts >= 3) closeQuiz();
       return;
     }
