@@ -312,7 +312,7 @@
       {
         question: "1/2: Trong kinh doanh, khi nguồn CUNG vượt quá CẦU (thừa hàng), giá cả thị trường sẽ biến động ra sao?",
         level: "TRUNG BÌNH",
-        penalty: 40,
+        penalty: 30,
         reward: 100,
         options: [
           "Giá cả có xu hướng giảm xuống thấp hơn giá trị để kích cầu tiêu dùng",
@@ -325,7 +325,7 @@
       {
         question: "2/2: Theo quy luật lưu thông tiền tệ, nếu phát hành lượng tiền giấy vượt quá nhu cầu thực tế của lưu thông thì gây ra hậu quả gì?",
         level: "KHÓ",
-        penalty: 50,
+        penalty: 45,
         reward: 120,
         options: [
           "Đồng tiền mất giá trị, giá cả hàng hóa tăng cao dẫn tới lạm phát",
@@ -339,7 +339,7 @@
     "gate-end": {
       question: "Vận dụng: Kinh tế số có còn tuân theo quy luật cung – cầu truyền thống?",
       level: "VẬN DỤNG CAO",
-      penalty: 70,
+      penalty: 50,
       reward: 150,
       options: [
         "Vẫn tuân theo bản chất, nhưng biểu hiện linh hoạt và tốc độ phản ứng nhanh hơn nhờ dữ liệu và thuật toán số",
@@ -1104,7 +1104,7 @@
     const penalty = quizData.penalty || 30;
     const reward = quizData.reward || 100;
 
-    quizQuestion.innerHTML = `<span>${quizData.question}</span><br/><span style="display:inline-block; margin-top:10px; font-size:12px; font-family:var(--mono); color:var(--gold); background:rgba(207,168,97,0.15); border:1px solid rgba(207,168,97,0.35); padding:4px 12px; border-radius:4px;">📊 ĐỘ KHÓ: <strong>${level}</strong> | Đúng <strong>+${reward}đ</strong> | Sai trừ <strong>-${penalty}đ</strong></span>`;
+    quizQuestion.innerHTML = `<span>${quizData.question}</span><br/><span style="display:inline-block; margin-top:10px; font-size:12px; font-family:var(--mono); color:var(--gold); background:rgba(207,168,97,0.15); border:1px solid rgba(207,168,97,0.35); padding:4px 12px; border-radius:4px;">ĐỘ KHÓ: <strong>${level}</strong> • Đúng <strong>+${reward} điểm</strong> • Sai trừ <strong>-${penalty} điểm</strong></span>`;
 
     const optionButtons = quizOptions.querySelectorAll(".quiz-option-button");
     optionButtons.forEach((btn, idx) => {
@@ -1206,7 +1206,7 @@
       playWrongSound();
 
       const reason = selectedIndex === -1 ? "Hết giờ!" : "Chưa chính xác!";
-      showToast(`⚠️ ${reason.toUpperCase()} (-${penalty} ĐIỂM)`);
+      showToast(`${reason.toUpperCase()} (-${penalty} ĐIỂM)`);
       showFloatingText(`-${penalty} ĐIỂM`, "red");
 
       if (isArray && state.quizIndex < quizDataEntry.length - 1) {
@@ -2678,6 +2678,14 @@
         }, 1200);
       }
     } else {
+      if (memoryMoves > 4) {
+        const memPenalty = 10;
+        state.quizPoints = Math.max(0, state.quizPoints - memPenalty);
+        updateUi();
+        playWrongSound();
+        showFloatingText(`-${memPenalty} ĐIỂM`, "red");
+        showToast(`GHÉP CHƯA ĐÚNG! (-${memPenalty} ĐIỂM)`);
+      }
       setTimeout(() => {
         card1.classList.remove("flipped");
         card2.classList.remove("flipped");
