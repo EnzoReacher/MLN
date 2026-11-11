@@ -225,6 +225,7 @@
   const leaderboardList = document.getElementById("leaderboard-list");
 
   const contentViewer = document.getElementById("content-viewer");
+  const viewerCard = contentViewer?.querySelector(".viewer-card");
   const viewerKicker = document.getElementById("viewer-kicker");
   const viewerTitle = document.getElementById("viewer-title");
   const viewerPage = document.getElementById("viewer-page");
@@ -795,6 +796,7 @@
   function openDialogue(item) {
     const lockedGate = item.kind === "gate" && !gateUnlocked(item);
     state.dialogueOpen = true;
+    document.exitPointerLock?.();
     dialogue.classList.remove("hidden");
     dialogueTitle.textContent = lockedGate ? "Cổng đang khóa" : item.title;
     dialogueBody.textContent = lockedGate
@@ -940,7 +942,9 @@
     state.viewerArtworkIndex = clamp(Number.isInteger(sectionIndex) ? sectionIndex : 0, 0, chapter.sections.length - 1);
     state.viewerPage = state.viewerArtworkIndex;
     state.viewerImage = 0;
+    document.exitPointerLock?.();
     contentViewer.classList.remove("hidden");
+    if (viewerCard) viewerCard.scrollTop = 0;
     renderViewer();
     return true;
   }
@@ -3017,9 +3021,34 @@
       return;
     }
     if (state.viewerOpen) {
-      if (key === "escape" || key === "e" || key === "enter" || key === " ") closeContentViewer();
-      else if (key === "arrowleft") cycleImage(-1);
-      else if (key === "arrowright") cycleImage(1);
+      if (key === "escape" || key === "e") {
+        closeContentViewer();
+        return;
+      }
+      if (key === "arrowup") {
+        if (viewerCard) viewerCard.scrollTop -= 60;
+        return;
+      }
+      if (key === "arrowdown") {
+        if (viewerCard) viewerCard.scrollTop += 60;
+        return;
+      }
+      if (key === "pageup") {
+        if (viewerCard) viewerCard.scrollTop -= 260;
+        return;
+      }
+      if (key === "pagedown" || key === " ") {
+        if (viewerCard) viewerCard.scrollTop += 260;
+        return;
+      }
+      if (key === "arrowleft") {
+        cycleImage(-1);
+        return;
+      }
+      if (key === "arrowright") {
+        cycleImage(1);
+        return;
+      }
       return;
     }
     if (state.dialogueOpen) {
@@ -3117,13 +3146,22 @@
   canvas.addEventListener("click", () => {
     resumeGameControls();
   });
+  contentViewer?.addEventListener("wheel", (e) => {
+    if (viewerCard) {
+      viewerCard.scrollTop += e.deltaY;
+    }
+  }, { passive: true });
   window.addEventListener("click", (e) => {
     if (state.viewerOpen) {
-      closeContentViewer();
+      if (e.target.classList.contains("viewer-backdrop") || e.target === contentViewer) {
+        closeContentViewer();
+      }
       return;
     }
     if (state.dialogueOpen) {
-      closeDialogue();
+      if (e.target.classList.contains("dialogue-backdrop") || e.target === dialogue) {
+        closeDialogue();
+      }
       return;
     }
     if (state.running && !state.quizOpen && !state.memoryOpen && !state.timelineOpen && !state.leaderboardOpen) {

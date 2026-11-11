@@ -175,9 +175,13 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
 .bottom-hint { position: absolute; left: 30px; bottom: 27px; display: flex; align-items: center; gap: 10px; color: var(--muted); font: 12px var(--mono); }
 .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 10px var(--gold); }
 
-.content-viewer { position: absolute; inset: 0; z-index: 16; display: grid; place-items: center; overflow: hidden; padding: clamp(10px, 1.8vw, 24px); }
+.content-viewer { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: clamp(12px, 2vh, 28px); }
 .viewer-backdrop { position: absolute; inset: 0; background: rgba(29, 27, 28, .70); backdrop-filter: blur(8px); }
-.viewer-card { position: relative; width: min(1500px, 100%); max-width: 100%; max-height: 96vh; overflow-x: hidden; overflow-y: auto; padding: clamp(24px, 3vw, 44px); border: 1px solid rgba(244, 236, 223, .34); background: #473e3d; box-shadow: 0 26px 90px rgba(20, 18, 19, .48); }
+.viewer-card { position: relative; z-index: 2; width: min(1440px, 100%); max-width: 100%; max-height: calc(100vh - clamp(24px, 4vh, 56px)); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; padding: clamp(20px, 2.5vw, 36px); border: 1px solid rgba(244, 236, 223, .34); background: #473e3d; box-shadow: 0 26px 90px rgba(20, 18, 19, .48); scrollbar-width: thin; scrollbar-color: var(--gold) rgba(20, 18, 19, .4); }
+.viewer-card::-webkit-scrollbar { width: 8px; }
+.viewer-card::-webkit-scrollbar-track { background: rgba(20, 18, 19, .4); border-radius: 4px; }
+.viewer-card::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+.viewer-card::-webkit-scrollbar-thumb:hover { background: #f0d5a0; }
 .viewer-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(244, 236, 223, .22); }
 .viewer-kicker, .viewer-section-label { color: var(--gold); font: 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; }
 .viewer-header h2 { margin: 10px 0 0; color: var(--paper); font-size: clamp(34px, 5vw, 62px); line-height: .98; letter-spacing: -.055em; font-weight: 600; }
@@ -187,7 +191,7 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
 .viewer-progress b { color: var(--faint); font-weight: 400; }
 .viewer-progress i { display: block; flex: 1; height: 4px; margin-left: 12px; background: rgba(244, 236, 223, .13); }
 .viewer-progress em { display: block; height: 100%; background: var(--red); transition: width .25s; }
-.viewer-layout { display: grid; grid-template-columns: minmax(280px, .72fr) minmax(0, 1.28fr); gap: clamp(24px, 3.4vw, 48px); min-width: 0; align-items: start; }
+.viewer-layout { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 1.15fr); gap: clamp(20px, 2.5vw, 40px); min-width: 0; align-items: start; }
 .viewer-layout.content-only { grid-template-columns: minmax(0, 1fr); max-width: 980px; margin-inline: auto; }
 .viewer-layout.content-only .viewer-copy { max-width: 920px; }
 .viewer-copy { min-width: 0; }
@@ -195,13 +199,13 @@ kbd { padding: 4px 7px; border: 1px solid var(--line); color: var(--paper); font
 .viewer-lead { margin: 0 0 20px; color: #f0d5a0; font-size: 18px; line-height: 1.5; }
 .viewer-paragraphs { display: grid; gap: 13px; }
 .viewer-paragraphs p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.58; }
-.viewer-visual { position: sticky; top: 0; display: flex; min-width: 0; max-width: 100%; margin: 0; padding: 12px; flex-direction: column; overflow: hidden; border: 1px solid rgba(244, 236, 223, .22); background: linear-gradient(145deg, rgba(244, 236, 223, .08), rgba(20, 18, 19, .18)), var(--panel-deep); box-shadow: 0 18px 44px rgba(20, 18, 19, .20); }
-.viewer-image-stage { display: grid; width: 100%; max-width: 100%; height: auto; min-height: 0; aspect-ratio: var(--viewer-image-ratio, 4 / 3); place-items: center; overflow: hidden; padding: 12px; border: 1px solid rgba(214, 174, 108, .32); background: #211f20; }
+.viewer-visual { position: sticky; top: 0; display: flex; min-width: 0; max-width: 100%; margin: 0; padding: 12px; flex-direction: column; border: 1px solid rgba(244, 236, 223, .22); background: linear-gradient(145deg, rgba(244, 236, 223, .08), rgba(20, 18, 19, .18)), var(--panel-deep); box-shadow: 0 18px 44px rgba(20, 18, 19, .20); }
+.viewer-image-stage { display: grid; width: 100%; max-width: 100%; height: auto; max-height: clamp(220px, 44vh, 420px); min-height: 0; aspect-ratio: var(--viewer-image-ratio, 4 / 3); place-items: center; overflow: hidden; padding: 10px; border: 1px solid rgba(214, 174, 108, .32); background: #211f20; }
 .viewer-image-placeholder { display: grid; width: 100%; height: 100%; min-height: 0; place-items: center; align-content: center; gap: 11px; padding: 30px; border: 1px dashed rgba(214, 174, 108, .48); background: rgba(214, 174, 108, .06); text-align: center; }
 .viewer-image-placeholder span { color: var(--red); font: 11px var(--mono); letter-spacing: .14em; }
 .viewer-image-placeholder strong { color: var(--paper); font-size: 19px; font-weight: 500; }
 .viewer-image-placeholder small { max-width: 300px; color: var(--faint); font-size: 14px; line-height: 1.55; }
-.viewer-image { display: block; width: 100%; height: 100%; max-width: none; max-height: none; object-fit: contain; object-position: center; background: transparent; cursor: zoom-in; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .32)); }
+.viewer-image { display: block; width: 100%; height: 100%; max-height: clamp(220px, 44vh, 420px); object-fit: contain; object-position: center; background: transparent; cursor: zoom-in; filter: drop-shadow(0 16px 22px rgba(0, 0, 0, .32)); }
 .viewer-visual figcaption, .lightbox-card figcaption { min-height: 22px; margin: 14px 3px 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
 .image-controls { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 15px; color: var(--faint); font: 13px var(--mono); }
 .image-controls button { width: 34px; height: 32px; border: 1px solid rgba(214, 174, 108, .42); background: transparent; color: var(--gold); cursor: pointer; font-size: 18px; }
