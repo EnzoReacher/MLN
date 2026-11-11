@@ -1694,51 +1694,99 @@
     pedestalCap.position.set(0, special ? 1.14 : .99, 0);
     group.add(pedestalCap);
 
-    const outerFrame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + (special ? .64 : .52), dimensions.height + (special ? .64 : .52), .14), frameMaterial);
+    const outerFrame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + (special ? .64 : .52), dimensions.height + (special ? .64 : .52), .16), frameMaterial);
     outerFrame.name = `honor-frame-outer-${room.id}`;
-    outerFrame.position.set(0, portraitY, -.12);
+    outerFrame.position.set(0, portraitY, 0);
     group.add(outerFrame);
-    const frame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + .34, dimensions.height + .34, .18), frameHighlightMaterial);
+    const frame = new THREE.Mesh(new THREE.BoxGeometry(dimensions.width + .34, dimensions.height + .34, .20), frameHighlightMaterial);
     frame.name = `honor-frame-${room.id}`;
-    frame.position.set(0, portraitY, -.10);
+    frame.position.set(0, portraitY, 0);
     group.add(frame);
-    const backing = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), darkMaterial);
-    backing.position.set(0, portraitY, -.20);
-    group.add(backing);
-    const portrait = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), portraitMaterial);
-    portrait.name = `honor-portrait-${room.id}`;
-    portrait.position.set(0, portraitY, .01);
-    group.add(portrait);
 
-    const glass = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width + .08, dimensions.height + .08), glassMaterial);
-    glass.name = `honor-glass-${room.id}`;
-    glass.position.set(0, portraitY, .09);
-    glass.renderOrder = 4;
-    group.add(glass);
-    const glare = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(.16, dimensions.width * .20), dimensions.height * 1.08), glareMaterial);
-    glare.name = `honor-glass-glare-${room.id}`;
-    glare.position.set(-dimensions.width * .24, portraitY, .13);
-    glare.rotation.z = -.24;
-    glare.renderOrder = 5;
-    group.add(glare);
+    // Front Facing Elements (+Z)
+    const backingFront = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), darkMaterial);
+    backingFront.position.set(0, portraitY, .1005);
+    group.add(backingFront);
+    const portraitFront = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), portraitMaterial);
+    portraitFront.name = `honor-portrait-${room.id}`;
+    portraitFront.position.set(0, portraitY, .102);
+    group.add(portraitFront);
+
+    const glassFront = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width + .08, dimensions.height + .08), glassMaterial);
+    glassFront.name = `honor-glass-${room.id}`;
+    glassFront.position.set(0, portraitY, .112);
+    glassFront.renderOrder = 4;
+    group.add(glassFront);
+    const glareFront = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(.16, dimensions.width * .20), dimensions.height * 1.08), glareMaterial);
+    glareFront.name = `honor-glass-glare-${room.id}`;
+    glareFront.position.set(-dimensions.width * .24, portraitY, .115);
+    glareFront.rotation.z = -.24;
+    glareFront.renderOrder = 5;
+    group.add(glareFront);
+
+    // Back Facing Elements (-Z) - Symmetrical display for both sides
+    const backingBack = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), darkMaterial);
+    backingBack.position.set(0, portraitY, -.1005);
+    backingBack.rotation.y = Math.PI;
+    group.add(backingBack);
+    const portraitBack = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width, dimensions.height), portraitMaterial);
+    portraitBack.name = `honor-portrait-back-${room.id}`;
+    portraitBack.position.set(0, portraitY, -.102);
+    portraitBack.rotation.y = Math.PI;
+    group.add(portraitBack);
+
+    const glassBack = new THREE.Mesh(new THREE.PlaneGeometry(dimensions.width + .08, dimensions.height + .08), glassMaterial);
+    glassBack.name = `honor-glass-back-${room.id}`;
+    glassBack.position.set(0, portraitY, -.112);
+    glassBack.rotation.y = Math.PI;
+    glassBack.renderOrder = 4;
+    group.add(glassBack);
+    const glareBack = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(.16, dimensions.width * .20), dimensions.height * 1.08), glareMaterial);
+    glareBack.name = `honor-glass-glare-back-${room.id}`;
+    glareBack.position.set(dimensions.width * .24, portraitY, -.115);
+    glareBack.rotation.y = Math.PI;
+    glareBack.rotation.z = -.24;
+    glareBack.renderOrder = 5;
+    group.add(glareBack);
+
+    // Mounting studs on both sides
     const studOffsetX = dimensions.width / 2 + (special ? .24 : .20);
     const studOffsetY = dimensions.height / 2 + (special ? .24 : .20);
     [-1, 1].forEach((x) => [-1, 1].forEach((y) => {
-      const stud = new THREE.Mesh(new THREE.SphereGeometry(special ? .055 : .045, 7, 5), studMaterial);
-      stud.name = `honor-glass-stud-${room.id}-${x}-${y}`;
-      stud.position.set(x * studOffsetX, portraitY + y * studOffsetY, .16);
-      stud.renderOrder = 6;
-      group.add(stud);
+      const studFront = new THREE.Mesh(new THREE.SphereGeometry(special ? .055 : .045, 7, 5), studMaterial);
+      studFront.name = `honor-glass-stud-${room.id}-${x}-${y}`;
+      studFront.position.set(x * studOffsetX, portraitY + y * studOffsetY, .122);
+      studFront.renderOrder = 6;
+      group.add(studFront);
+
+      const studBack = new THREE.Mesh(new THREE.SphereGeometry(special ? .055 : .045, 7, 5), studMaterial);
+      studBack.name = `honor-glass-stud-back-${room.id}-${x}-${y}`;
+      studBack.position.set(x * studOffsetX, portraitY + y * studOffsetY, -.122);
+      studBack.renderOrder = 6;
+      group.add(studBack);
     }));
 
-    const plaqueBase = new THREE.Mesh(new THREE.BoxGeometry(plaqueWidth, special ? .28 : .24, .07), frameHighlightMaterial);
-    plaqueBase.position.set(0, plaqueY, .25);
-    group.add(plaqueBase);
+    // Plaques on both sides
     const plaqueMaterial = new THREE.MeshBasicMaterial({ map: makeHonorPlaqueTexture(honor), side: THREE.DoubleSide });
-    const plaque = new THREE.Mesh(new THREE.PlaneGeometry(plaqueWidth - .08, special ? .24 : .20), plaqueMaterial);
-    plaque.name = `honor-plaque-${room.id}`;
-    plaque.position.set(0, plaqueY, .292);
-    group.add(plaque);
+
+    // Front Plaque
+    const plaqueBaseFront = new THREE.Mesh(new THREE.BoxGeometry(plaqueWidth, special ? .28 : .24, .07), frameHighlightMaterial);
+    plaqueBaseFront.position.set(0, plaqueY, .22);
+    group.add(plaqueBaseFront);
+    const plaqueFront = new THREE.Mesh(new THREE.PlaneGeometry(plaqueWidth - .08, special ? .24 : .20), plaqueMaterial);
+    plaqueFront.name = `honor-plaque-${room.id}`;
+    plaqueFront.position.set(0, plaqueY, .258);
+    group.add(plaqueFront);
+
+    // Back Plaque
+    const plaqueBaseBack = new THREE.Mesh(new THREE.BoxGeometry(plaqueWidth, special ? .28 : .24, .07), frameHighlightMaterial);
+    plaqueBaseBack.position.set(0, plaqueY, -.22);
+    group.add(plaqueBaseBack);
+    const plaqueBack = new THREE.Mesh(new THREE.PlaneGeometry(plaqueWidth - .08, special ? .24 : .20), plaqueMaterial);
+    plaqueBack.name = `honor-plaque-back-${room.id}`;
+    plaqueBack.position.set(0, plaqueY, -.258);
+    plaqueBack.rotation.y = Math.PI;
+    group.add(plaqueBack);
 
     if (textureLoader) {
       textureLoader.load(honor.image, (texture) => {
