@@ -897,6 +897,7 @@
     if (!section) return;
 
     state.viewedPages.add(pageKey());
+    completeChapter(chapter.id);
     viewerKicker.textContent = `ARCHIVE ${chapter.code} / TRANH ${String(state.viewerArtworkIndex + 1).padStart(2, "0")} / ${chapter.label}`;
     viewerTitle.textContent = chapter.title;
     viewerPage.textContent = String(state.viewerPage + 1).padStart(2, "0");
@@ -953,6 +954,9 @@
   }
 
   function closeContentViewer() {
+    if (state.viewerChapter) {
+      completeChapter(state.viewerChapter);
+    }
     state.viewerOpen = false;
     state.viewerChapter = null;
     state.viewerPage = 0;
@@ -965,18 +969,22 @@
   }
 
   function completeChapter(chapterId) {
-    const chapter = contentById.get(chapterId);
-    if (!chapter || !state.viewedPages.has(`${chapterId}:0`)) return false;
+    if (!chapterId) return false;
+    const isNew = !state.evidence.has(chapterId);
     state.evidence.add(chapterId);
     updateGateMeshes();
     updateUi();
+    if (isNew) {
+      const room = rooms.find(r => r.id === chapterId);
+      const roomName = room?.name || chapterId.toUpperCase();
+      showToast(`ĐÃ GHI NHẬN HỒ SƠ: ${roomName} — CỔNG ĐÃ SẴN SÀNG!`);
+    }
     return true;
   }
 
   function nextViewerPage() {
     const chapter = activeChapter();
-    if (!chapter) return;
-    if (state.viewerArtworkIndex === 0 && !state.evidence.has(chapter.id)) completeChapter(chapter.id);
+    if (chapter) completeChapter(chapter.id);
     closeContentViewer();
   }
 
